@@ -12,4 +12,4 @@ the pipelined version mostly works although not fully
 it is capable of running asm programs with "pipeline_" prefix and "fib.asm"
 it is not yet capable of running "factorial.asm" and "sort.asm"
 
-
+the assembler will be changed when i get back to compilers, right now dont judge
