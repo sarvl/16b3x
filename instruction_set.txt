@@ -1,0 +1,494 @@
+[TABLE OF CONTENTS]
+	[OVERVIEW]
+	[INSTRUCTION_OVERVIEW]
+	[MEMORY_ACCESS]
+	[INTERNAL_REGISTERS]
+	[CALLING_CONVETION]
+	[STACK]
+	[STACK_FRAME]
+	[EXTERNAL_REGISTERS]
+	[EXTENDED_IMM]
+	[DURING_EVERY_CYCLE]
+	[DETAILED_INSTRUCTION_EXPLANATION]
+	[KNOWN_LIMITATIONS]
+
+[OVERVIEW]
+version:           0 
+codename:          16b30
+endianness:        big endian
+instruction-limit: 63
+instruction-count: 42
+this doc revision:  0 
+
+
+all potential future version WILL BE backwards compatible with previous versions 
+note that instruction-limit in instruction-count treat instruction's formats as separate instructions
+	even when 2 different formats behave exactly the same
+
+[INSTRUCTION_OVERVIEW]
+number in the opcode in hex
+fields with no instructions intentionally left blank
+programs MUST NOT depend on their behavior since in the future the ISA may be extended
+
+00  nop                  	# ---
+01  hlt ccc              	# IF(FL & ccc) { halt } 
+02                       	#  
+03                       	#  
+04                       	#   
+05  mov     R0, R1/imm8 	# R0 <-- R1/imm16
+06  rdm     R0, R1/imm8 	# R0 <-- M[R1/imm16]
+07  wrm     R0, R1/imm8 	# M[R1/imm16] <-- R0
+08                      	#  
+09                      	#  
+0A                      	# 
+0B                      	# 
+0C  rdx     E0, R0       	# R0 <-- E0      
+0D  wrx     E0, R1/imm8 	# E0 <-- R1/imm16
+0E  psh     R0          	# SP <-- SP - 2 ; M[SP] <-- R0
+0F  pop     R0          	# R0 <-- M[SP]  ; SP    <-- SP + 2;
+10                      	#  
+11  cmp     R0, R1/imm8 	# R0 - R1/imm16 
+12                      	#  
+13  tst     R0, R1/imm8 	# R0 & R1/imm16 
+14  jmp ccc     R1/imm8 	# IF(FL & ccc) { IP <-- R0/imm16 }
+15  cal ccc     R1/imm8 	# IF(FL & ccc) { LR <-- IP + 2; IP <-- R0/imm16 }
+16  ret ccc             	# IF(FL & ccc) { IP <-- LR }
+17                      	#  
+18  add     R0, R1/imm8 	# R0 <-- R0 +  R1/imm16
+19  sub     R0, R1/imm8 	# R0 <-- R0 -  R1/imm16
+1A  not     R0, R1/imm8 	# R0 <--    ~  R1/imm16
+1B  and     R0, R1/imm8 	# R0 <-- R0 &  R1/imm16
+1C  orr     R0, R1/imm8 	# R0 <-- R0 |  R1/imm16
+1D  xor     R0, R1/imm8 	# R0 <-- R0 ^  R1/imm16
+1E  sll     R0, R1/imm4 	# R0 <-- R0 << R1/imm4
+1F  slr     R0, R1/imm4 	# R0 <-- R0 >> R1/imm4
+
+where:
+M[x] means memory at address x
+Rx   means register x
+Ex   means external register x
+special names denote external registers, see [EXTERNAL_REGISTERS]
+
+note that instructins that use imm8 have imm16 in short description of behavior 
+this is not a mistake see [EXTERNAL_REGISTERS] about register UI and see [EXTENDED_IMM]
+
+for more detailed explanation see [DETAILED_INSTRUCTION_EXPLANATION] 
+for instruction encoding see [INSTRUCTION_ENCODING]
+
+[MEMORY_ACCESS]
+	memory is byte addressed
+	with that said, RDM and WRM require memory address to be 2B aligned 
+	the exact way of handling (or ignoring) the unaligned memory access is implementation specific
+	instructions must be 2B aligned
+
+[INSTRUCTION_ENCODING]
+each instruction is 16bits long 
+there are two instructions format, R-format and I-format
+I-format specifies how instructions that use immiediate value as its second operand ar encoded
+R-format specifies all the other instructions
+note that some instructions are valid in both formats (instruction doesnt have second operand), if thats the case then both formats may be used 
+
+opcodes for both versions of instruction are the same for all formats, what differs is where are they placed  
+
+R-format:
+	00000BBB CCCDDDDD
+	
+	from MSb to LSb:
+	     5 bits are 0 
+	then 3 bits denote R0/ccc/E0
+	then 3 bits denote R1
+	then 5 bits denote opcode
+
+
+I-format:
+	AAAAABBB IIIIIIII
+
+	from MSb to LSb
+	     5 bits denote opcode
+	then 3 bits denote R0/ccc
+	then 8 bits denote imm8
+
+	if instruction uses imm4 instead of imm8 then 4LSb have to be used 
+	
+RDX must be R-format
+first operand of RDX and WRX is external register
+note that this is not consistent with RDM and WRM but this was the way to get ability to load External register with constant value
+
+opcodes mean the same instruction whether in R-format or in I-format (with exception below)
+
+
+instructions that use ccc are encoded as regular instructions except 3 condition bits are placed where R0 would be and instructions do not care about R0
+if instruction doesnt have variant with immiediate and it uses only 1 register (1 condition code) then its behavior is the same in R-format and I-format
+if instruction doesnt have variant with immiediate and uses 2 registers then it DOES NOT HAVE imm format 
+
+example:
+	encoding of ADD R0, R4
+	opcode for add: 18 ; in binary: 10100
+	uses two registers so R-format 
+	R0 is identified by 000
+	R4 is identified by 100
+
+	therefore encoding is 00000 000 100 10100 => 00000000 10010100 => 0094
+
+	encoding of jmp E 5 
+	opcode for jmp: 10 ; in binary : 10000
+	uses ccc and immiedite therefor I-format
+	E is ccc decoded to 010 
+	5 in binary is 0101 ; extended to 8 bits 00000101
+
+	therefore encoding is 10000 010 00000101 => 10000010 00000101 => 8205
+
+
+[INTERNAL_REGISTERS]
+0 R0 ; GP 0 
+1 R1 ; GP 1  
+2 R2 ; GP 2  
+3 R3 ; GP 3  
+4 R4 ; GP 4  
+5 R5 ; GP 5  
+6 R6 ; GP 6  
+7 R7 ; GP 7  
+
+[CALLING_CONVETION]
+R0       - return value
+R0 to R7 - arguments
+more arguments are put on stack in order, where first POPed argument must be the next argument after R7
+in other words, last argument is PSHed first 
+
+every register is caller saved
+
+return address is put into LR by CAL, in order to call procedure B inside procedure A, A must first save the LR register
+it is advised that unless A is leaf then PSHing LR is the first thing done in the procedure 
+
+see [STACK_FRAME] for details on what is considered part of stack frame of procedure
+
+it is advised to use CAL and RET for procedure calls but it is not necessary as their behavior can be achieved with RDX, WRX and arithmetic instructions
+
+[STACK]
+	controlled by SP via PSH and POP or manually with RDX, WRX, RDM, WRM, ADD, SUB
+	stack MUST be 2B aligned 
+
+	SP is not initialized by default 
+
+	SP points to the data on top of the stack NOT where that data would go 
+	in other words, PSH first decreases SP then puts data, POP first gets data then decreases SP 
+
+[STACK_FRAME]
+	arguments passed to procedure A by procedure B are considered part of procedure B's stack frame
+	local variables saved on stack are considered part of stack frame
+
+	each procedure MUST clear its stack frame, via POP or directly modyfing SP
+
+	for details on stack see [STACK]
+
+[EXTERNAL_REGISTERS]
+0 IP ; Instruction Pointer ; points to NEXT instruction 
+1 SP ; Stack Pointer       ; points to bottom of the stack, where an object exists see [STACK]
+2 LR ; Link register       ; points to return address of CAL, specifically next instruction after CAL see [CALLING_CONVENTION]
+3
+4 UI ; Upper Immiediate    ; 8 LSbits denote 8 MSb of imm16 when instruction uses imm8, see 
+5 FL ; Flags register      ; 3 LSbits of this register denote flags set by previous instruction, see [FLAGS] 
+6 
+7 
+
+
+IP
+	points to NEXT instruction
+	may be changed by:
+		JMP, CAL, RET, WRX
+	
+	note that actual value of the register denotes next instruction NOT where it is in memory 
+	it means that before accessing memory the value is shifted by 1 to the left 
+
+SP
+	see [STACK], [STACK_FRAME]
+
+LR
+	contains the address to return stored by CAL 
+	used by RET 
+	see [CALLING_CONVENTION]
+
+UI
+	used by any instruction that uses immiediate
+	value set at instruction n will take effect at instruction n + 1 and after instruction n + 1 UI is set back to 0 
+	may be changed by WRX
+
+	see [EXTENDED_IMM]
+
+FL 
+	contains 3 flag bits
+	00000000 0000LEG
+	 L - less
+	 E - equal
+	 G - greater
+
+	architecture must support at least these 3 bits to be read and written
+	write/read from other bits might not have an effect 
+
+	initial value is not specified but is valid (meaning that one and only one flag bit is 1)
+
+	set by
+	CMP, TST, ADD, SUB, NOT, AND, ORR, XOR, SLL, SLR 
+
+
+
+[EXTENDED_IMM]
+wherever instruction uses imm16 and only imm8 was specified 
+	the process of getting imm16 is as follows 
+	(UI << 8) | imm8 
+
+	UI can be set via WRX, it is advised that assembler itself will convert any use of imm greater than 8 bits into 2 instructions 
+	eg
+		MOV 	R0, 513
+		gets turned into
+		WRX 	UI, 2
+		MOV 	R0, 1
+		which is equivalent to 
+		MOV 	R0, 2
+		SHL 	R0, 8
+		ORR 	R0, 1 
+
+
+[DURING_EVERY_CYCLE]
+	actions here happen at every cycle, independent (unless stated otherwise) of instruction specified 
+
+	IP <-- IP + 1 ; unless executed instruction changes it 
+	UI <-- 0      ; unless executed instruction changes it 
+
+
+[DETAILED_INSTRUCTION_EXPLANATION]
+
+	NOP
+		processor does nothing except what is done [DURING_EVERY_CYCLE] 
+		external registers altered:
+			---
+
+	HLT ccc
+		IF(F & ccc) 
+		{
+			halt
+		}
+
+		conditionally pauses execution of the cpu
+		there is no way to resume it other than to restart it
+
+		external registers altered:
+			---
+	
+	MOV R0, R1/imm8
+		R0 <-- R1/imm16
+
+		copies contets of either R1 or extendend immiediate into R0
+
+		external registers altered:
+			---
+
+	RDM R0, R1/imm8
+		R0 <-- M[R1/imm16]
+
+		copies contents of memory pointed to by second operand into R0
+
+		external registers altered:
+			---
+
+	WRM R0, R1/imm8
+		M[R1/imm16] <-- R0
+		
+		copies contents of R0 into memory pointed to by second operand  
+
+		external registers altered:
+			---
+
+	RDX E0, R0
+		R0 <-- E0
+
+		copies contents of external register E0 into R0
+
+		external registers altered:
+			---
+
+	WRX E0, R1/imm16
+		E0 <-- R1/imm16
+		
+		copies second operand into external register R0
+
+		external registers altered:
+			potentially any one 
+
+	PSH R0          	
+		SP <-- SP - 2
+		M[SP] <-- R0
+
+		decreases SP by 2 
+		THEN
+		copies contents of R0 into memory at address held by SP
+
+		
+		external registers altered:
+			SP
+
+	POP R0
+		R0 <-- M[SP]
+		SP <-- SP + 2;
+
+		copies contents of memory at address held by SP
+		THEN
+		increases SP by 2
+
+
+		external registers altered:
+			SP
+
+	JMP ccc R1/imm8
+		IF(FL & ccc) 
+		{ 
+			IP <-- R0/imm16
+		}
+
+		if flags register anded with condition codes yields nonzero value
+			changes the IP to second operand 
+
+		external registers altered:
+			IP if condition is true 
+
+	CAL ccc R1/imm8
+		IF(FL & ccc) 
+		{ 
+			LR <-- IP
+			IP <-- R0/imm16 
+		}
+		
+		if flags register anded with condition codes yields non zero value
+			saves value of IP into LR
+			THEN
+			changes the IP to either contents of R0 or extended immiediate
+
+		external registers altered:
+			LR and IP if condition is true 
+
+	RET ccc
+		IF(FL & ccc) 
+		{ 
+			IP <-- LR
+		}
+        
+		if flags register anded with condition codes yields non zero value
+			changes IP to LR	
+
+		external registers altered:
+			IP if condition is true
+
+	CMP R0, R1/imm8
+		R0 - R1/imm16
+	
+		acts like SUB
+		except doesnt write to register
+		operates on signed numbers
+
+		compares SIGNED values
+
+		external registers altered:
+			FL
+
+	TST R0, R1/imm8
+		R0 & R1/imm16
+		
+		acts like AND 
+		except doesnt write to register
+
+		external registers altered:
+			FL
+
+	ADD R0, R1/imm8
+		R0 <-- R0 +  R1/imm16
+
+		performs arithmetic addition on the operands
+		stores result in R0
+
+		external registers altered:
+			FL
+	
+	SUB R0, R1/imm8
+		R0 <-- R0 +  R1/imm16
+
+		performs arithmetic subtraction on the operands
+		stores result in R0
+
+		external registers altered:
+			FL
+
+	NOT R0, R1/imm8
+		R0 <-- ~ R1/imm16
+
+		performs logical not on either contents of R1 or extendend immiediate
+		stores result in R0
+
+		external registers altered:
+			FL
+
+	AND R0, R1/imm8
+		R0 <-- R0 &  R1/imm16
+
+		performs logical and on the operands
+		stores result in R0
+
+		external registers altered:
+			FL
+
+	ORR R0, R1/imm8
+		R0 <-- R0 |  R1/imm16
+
+		performs logical or on the operands
+		stores result in R0
+
+		external registers altered:
+			FL
+
+	XOR R0, R1/imm8
+		R0 <-- R0 ^  R1/imm16
+
+		performs logical exclusive or on the operands
+		stores result in R0
+
+		external registers altered:
+			FL
+
+	SLL R0, R1/imm4
+		R0 <-- R0 << R1/imm4
+
+		performs logical shift left on the operands
+		stores result in R0
+		
+		only 4LSb of second operand matter
+
+		external registers altered:
+			FL
+
+	SLR R0, R1/imm4
+		R0 <-- R0 >> R1/imm4
+
+		performs logical shift right on the operands
+		stores result in R0
+
+		only 4LSb of second operand matter
+
+		external registers altered:
+			FL
+
+[KNOWN_LIMITATIONS]
+	comparing values
+		since the cpu is 16bit and flags are set basing on output
+		then comparision IS NOT COMMUTATIVE 
+		that is a < b ∧ b < c =/> a < c 
+		example:
+		a = 123, b = 11859, c = 36427 
+		a < b ∧ b < c 
+		but a > c 
+		because a - c is actually a + (-c) 
+		since c is in 2s complement and bigger than 2^15 then it is already treated as negative
+		therefore 123 + ~c + 1 is actually > 0 therefore a > c even though mathematically a < c 
+
+
+		for best results ensure that the value is smaller than +-2^15
+
+
