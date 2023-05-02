@@ -55,7 +55,8 @@ fact_end:
 	pop 	R7
 	wrx 	LR, R7
 	ret
-	
+
+;x0019
 start:
 	mov 	R0, 6
 	cal 	LEG fact

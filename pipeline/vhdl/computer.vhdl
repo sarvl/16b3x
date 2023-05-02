@@ -169,6 +169,8 @@ ARCHITECTURE behav OF computer IS
 			icycadv : IN  std_logic;
 			ihlt: IN  std_logic;
 			iiim: IN  std_logic;
+			isre: IN  std_logic;
+			iext: IN  std_logic_vector(15 DOWNTO 0);
 	
 			or0  : OUT std_logic_vector( 2 DOWNTO 0);
 			or1  : OUT std_logic_vector( 2 DOWNTO 0);
@@ -192,7 +194,9 @@ ARCHITECTURE behav OF computer IS
 			oalu_op : OUT std_logic_vector(2 DOWNTO 0);
 			ocycadv : OUT std_logic;
 			ohlt : OUT std_logic;
-			oiim : OUT std_logic);
+			oiim : OUT std_logic;
+			osre : OUT std_logic;
+			oext: OUT std_logic_vector(15 DOWNTO 0));
 	END COMPONENT stage;
 -- STAGE
 
@@ -211,7 +215,6 @@ ARCHITECTURE behav OF computer IS
 -- signals control 
 	SIGNAL instr : std_logic_vector(15 DOWNTO 0);
 
-	SIGNAL sre    : std_logic := '0';
 	SIGNAL inv    : std_logic := '0';
 -- signals control 
 
@@ -293,6 +296,8 @@ ARCHITECTURE behav OF computer IS
 		cycadv : std_logic;
 		hlt : std_logic;
 		iim : std_logic;
+		sre : std_logic;
+		ext : std_logic_vector(15 DOWNTO 0);
 	END RECORD passed_signals;
 
 
@@ -300,11 +305,16 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL s1_signals : passed_signals;
 	SIGNAL s2_signals : passed_signals;
 
+	SIGNAL ext_out : std_logic_vector(15 DOWNTO 0);
 
 	SIGNAL alu_in0 : std_logic_vector(15 DOWNTO 0);
 	SIGNAL alu_in1 : std_logic_vector(15 DOWNTO 0);
 
 	SIGNAL instr_adr : std_logic_vector(15 DOWNTO 0);
+
+	SIGNAL ramwr : std_logic := '0';
+
+	SIGNAL mem_data : std_logic_vector(15 DOWNTO 0);
 BEGIN
 	PROCESS IS 
 	BEGIN
@@ -345,7 +355,7 @@ BEGIN
 
 	reg_sp: reg_16bit PORT MAP(i0  => r_sp_in,
 	                           o0  => r_sp_out,
-	                           we  => '1',
+	                           we  => wrsp,
 	                           clk => clk);
 	spadd: arith_adder_16bit PORT MAP(i0 => r_sp_out,
 	                                  i1 => const_16bit_2,
@@ -376,27 +386,27 @@ BEGIN
 
 	--s0_ftchandec ; outputs data to s0_signals
 	s1_execution: stage PORT MAP(clk, next_stage,
-		s0_signals.r0,     s0_signals.r1,        s0_signals.res, s0_signals.mem, s0_signals.op0, 
-		s0_signals.op1,    s0_signals.flg,       s0_signals.wrr, s0_signals.wrm, s0_signals.wre,    
-		s0_signals.wrf,    s0_signals.sro,       s0_signals.srr, s0_signals.srm, s0_signals.psh,
-		s0_signals.pop,    s0_signals.jmp,       s0_signals.cal, s0_signals.ret, s0_signals.alu_op, 
-		s0_signals.cycadv, s0_signals.hlt,       s0_signals.iim,
-		s1_signals.r0,     s1_signals.r1,        s1_signals.res, s1_signals.mem, s1_signals.op0, 
-		s1_signals.op1,    s1_signals.flg,       s1_signals.wrr, s1_signals.wrm, s1_signals.wre,    
-		s1_signals.wrf,    s1_signals.sro,       s1_signals.srr, s1_signals.srm, s1_signals.psh,
-		s1_signals.pop,    s1_signals.jmp,       s1_signals.cal, s1_signals.ret, s1_signals.alu_op, 
-		s1_signals.cycadv, s1_signals.hlt,       s1_signals.iim);
-	s1_writeback: stage PORT MAP(clk, next_stage,
-		s1_signals.r0,     r_fl_out(2 DOWNTO 0), alu_out,        ram_out,        s1_signals.op0, 
-		s1_signals.op1,    s1_signals.flg,       s1_signals.wrr, s1_signals.wrm, s1_signals.wre,    
-		s1_signals.wrf,    s1_signals.sro,       s1_signals.srr, s1_signals.srm, s1_signals.psh,
-		s1_signals.pop,    s1_signals.jmp,       s1_signals.cal, s1_signals.ret, s1_signals.alu_op, 
-		s1_signals.cycadv, s1_signals.hlt,       s1_signals.iim,
-		s2_signals.r0,     s2_signals.r1,        s2_signals.res, s2_signals.mem, s2_signals.op0, 
-		s2_signals.op1,    s2_signals.flg,       s2_signals.wrr, s2_signals.wrm, s2_signals.wre,    
-		s2_signals.wrf,    s2_signals.sro,       s2_signals.srr, s2_signals.srm, s2_signals.psh,
-		s2_signals.pop,    s2_signals.jmp,       s2_signals.cal, s2_signals.ret, s2_signals.alu_op, 
-		s2_signals.cycadv, s2_signals.hlt,       s2_signals.iim);
+		s0_signals.r0,     s0_signals.r1,  s0_signals.res, s0_signals.mem, s0_signals.op0, 
+		s0_signals.op1,    s0_signals.flg, s0_signals.wrr, s0_signals.wrm, s0_signals.wre,    
+		s0_signals.wrf,    s0_signals.sro, s0_signals.srr, s0_signals.srm, s0_signals.psh,
+		s0_signals.pop,    s0_signals.jmp, s0_signals.cal, s0_signals.ret, s0_signals.alu_op, 
+		s0_signals.cycadv, s0_signals.hlt, s0_signals.iim, s0_signals.sre, ext_out, 
+		s1_signals.r0,     s1_signals.r1,  s1_signals.res, s1_signals.mem, s1_signals.op0, 
+		s1_signals.op1,    s1_signals.flg, s1_signals.wrr, s1_signals.wrm, s1_signals.wre,    
+		s1_signals.wrf,    s1_signals.sro, s1_signals.srr, s1_signals.srm, s1_signals.psh,
+		s1_signals.pop,    s1_signals.jmp, s1_signals.cal, s1_signals.ret, s1_signals.alu_op, 
+		s1_signals.cycadv, s1_signals.hlt, s1_signals.iim, s1_signals.sre, s1_signals.ext);
+	s2_writeback: stage PORT MAP(clk, next_stage,
+		s1_signals.r0,     s1_signals.r1,  alu_out,        mem_data,       s1_signals.op0, 
+		s1_signals.op1,    s1_signals.flg, s1_signals.wrr, s1_signals.wrm, s1_signals.wre,    
+		s1_signals.wrf,    s1_signals.sro, s1_signals.srr, s1_signals.srm, s1_signals.psh,
+		s1_signals.pop,    s1_signals.jmp, s1_signals.cal, s1_signals.ret, s1_signals.alu_op, 
+		s1_signals.cycadv, s1_signals.hlt, s1_signals.iim, s1_signals.sre, s1_signals.ext,
+		s2_signals.r0,     s2_signals.r1,  s2_signals.res, s2_signals.mem, s2_signals.op0, 
+		s2_signals.op1,    s2_signals.flg, s2_signals.wrr, s2_signals.wrm, s2_signals.wre,    
+		s2_signals.wrf,    s2_signals.sro, s2_signals.srr, s2_signals.srm, s2_signals.psh,
+		s2_signals.pop,    s2_signals.jmp, s2_signals.cal, s2_signals.ret, s2_signals.alu_op, 
+		s2_signals.cycadv, s2_signals.hlt, s2_signals.iim, s2_signals.sre, s2_signals.ext);
 
 -- REGISTERS
 
@@ -404,7 +414,7 @@ BEGIN
 	ramo:   ram       PORT MAP(a0  => ram_adr,
 	                           i0  => ram_in,
 	                           o0  => ram_out,
-	                           we  => s2_signals.wrm,
+	                           we  => ramwr,
 	                           clk => clk);
 -- RAM
 
@@ -419,7 +429,7 @@ BEGIN
 			s0_signals.wrf,
 			s0_signals.iim,
 			s0_signals.sro,
-			sre,
+			s0_signals.sre,
 			s0_signals.srm,
 			s0_signals.srr,
 			inv,
@@ -440,10 +450,10 @@ BEGIN
 	ram_adr <= ipsll   WHEN next_stage = '1' 
 	      ELSE dataadr;
 	--only when instruction uses memory ram_in matters
-	ram_in  <= s2_signals.op0 WHEN s2_signals.psh = '1' OR s2_signals.wrm = '1';
-	dataadr <= sps2           WHEN s2_signals.psh = '1' 
-	      ELSE r_sp_out       WHEN s2_signals.pop = '1'
-	      ELSE s2_signals.op1 WHEN s2_signals.wrm = '1' OR s2_signals.srm = '1';
+	ram_in  <= s1_signals.op0 WHEN s1_signals.psh = '1' OR s1_signals.wrm = '1';
+	dataadr <= sps2           WHEN s1_signals.psh = '1' 
+	      ELSE r_sp_out       WHEN s1_signals.pop = '1'
+	      ELSE s1_signals.op1 WHEN s1_signals.wrm = '1' OR s1_signals.srm = '1';
 
 	--as isa specifies
 	imm8          <= instr( 7 DOWNTO 0);
@@ -453,41 +463,54 @@ BEGIN
 	imm16 <= r_ui_out(7 DOWNTO 0) 
 	       & imm8;
 
+	ext_out <= r_lr_out;
+
 	--taking operands 
 	s0_signals.op0 <= alu_out        WHEN s1_signals.srr = '1' AND s1_signals.r0 = s0_signals.r0
 	             ELSE s1_signals.op1 WHEN s1_signals.sro = '1' AND s1_signals.r0 = s0_signals.r0
+	             ELSE ext_out        WHEN s1_signals.sre = '1' AND s1_signals.r0 = s0_signals.r0
+	             ELSE mem_data       WHEN s1_signals.srm = '1' AND s1_signals.r0 = s0_signals.r0
+	             ELSE mem_data       WHEN s1_signals.pop = '1' AND s1_signals.r0 = s0_signals.r0
 
-	             ELSE s2_signals.res WHEN s2_signals.srr = '1' AND s2_signals.r0 = s0_signals.r0
-	             ELSE s2_signals.op1 WHEN s2_signals.sro = '1' AND s2_signals.r0 = s0_signals.r0
+	             ELSE r0i            WHEN (s2_signals.srr = '1' AND s2_signals.r0 = s0_signals.r0)
+	                                   OR (s2_signals.sro = '1' AND s2_signals.r0 = s0_signals.r0)
+	                                   OR (s2_signals.sre = '1' AND s2_signals.r0 = s0_signals.r0)
+	                                   OR (s2_signals.srm = '1' AND s2_signals.r0 = s0_signals.r0)
+	                                   OR (s2_signals.pop = '1' AND s2_signals.r0 = s0_signals.r0)
 
 	             ELSE r0o;
 	s0_signals.op1 <= imm16          WHEN s0_signals.iim = '1' 
 
 	             ELSE alu_out        WHEN s1_signals.srr = '1' AND s1_signals.r0 = s0_signals.r1
 	             ELSE s1_signals.op1 WHEN s1_signals.sro = '1' AND s1_signals.r0 = s0_signals.r1
+	             ELSE ext_out        WHEN s1_signals.sre = '1' AND s1_signals.r0 = s0_signals.r1
+	             ELSE mem_data       WHEN s1_signals.srm = '1' AND s1_signals.r0 = s0_signals.r1
+	             ELSE mem_data       WHEN s1_signals.pop = '1' AND s1_signals.r0 = s0_signals.r1
 	             
-				 ELSE s2_signals.res WHEN s2_signals.srr = '1' AND s2_signals.r0 = s0_signals.r1
-	             ELSE s2_signals.op1 WHEN s2_signals.sro = '1' AND s2_signals.r0 = s0_signals.r1
+	             ELSE r0i            WHEN (s2_signals.srr = '1' AND s2_signals.r0 = s0_signals.r1)
+	                                   OR (s2_signals.sro = '1' AND s2_signals.r0 = s0_signals.r1)
+	                                   OR (s2_signals.sre = '1' AND s2_signals.r0 = s0_signals.r1)
+	                                   OR (s2_signals.srm = '1' AND s2_signals.r0 = s0_signals.r1)
+	                                   OR (s2_signals.pop = '1' AND s2_signals.r0 = s0_signals.r1)
 
 	             ELSE r1o;
 
 	--see control for explanation of `srX` signals
 	r0i <= s2_signals.op1 WHEN s2_signals.sro = '1'                 
 	  ELSE s2_signals.res WHEN s2_signals.srr = '1'                 
---	  ELSE s2_signals.mem WHEN s2_signals.pop = '1' OR  s2_signals.srm = '1'   
+	  ELSE s2_signals.mem WHEN s2_signals.pop = '1' OR   s2_signals.srm = '1'   
 --	  ELSE r_ip_out       WHEN s2_signals.sre = '1' AND  r1 = "000" 
 --	  ELSE r_sp_out       WHEN s2_signals.sre = '1' AND  r1 = "001" 
---	  ELSE r_lr_out       WHEN s2_signals.sre = '1' AND  r1 = "010" 
+	  ELSE s2_signals.ext WHEN s2_signals.sre = '1'
 --	  ELSE r_ui_out       WHEN s2_signals.sre = '1' AND  r1 = "100" 
 --	  ELSE r_fl_out       WHEN s2_signals.sre = '1' AND  r1 = "101" 
-	  ELSE x"0000";
+	  ELSE x"DEAD";
 
---	r_sp_in <= spp2      WHEN pop = '1'                 
---	      ELSE sps2      WHEN psh = '1'                 
+	r_sp_in <= spp2 WHEN s1_signals.pop = '1' AND next_stage = '0'
+	      ELSE sps2 WHEN s1_signals.psh = '1' AND next_stage = '0'; 
 --	      ELSE op1       WHEN wre = '1' AND  r0 = "001" 
---	      ELSE r_sp_out;
---	wrsp    <= '1' WHEN psh = '1' OR pop = '1' 
---	      ELSE '0';
+	wrsp    <= '1'  WHEN (s1_signals.psh = '1' OR s1_signals.pop = '1') AND next_stage = '0' 
+	      ELSE '0';
 
 
 --	r_ui_in <= op1 WHEN wre = '1' AND r0 = "100";
@@ -495,17 +518,20 @@ BEGIN
 --     ELSE '0';
 
 
---	r_lr_in <= ipinc    WHEN cal = '1' AND flcmp /= "000" 
---	      ELSE op1      WHEN wre = '1' AND   r0   = "010";
---	wrlr    <= '1' WHEN cal = '1'               
+	r_lr_in <= r_ip_out       WHEN s1_signals.cal = '1' AND flcmp         /= "000"
+	      ELSE s2_signals.op1 WHEN s2_signals.wre = '1' AND s2_signals.r0  = "010"
+		  ELSE x"DEAD";
+	wrlr    <= '1'      WHEN (s1_signals.cal = '1' AND         flcmp /= "000")
+	                      OR (s2_signals.wre = '1' AND s2_signals.r0  = "010")
 --	      ELSE '1' WHEN wre = '1' AND r0 = "010"
---		  ELSE '0';
+		  ELSE '0';
 
 	r_ip_in   <= ipinc; 
 --	      ELSE op1      WHEN wre = '1' AND r0     = "000" 
 	instr_adr <= r_ip_out       WHEN next_stage = '0' 
 	        ELSE s1_signals.op1 WHEN s1_signals.jmp = '1' AND flcmp /= "000"
 	        ELSE s1_signals.op1 WHEN s1_signals.cal = '1' AND flcmp /= "000" 
+	        ELSE s2_signals.op1 WHEN s1_signals.ret = '1' AND flcmp /= "000" AND s2_signals.wre = '1' AND s2_signals.r0 = "010" 
 	        ELSE r_lr_out       WHEN s1_signals.ret = '1' AND flcmp /= "000" 
 	        ELSE r_ip_out;
 
@@ -514,18 +540,26 @@ BEGIN
 --	      ELSE op1     WHEN wre = '1' AND  r0 = "101" 
 	      ELSE x"0001";
 
-	alu_in0 <= s2_signals.res WHEN s2_signals.r0 = s1_signals.r0 AND s2_signals.srr = '1'
-	      ELSE s2_signals.op1 WHEN s2_signals.r0 = s1_signals.r0 AND s2_signals.sro = '1'
-	      
-		  ELSE s1_signals.op0;
-	alu_in1 <= s1_signals.op1 WHEN s1_signals.iim = '1'
+	alu_in0 <= --s2_signals.res WHEN s2_signals.r0 = s1_signals.r0 AND s2_signals.srr = '1'
+	     -- ELSE s2_signals.op1 WHEN s2_signals.r0 = s1_signals.r0 AND s2_signals.sro = '1'
+		 --ELSE 
+		 s1_signals.op0;
+	alu_in1 <= --s1_signals.op1 WHEN s1_signals.iim = '1'
 
-	      ELSE s2_signals.res WHEN s2_signals.r0 = s1_signals.r1 AND s2_signals.srr = '1'
-	      ELSE s2_signals.op1 WHEN s2_signals.r0 = s1_signals.r1 AND s2_signals.sro = '1'
+	     -- ELSE s2_signals.res WHEN s2_signals.r0 = s1_signals.r1 AND s2_signals.srr = '1'
+	     -- ELSE s2_signals.op1 WHEN s2_signals.r0 = s1_signals.r1 AND s2_signals.sro = '1'
 		  
-	      ELSE s1_signals.op1;
+	     -- ELSE 
+		 s1_signals.op1;
 
-	next_stage <= '0' WHEN s1_signals.cycadv = '0' 
-	         ELSE '1';
+	next_stage <= '1' WHEN false
+	         ELSE '0' WHEN s0_signals.cycadv = '0' AND rising_edge(clk)
+	         ELSE '1' WHEN rising_edge(clk);
+
+
+	ramwr <= '1' WHEN s1_signals.wrm = '1'         AND next_stage = '0'
+	    ELSE '0';
+	mem_data <= ram_out WHEN s1_signals.srm = '1'  AND next_stage = '0'
+	       ELSE ram_out WHEN s1_signals.pop = '1'  AND next_stage = '0'; 
 
 END ARCHITECTURE behav;

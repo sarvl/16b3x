@@ -29,6 +29,8 @@ ENTITY stage IS
 		icycadv : IN  std_logic;
 		ihlt : IN  std_logic;
 		iiim : IN  std_logic;
+		isre : IN  std_logic;
+		iext : IN  std_logic_vector(15 DOWNTO 0);
 
 		or0  : OUT std_logic_vector( 2 DOWNTO 0);
 		or1  : OUT std_logic_vector( 2 DOWNTO 0);
@@ -52,7 +54,9 @@ ENTITY stage IS
 		oalu_op : OUT std_logic_vector(2 DOWNTO 0);
 		ocycadv : OUT std_logic;
 		ohlt : OUT std_logic;
-		oiim : OUT std_logic);
+		oiim : OUT std_logic;
+		osre : OUT std_logic;
+		oext : OUT std_logic_vector(15 DOWNTO 0));
 END ENTITY stage;
 
 
@@ -111,6 +115,7 @@ BEGIN
 	bundled_in(23) <= iret;
 	bundled_in(24) <= ihlt;
 	bundled_in(25) <= iiim;
+	bundled_in(26) <= isre;
 		
 	dc : reg_defon PORT MAP(                 icycadv,                   ocycadv, update_stage, clk);
 
@@ -120,6 +125,7 @@ BEGIN
 	d3 : reg_16bit PORT MAP(                    imem,                      omem, update_stage, clk);
 	d4 : reg_16bit PORT MAP(                    iop0,                      oop0, update_stage, clk);
 	d5 : reg_16bit PORT MAP(                    iop1,                      oop1, update_stage, clk);
+	d6 : reg_16bit PORT MAP(                    iext,                      oext, update_stage, clk);
 
 
 	or0(0)     <= bundled_out( 0);
@@ -152,5 +158,6 @@ BEGIN
 	oret       <= bundled_out(23);
 	ohlt       <= bundled_out(24);
 	oiim       <= bundled_out(25);
+	osre       <= bundled_out(26);
 
 END ARCHITECTURE behav;
