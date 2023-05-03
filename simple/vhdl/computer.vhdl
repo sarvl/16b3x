@@ -286,7 +286,7 @@ BEGIN
 	                           clk => clk);
 	reg_ui: reg_16bit PORT MAP(i0  => r_ui_in,
 	                           o0  => r_ui_out,
-	                           we  => wrui,
+	                           we  => '1',
 	                           clk => clk);
 	reg_fl: reg_flags PORT MAP(i0  => r_fl_in,
 	                           o0  => r_fl_out,
@@ -374,9 +374,8 @@ BEGIN
 	      ELSE '0';
 
 
-	r_ui_in <= op1 WHEN wre = '1' AND r0 = "100";
-	wrui    <= '1' WHEN wre = '1' AND r0 = "100" 
-	      ELSE '0';
+	r_ui_in <= op1 WHEN wre = '1' AND r0 = "100"
+	      ELSE x"0000";
 
 
 	r_lr_in <= ipinc    WHEN cal = '1' AND flcmp /= "000" 
