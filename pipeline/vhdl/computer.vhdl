@@ -235,10 +235,6 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL   r_lr_out : std_logic_vector(15 DOWNTO 0);
 	SIGNAL   wrlr     : std_logic := '0';
 
-	SIGNAL   r_ui_in  : std_logic_vector(15 DOWNTO 0);
-	SIGNAL   r_ui_out : std_logic_vector(15 DOWNTO 0);
-	SIGNAL   wrui     : std_logic := '0';
-
 	SIGNAL   r_fl_in  : std_logic_vector(15 DOWNTO 0);
 	SIGNAL   r_fl_out : std_logic_vector(15 DOWNTO 0);
 	--write to flags controled by wrf
@@ -313,6 +309,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL instr_adr : std_logic_vector(15 DOWNTO 0);
 
 	SIGNAL ramwr : std_logic := '0';
+	SIGNAL wrfl : std_logic := '0';
 
 	SIGNAL mem_data : std_logic_vector(15 DOWNTO 0);
 BEGIN
@@ -372,13 +369,9 @@ BEGIN
 	                           o0  => r_lr_out,
 	                           we  => wrlr,
 	                           clk => clk);
-	reg_ui: reg_16bit PORT MAP(i0  => r_ui_in,
-	                           o0  => r_ui_out,
-	                           we  => wrui,
-	                           clk => clk);
 	reg_fl: reg_flags PORT MAP(i0  => r_fl_in,
 	                           o0  => r_fl_out,
-	                           we  => s1_signals.wrf,
+	                           we  => wrfl,
 	                           clk => clk);
 	cmpfl: gate_and2_3bit PORT MAP(s1_signals.r0, 
 	                               r_fl_out(2 DOWNTO 0),
@@ -460,15 +453,28 @@ BEGIN
 	s0_signals.r0 <= instr(10 DOWNTO 8);
 	s0_signals.r1 <= instr( 7 DOWNTO 5);
 	--extending immiediate
-	imm16 <= r_ui_out(7 DOWNTO 0) 
-	       & imm8;
+	imm16 <= (s1_signals.op1(7 DOWNTO 0) & imm8) WHEN s1_signals.wre = '1' AND s1_signals.r0 = "100"
+	    ELSE x"00" & imm8;
 
-	ext_out <= r_lr_out;
+	ext_out <= r_ip_in        WHEN s0_signals.sre = '1' AND s0_signals.r1 = "000"
+
+		  ELSE r_sp_in        WHEN s0_signals.sre = '1' AND s0_signals.r1 = "001" AND wrsp = '1'
+	      ELSE r_fl_in        WHEN s0_signals.sre = '1' AND s0_signals.r1 = "101" AND wrfl = '1'
+	      ELSE r_lr_in        WHEN s0_signals.sre = '1' AND s0_signals.r1 = "010" AND wrlr = '1'
+
+	      ELSE s1_signals.op1 WHEN s0_signals.sre = '1' AND s1_signals.wre = '1' AND s0_signals.r1 = s1_signals.r0
+		  
+		  ELSE x"0000"        WHEN s0_signals.sre = '1' AND s0_signals.r1 = "100"
+	      ELSE r_fl_out       WHEN s0_signals.sre = '1' AND s0_signals.r1 = "101" 
+	      ELSE r_sp_out       WHEN s0_signals.sre = '1' AND s0_signals.r1 = "001" 
+	      ELSE r_lr_out       WHEN s0_signals.sre = '1' AND s0_signals.r1 = "010" 
+		  
+		  ELSE x"DEAD";
 
 	--taking operands 
 	s0_signals.op0 <= alu_out        WHEN s1_signals.srr = '1' AND s1_signals.r0 = s0_signals.r0
 	             ELSE s1_signals.op1 WHEN s1_signals.sro = '1' AND s1_signals.r0 = s0_signals.r0
-	             ELSE ext_out        WHEN s1_signals.sre = '1' AND s1_signals.r0 = s0_signals.r0
+	             ELSE s1_signals.ext WHEN s1_signals.sre = '1' AND s1_signals.r0 = s0_signals.r0
 	             ELSE mem_data       WHEN s1_signals.srm = '1' AND s1_signals.r0 = s0_signals.r0
 	             ELSE mem_data       WHEN s1_signals.pop = '1' AND s1_signals.r0 = s0_signals.r0
 
@@ -483,7 +489,7 @@ BEGIN
 
 	             ELSE alu_out        WHEN s1_signals.srr = '1' AND s1_signals.r0 = s0_signals.r1
 	             ELSE s1_signals.op1 WHEN s1_signals.sro = '1' AND s1_signals.r0 = s0_signals.r1
-	             ELSE ext_out        WHEN s1_signals.sre = '1' AND s1_signals.r0 = s0_signals.r1
+	             ELSE s1_signals.ext WHEN s1_signals.sre = '1' AND s1_signals.r0 = s0_signals.r1
 	             ELSE mem_data       WHEN s1_signals.srm = '1' AND s1_signals.r0 = s0_signals.r1
 	             ELSE mem_data       WHEN s1_signals.pop = '1' AND s1_signals.r0 = s0_signals.r1
 	             
@@ -499,46 +505,42 @@ BEGIN
 	r0i <= s2_signals.op1 WHEN s2_signals.sro = '1'                 
 	  ELSE s2_signals.res WHEN s2_signals.srr = '1'                 
 	  ELSE s2_signals.mem WHEN s2_signals.pop = '1' OR   s2_signals.srm = '1'   
---	  ELSE r_ip_out       WHEN s2_signals.sre = '1' AND  r1 = "000" 
---	  ELSE r_sp_out       WHEN s2_signals.sre = '1' AND  r1 = "001" 
 	  ELSE s2_signals.ext WHEN s2_signals.sre = '1'
---	  ELSE r_ui_out       WHEN s2_signals.sre = '1' AND  r1 = "100" 
---	  ELSE r_fl_out       WHEN s2_signals.sre = '1' AND  r1 = "101" 
 	  ELSE x"DEAD";
 
-	r_sp_in <= spp2 WHEN s1_signals.pop = '1' AND next_stage = '0'
-	      ELSE sps2 WHEN s1_signals.psh = '1' AND next_stage = '0'; 
---	      ELSE op1       WHEN wre = '1' AND  r0 = "001" 
-	wrsp    <= '1'  WHEN (s1_signals.psh = '1' OR s1_signals.pop = '1') AND next_stage = '0' 
+	r_sp_in <= spp2           WHEN s1_signals.pop = '1' AND next_stage = '0'
+	      ELSE sps2           WHEN s1_signals.psh = '1' AND next_stage = '0' 
+	      ELSE s1_signals.op1 WHEN s1_signals.wre = '1' AND s1_signals.r0  = "001"
+		  ELSE x"DEAD";
+	wrsp    <= '1'  WHEN ((s1_signals.psh = '1'  OR s1_signals.pop = '1')   AND next_stage = '0')
+	                  OR  (s1_signals.wre = '1' AND s1_signals.r0  = "001")
 	      ELSE '0';
 
 
---	r_ui_in <= op1 WHEN wre = '1' AND r0 = "100";
---	wrui    <= '1' WHEN wre = '1' AND r0 = "100" 
---     ELSE '0';
-
-
 	r_lr_in <= r_ip_out       WHEN s1_signals.cal = '1' AND flcmp         /= "000"
-	      ELSE s2_signals.op1 WHEN s2_signals.wre = '1' AND s2_signals.r0  = "010"
+	      ELSE s1_signals.op1 WHEN s1_signals.wre = '1' AND s1_signals.r0  = "010"
 		  ELSE x"DEAD";
 	wrlr    <= '1'      WHEN (s1_signals.cal = '1' AND         flcmp /= "000")
-	                      OR (s2_signals.wre = '1' AND s2_signals.r0  = "010")
---	      ELSE '1' WHEN wre = '1' AND r0 = "010"
+	                      OR (s1_signals.wre = '1' AND s1_signals.r0  = "010")
 		  ELSE '0';
 
-	r_ip_in   <= ipinc; 
---	      ELSE op1      WHEN wre = '1' AND r0     = "000" 
+	r_ip_in   <= s1_signals.op1 WHEN s1_signals.wre = '1' AND s1_signals.r0 = "000"
+	        ELSE ipinc; 
 	instr_adr <= r_ip_out       WHEN next_stage = '0' 
+	        ELSE s1_signals.op1 WHEN s1_signals.wre = '1' AND s1_signals.r0 = "000" 
 	        ELSE s1_signals.op1 WHEN s1_signals.jmp = '1' AND flcmp /= "000"
 	        ELSE s1_signals.op1 WHEN s1_signals.cal = '1' AND flcmp /= "000" 
 	        ELSE s2_signals.op1 WHEN s1_signals.ret = '1' AND flcmp /= "000" AND s2_signals.wre = '1' AND s2_signals.r0 = "010" 
 	        ELSE r_lr_out       WHEN s1_signals.ret = '1' AND flcmp /= "000" 
 	        ELSE r_ip_out;
 
-	r_fl_in <= x"0004" WHEN alu_out(15) = '1'         
-	      ELSE x"0002" WHEN alu_out     = x"0000"     
---	      ELSE op1     WHEN wre = '1' AND  r0 = "101" 
+	r_fl_in <= x"0004"        WHEN alu_out(15) = '1'         
+	      ELSE x"0002"        WHEN alu_out     = x"0000"     
+	      ELSE s1_signals.op1 WHEN s1_signals.wre = '1' AND  s1_signals.r0 = "101" 
 	      ELSE x"0001";
+
+	wrfl <= '1' WHEN s1_signals.wre = '1' AND s1_signals.r0 = "101"
+	   ELSE s1_signals.wrf;
 
 	alu_in0 <= --s2_signals.res WHEN s2_signals.r0 = s1_signals.r0 AND s2_signals.srr = '1'
 	     -- ELSE s2_signals.op1 WHEN s2_signals.r0 = s1_signals.r0 AND s2_signals.sro = '1'

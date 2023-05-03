@@ -1,0 +1,176 @@
+[*]
+[*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
+[*] Tue May  2 15:43:27 2023
+[*]
+[dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/pipeline/vhdl/wave.ghw"
+[dumpfile_mtime] "Tue May  2 15:41:57 2023"
+[dumpfile_size] 2159209
+[savefile] "/home/sarvel/Projects/Computers/16bit_v3/pipeline/vhdl/default.gtkw"
+[timestart] 0
+[size] 1366 768
+[pos] -1 -1
+*-22.134140 2870000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.computer.
+[sst_width] 273
+[signals_width] 196
+[sst_expanded] 1
+[sst_vpaned_height] 319
+@200
+-clock
+@28
+top.computer.clk
+@200
+-
+-general
+@22
+#{top.computer.instr_adr[15:0]} top.computer.instr_adr[15] top.computer.instr_adr[14] top.computer.instr_adr[13] top.computer.instr_adr[12] top.computer.instr_adr[11] top.computer.instr_adr[10] top.computer.instr_adr[9] top.computer.instr_adr[8] top.computer.instr_adr[7] top.computer.instr_adr[6] top.computer.instr_adr[5] top.computer.instr_adr[4] top.computer.instr_adr[3] top.computer.instr_adr[2] top.computer.instr_adr[1] top.computer.instr_adr[0]
+#{top.computer.instr[15:0]} top.computer.instr[15] top.computer.instr[14] top.computer.instr[13] top.computer.instr[12] top.computer.instr[11] top.computer.instr[10] top.computer.instr[9] top.computer.instr[8] top.computer.instr[7] top.computer.instr[6] top.computer.instr[5] top.computer.instr[4] top.computer.instr[3] top.computer.instr[2] top.computer.instr[1] top.computer.instr[0]
+#{top.computer.cntrl.opcode[4:0]} top.computer.cntrl.opcode[4] top.computer.cntrl.opcode[3] top.computer.cntrl.opcode[2] top.computer.cntrl.opcode[1] top.computer.cntrl.opcode[0]
+@28
+top.computer.next_stage
+@22
+#{top.computer.ext_out[15:0]} top.computer.ext_out[15] top.computer.ext_out[14] top.computer.ext_out[13] top.computer.ext_out[12] top.computer.ext_out[11] top.computer.ext_out[10] top.computer.ext_out[9] top.computer.ext_out[8] top.computer.ext_out[7] top.computer.ext_out[6] top.computer.ext_out[5] top.computer.ext_out[4] top.computer.ext_out[3] top.computer.ext_out[2] top.computer.ext_out[1] top.computer.ext_out[0]
+@200
+-
+-regs
+@28
+top.computer.rgf.we
+@22
+#{top.computer.rgf.d0[15:0]} top.computer.rgf.d0[15] top.computer.rgf.d0[14] top.computer.rgf.d0[13] top.computer.rgf.d0[12] top.computer.rgf.d0[11] top.computer.rgf.d0[10] top.computer.rgf.d0[9] top.computer.rgf.d0[8] top.computer.rgf.d0[7] top.computer.rgf.d0[6] top.computer.rgf.d0[5] top.computer.rgf.d0[4] top.computer.rgf.d0[3] top.computer.rgf.d0[2] top.computer.rgf.d0[1] top.computer.rgf.d0[0]
+#{top.computer.rgf.d1[15:0]} top.computer.rgf.d1[15] top.computer.rgf.d1[14] top.computer.rgf.d1[13] top.computer.rgf.d1[12] top.computer.rgf.d1[11] top.computer.rgf.d1[10] top.computer.rgf.d1[9] top.computer.rgf.d1[8] top.computer.rgf.d1[7] top.computer.rgf.d1[6] top.computer.rgf.d1[5] top.computer.rgf.d1[4] top.computer.rgf.d1[3] top.computer.rgf.d1[2] top.computer.rgf.d1[1] top.computer.rgf.d1[0]
+#{top.computer.rgf.d2[15:0]} top.computer.rgf.d2[15] top.computer.rgf.d2[14] top.computer.rgf.d2[13] top.computer.rgf.d2[12] top.computer.rgf.d2[11] top.computer.rgf.d2[10] top.computer.rgf.d2[9] top.computer.rgf.d2[8] top.computer.rgf.d2[7] top.computer.rgf.d2[6] top.computer.rgf.d2[5] top.computer.rgf.d2[4] top.computer.rgf.d2[3] top.computer.rgf.d2[2] top.computer.rgf.d2[1] top.computer.rgf.d2[0]
+#{top.computer.rgf.d3[15:0]} top.computer.rgf.d3[15] top.computer.rgf.d3[14] top.computer.rgf.d3[13] top.computer.rgf.d3[12] top.computer.rgf.d3[11] top.computer.rgf.d3[10] top.computer.rgf.d3[9] top.computer.rgf.d3[8] top.computer.rgf.d3[7] top.computer.rgf.d3[6] top.computer.rgf.d3[5] top.computer.rgf.d3[4] top.computer.rgf.d3[3] top.computer.rgf.d3[2] top.computer.rgf.d3[1] top.computer.rgf.d3[0]
+#{top.computer.rgf.d4[15:0]} top.computer.rgf.d4[15] top.computer.rgf.d4[14] top.computer.rgf.d4[13] top.computer.rgf.d4[12] top.computer.rgf.d4[11] top.computer.rgf.d4[10] top.computer.rgf.d4[9] top.computer.rgf.d4[8] top.computer.rgf.d4[7] top.computer.rgf.d4[6] top.computer.rgf.d4[5] top.computer.rgf.d4[4] top.computer.rgf.d4[3] top.computer.rgf.d4[2] top.computer.rgf.d4[1] top.computer.rgf.d4[0]
+#{top.computer.rgf.d5[15:0]} top.computer.rgf.d5[15] top.computer.rgf.d5[14] top.computer.rgf.d5[13] top.computer.rgf.d5[12] top.computer.rgf.d5[11] top.computer.rgf.d5[10] top.computer.rgf.d5[9] top.computer.rgf.d5[8] top.computer.rgf.d5[7] top.computer.rgf.d5[6] top.computer.rgf.d5[5] top.computer.rgf.d5[4] top.computer.rgf.d5[3] top.computer.rgf.d5[2] top.computer.rgf.d5[1] top.computer.rgf.d5[0]
+#{top.computer.rgf.d6[15:0]} top.computer.rgf.d6[15] top.computer.rgf.d6[14] top.computer.rgf.d6[13] top.computer.rgf.d6[12] top.computer.rgf.d6[11] top.computer.rgf.d6[10] top.computer.rgf.d6[9] top.computer.rgf.d6[8] top.computer.rgf.d6[7] top.computer.rgf.d6[6] top.computer.rgf.d6[5] top.computer.rgf.d6[4] top.computer.rgf.d6[3] top.computer.rgf.d6[2] top.computer.rgf.d6[1] top.computer.rgf.d6[0]
+#{top.computer.rgf.d7[15:0]} top.computer.rgf.d7[15] top.computer.rgf.d7[14] top.computer.rgf.d7[13] top.computer.rgf.d7[12] top.computer.rgf.d7[11] top.computer.rgf.d7[10] top.computer.rgf.d7[9] top.computer.rgf.d7[8] top.computer.rgf.d7[7] top.computer.rgf.d7[6] top.computer.rgf.d7[5] top.computer.rgf.d7[4] top.computer.rgf.d7[3] top.computer.rgf.d7[2] top.computer.rgf.d7[1] top.computer.rgf.d7[0]
+@200
+-external
+@22
+#{top.computer.r_ip_in[15:0]} top.computer.r_ip_in[15] top.computer.r_ip_in[14] top.computer.r_ip_in[13] top.computer.r_ip_in[12] top.computer.r_ip_in[11] top.computer.r_ip_in[10] top.computer.r_ip_in[9] top.computer.r_ip_in[8] top.computer.r_ip_in[7] top.computer.r_ip_in[6] top.computer.r_ip_in[5] top.computer.r_ip_in[4] top.computer.r_ip_in[3] top.computer.r_ip_in[2] top.computer.r_ip_in[1] top.computer.r_ip_in[0]
+#{top.computer.r_ip_out[15:0]} top.computer.r_ip_out[15] top.computer.r_ip_out[14] top.computer.r_ip_out[13] top.computer.r_ip_out[12] top.computer.r_ip_out[11] top.computer.r_ip_out[10] top.computer.r_ip_out[9] top.computer.r_ip_out[8] top.computer.r_ip_out[7] top.computer.r_ip_out[6] top.computer.r_ip_out[5] top.computer.r_ip_out[4] top.computer.r_ip_out[3] top.computer.r_ip_out[2] top.computer.r_ip_out[1] top.computer.r_ip_out[0]
+#{top.computer.r_sp_in[15:0]} top.computer.r_sp_in[15] top.computer.r_sp_in[14] top.computer.r_sp_in[13] top.computer.r_sp_in[12] top.computer.r_sp_in[11] top.computer.r_sp_in[10] top.computer.r_sp_in[9] top.computer.r_sp_in[8] top.computer.r_sp_in[7] top.computer.r_sp_in[6] top.computer.r_sp_in[5] top.computer.r_sp_in[4] top.computer.r_sp_in[3] top.computer.r_sp_in[2] top.computer.r_sp_in[1] top.computer.r_sp_in[0]
+#{top.computer.r_sp_out[15:0]} top.computer.r_sp_out[15] top.computer.r_sp_out[14] top.computer.r_sp_out[13] top.computer.r_sp_out[12] top.computer.r_sp_out[11] top.computer.r_sp_out[10] top.computer.r_sp_out[9] top.computer.r_sp_out[8] top.computer.r_sp_out[7] top.computer.r_sp_out[6] top.computer.r_sp_out[5] top.computer.r_sp_out[4] top.computer.r_sp_out[3] top.computer.r_sp_out[2] top.computer.r_sp_out[1] top.computer.r_sp_out[0]
+#{top.computer.r_lr_in[15:0]} top.computer.r_lr_in[15] top.computer.r_lr_in[14] top.computer.r_lr_in[13] top.computer.r_lr_in[12] top.computer.r_lr_in[11] top.computer.r_lr_in[10] top.computer.r_lr_in[9] top.computer.r_lr_in[8] top.computer.r_lr_in[7] top.computer.r_lr_in[6] top.computer.r_lr_in[5] top.computer.r_lr_in[4] top.computer.r_lr_in[3] top.computer.r_lr_in[2] top.computer.r_lr_in[1] top.computer.r_lr_in[0]
+#{top.computer.r_lr_out[15:0]} top.computer.r_lr_out[15] top.computer.r_lr_out[14] top.computer.r_lr_out[13] top.computer.r_lr_out[12] top.computer.r_lr_out[11] top.computer.r_lr_out[10] top.computer.r_lr_out[9] top.computer.r_lr_out[8] top.computer.r_lr_out[7] top.computer.r_lr_out[6] top.computer.r_lr_out[5] top.computer.r_lr_out[4] top.computer.r_lr_out[3] top.computer.r_lr_out[2] top.computer.r_lr_out[1] top.computer.r_lr_out[0]
+#{top.computer.r_ui_in[15:0]} top.computer.r_ui_in[15] top.computer.r_ui_in[14] top.computer.r_ui_in[13] top.computer.r_ui_in[12] top.computer.r_ui_in[11] top.computer.r_ui_in[10] top.computer.r_ui_in[9] top.computer.r_ui_in[8] top.computer.r_ui_in[7] top.computer.r_ui_in[6] top.computer.r_ui_in[5] top.computer.r_ui_in[4] top.computer.r_ui_in[3] top.computer.r_ui_in[2] top.computer.r_ui_in[1] top.computer.r_ui_in[0]
+#{top.computer.r_ui_out[15:0]} top.computer.r_ui_out[15] top.computer.r_ui_out[14] top.computer.r_ui_out[13] top.computer.r_ui_out[12] top.computer.r_ui_out[11] top.computer.r_ui_out[10] top.computer.r_ui_out[9] top.computer.r_ui_out[8] top.computer.r_ui_out[7] top.computer.r_ui_out[6] top.computer.r_ui_out[5] top.computer.r_ui_out[4] top.computer.r_ui_out[3] top.computer.r_ui_out[2] top.computer.r_ui_out[1] top.computer.r_ui_out[0]
+#{top.computer.r_fl_in[15:0]} top.computer.r_fl_in[15] top.computer.r_fl_in[14] top.computer.r_fl_in[13] top.computer.r_fl_in[12] top.computer.r_fl_in[11] top.computer.r_fl_in[10] top.computer.r_fl_in[9] top.computer.r_fl_in[8] top.computer.r_fl_in[7] top.computer.r_fl_in[6] top.computer.r_fl_in[5] top.computer.r_fl_in[4] top.computer.r_fl_in[3] top.computer.r_fl_in[2] top.computer.r_fl_in[1] top.computer.r_fl_in[0]
+#{top.computer.r_fl_out[15:0]} top.computer.r_fl_out[15] top.computer.r_fl_out[14] top.computer.r_fl_out[13] top.computer.r_fl_out[12] top.computer.r_fl_out[11] top.computer.r_fl_out[10] top.computer.r_fl_out[9] top.computer.r_fl_out[8] top.computer.r_fl_out[7] top.computer.r_fl_out[6] top.computer.r_fl_out[5] top.computer.r_fl_out[4] top.computer.r_fl_out[3] top.computer.r_fl_out[2] top.computer.r_fl_out[1] top.computer.r_fl_out[0]
+@200
+-
+-ram
+@22
+#{top.computer.ipsll[15:0]} top.computer.ipsll[15] top.computer.ipsll[14] top.computer.ipsll[13] top.computer.ipsll[12] top.computer.ipsll[11] top.computer.ipsll[10] top.computer.ipsll[9] top.computer.ipsll[8] top.computer.ipsll[7] top.computer.ipsll[6] top.computer.ipsll[5] top.computer.ipsll[4] top.computer.ipsll[3] top.computer.ipsll[2] top.computer.ipsll[1] top.computer.ipsll[0]
+#{top.computer.ram_adr[15:0]} top.computer.ram_adr[15] top.computer.ram_adr[14] top.computer.ram_adr[13] top.computer.ram_adr[12] top.computer.ram_adr[11] top.computer.ram_adr[10] top.computer.ram_adr[9] top.computer.ram_adr[8] top.computer.ram_adr[7] top.computer.ram_adr[6] top.computer.ram_adr[5] top.computer.ram_adr[4] top.computer.ram_adr[3] top.computer.ram_adr[2] top.computer.ram_adr[1] top.computer.ram_adr[0]
+#{top.computer.ram_in[15:0]} top.computer.ram_in[15] top.computer.ram_in[14] top.computer.ram_in[13] top.computer.ram_in[12] top.computer.ram_in[11] top.computer.ram_in[10] top.computer.ram_in[9] top.computer.ram_in[8] top.computer.ram_in[7] top.computer.ram_in[6] top.computer.ram_in[5] top.computer.ram_in[4] top.computer.ram_in[3] top.computer.ram_in[2] top.computer.ram_in[1] top.computer.ram_in[0]
+#{top.computer.ram_out[15:0]} top.computer.ram_out[15] top.computer.ram_out[14] top.computer.ram_out[13] top.computer.ram_out[12] top.computer.ram_out[11] top.computer.ram_out[10] top.computer.ram_out[9] top.computer.ram_out[8] top.computer.ram_out[7] top.computer.ram_out[6] top.computer.ram_out[5] top.computer.ram_out[4] top.computer.ram_out[3] top.computer.ram_out[2] top.computer.ram_out[1] top.computer.ram_out[0]
+#{top.computer.ramo.a0m[15:0]} top.computer.ramo.a0m[14] top.computer.ramo.a0m[13] top.computer.ramo.a0m[12] top.computer.ramo.a0m[11] top.computer.ramo.a0m[10] top.computer.ramo.a0m[9] top.computer.ramo.a0m[8] top.computer.ramo.a0m[7] top.computer.ramo.a0m[6] top.computer.ramo.a0m[5] top.computer.ramo.a0m[4] top.computer.ramo.a0m[3] top.computer.ramo.a0m[2] top.computer.ramo.a0m[1] top.computer.ramo.a0m[0]
+#{top.computer.ramo.a0l[15:0]} top.computer.ramo.a0l[14] top.computer.ramo.a0l[13] top.computer.ramo.a0l[12] top.computer.ramo.a0l[11] top.computer.ramo.a0l[10] top.computer.ramo.a0l[9] top.computer.ramo.a0l[8] top.computer.ramo.a0l[7] top.computer.ramo.a0l[6] top.computer.ramo.a0l[5] top.computer.ramo.a0l[4] top.computer.ramo.a0l[3] top.computer.ramo.a0l[2] top.computer.ramo.a0l[1] top.computer.ramo.a0l[0]
+#{top.computer.ramo.datam[32767][7:0]} top.computer.ramo.datam[32767][7] top.computer.ramo.datam[32767][6] top.computer.ramo.datam[32767][5] top.computer.ramo.datam[32767][4] top.computer.ramo.datam[32767][3] top.computer.ramo.datam[32767][2] top.computer.ramo.datam[32767][1] top.computer.ramo.datam[32767][0]
+#{top.computer.ramo.datal[32767][7:0]} top.computer.ramo.datal[32767][7] top.computer.ramo.datal[32767][6] top.computer.ramo.datal[32767][5] top.computer.ramo.datal[32767][4] top.computer.ramo.datal[32767][3] top.computer.ramo.datal[32767][2] top.computer.ramo.datal[32767][1] top.computer.ramo.datal[32767][0]
+#{top.computer.ramo.datam[32766][7:0]} top.computer.ramo.datam[32766][7] top.computer.ramo.datam[32766][6] top.computer.ramo.datam[32766][5] top.computer.ramo.datam[32766][4] top.computer.ramo.datam[32766][3] top.computer.ramo.datam[32766][2] top.computer.ramo.datam[32766][1] top.computer.ramo.datam[32766][0]
+#{top.computer.ramo.datal[32766][7:0]} top.computer.ramo.datal[32766][7] top.computer.ramo.datal[32766][6] top.computer.ramo.datal[32766][5] top.computer.ramo.datal[32766][4] top.computer.ramo.datal[32766][3] top.computer.ramo.datal[32766][2] top.computer.ramo.datal[32766][1] top.computer.ramo.datal[32766][0]
+@200
+-
+-alu
+@22
+#{top.computer.alu_out[15:0]} top.computer.alu_out[15] top.computer.alu_out[14] top.computer.alu_out[13] top.computer.alu_out[12] top.computer.alu_out[11] top.computer.alu_out[10] top.computer.alu_out[9] top.computer.alu_out[8] top.computer.alu_out[7] top.computer.alu_out[6] top.computer.alu_out[5] top.computer.alu_out[4] top.computer.alu_out[3] top.computer.alu_out[2] top.computer.alu_out[1] top.computer.alu_out[0]
+@200
+-
+-control
+@28
+top.computer.inv
+@200
+-
+-stages
+-s0_ftchandec
+@28
+#{top.computer.s0_signals.r0[2:0]} top.computer.s0_signals.r0[2] top.computer.s0_signals.r0[1] top.computer.s0_signals.r0[0]
+#{top.computer.s0_signals.r1[2:0]} top.computer.s0_signals.r1[2] top.computer.s0_signals.r1[1] top.computer.s0_signals.r1[0]
+@22
+#{top.computer.s0_signals.op0[15:0]} top.computer.s0_signals.op0[15] top.computer.s0_signals.op0[14] top.computer.s0_signals.op0[13] top.computer.s0_signals.op0[12] top.computer.s0_signals.op0[11] top.computer.s0_signals.op0[10] top.computer.s0_signals.op0[9] top.computer.s0_signals.op0[8] top.computer.s0_signals.op0[7] top.computer.s0_signals.op0[6] top.computer.s0_signals.op0[5] top.computer.s0_signals.op0[4] top.computer.s0_signals.op0[3] top.computer.s0_signals.op0[2] top.computer.s0_signals.op0[1] top.computer.s0_signals.op0[0]
+#{top.computer.s0_signals.op1[15:0]} top.computer.s0_signals.op1[15] top.computer.s0_signals.op1[14] top.computer.s0_signals.op1[13] top.computer.s0_signals.op1[12] top.computer.s0_signals.op1[11] top.computer.s0_signals.op1[10] top.computer.s0_signals.op1[9] top.computer.s0_signals.op1[8] top.computer.s0_signals.op1[7] top.computer.s0_signals.op1[6] top.computer.s0_signals.op1[5] top.computer.s0_signals.op1[4] top.computer.s0_signals.op1[3] top.computer.s0_signals.op1[2] top.computer.s0_signals.op1[1] top.computer.s0_signals.op1[0]
+#{top.computer.s0_signals.mem[15:0]} top.computer.s0_signals.mem[15] top.computer.s0_signals.mem[14] top.computer.s0_signals.mem[13] top.computer.s0_signals.mem[12] top.computer.s0_signals.mem[11] top.computer.s0_signals.mem[10] top.computer.s0_signals.mem[9] top.computer.s0_signals.mem[8] top.computer.s0_signals.mem[7] top.computer.s0_signals.mem[6] top.computer.s0_signals.mem[5] top.computer.s0_signals.mem[4] top.computer.s0_signals.mem[3] top.computer.s0_signals.mem[2] top.computer.s0_signals.mem[1] top.computer.s0_signals.mem[0]
+#{top.computer.s0_signals.res[15:0]} top.computer.s0_signals.res[15] top.computer.s0_signals.res[14] top.computer.s0_signals.res[13] top.computer.s0_signals.res[12] top.computer.s0_signals.res[11] top.computer.s0_signals.res[10] top.computer.s0_signals.res[9] top.computer.s0_signals.res[8] top.computer.s0_signals.res[7] top.computer.s0_signals.res[6] top.computer.s0_signals.res[5] top.computer.s0_signals.res[4] top.computer.s0_signals.res[3] top.computer.s0_signals.res[2] top.computer.s0_signals.res[1] top.computer.s0_signals.res[0]
+#{top.computer.s0_signals.ext[15:0]} top.computer.s0_signals.ext[15] top.computer.s0_signals.ext[14] top.computer.s0_signals.ext[13] top.computer.s0_signals.ext[12] top.computer.s0_signals.ext[11] top.computer.s0_signals.ext[10] top.computer.s0_signals.ext[9] top.computer.s0_signals.ext[8] top.computer.s0_signals.ext[7] top.computer.s0_signals.ext[6] top.computer.s0_signals.ext[5] top.computer.s0_signals.ext[4] top.computer.s0_signals.ext[3] top.computer.s0_signals.ext[2] top.computer.s0_signals.ext[1] top.computer.s0_signals.ext[0]
+@28
+#{top.computer.s0_signals.alu_op[2:0]} top.computer.s0_signals.alu_op[2] top.computer.s0_signals.alu_op[1] top.computer.s0_signals.alu_op[0]
+#{top.computer.s0_signals.flg[2:0]} top.computer.s0_signals.flg[2] top.computer.s0_signals.flg[1] top.computer.s0_signals.flg[0]
+top.computer.s0_signals.cycadv
+top.computer.s0_signals.cal
+top.computer.s0_signals.hlt
+top.computer.s0_signals.jmp
+top.computer.s0_signals.pop
+top.computer.s0_signals.psh
+top.computer.s0_signals.ret
+top.computer.s0_signals.srm
+top.computer.s0_signals.sro
+top.computer.s0_signals.srr
+top.computer.s0_signals.wre
+top.computer.s0_signals.wrf
+top.computer.s0_signals.wrm
+top.computer.s0_signals.wrr
+@200
+-s1_execution
+@22
+#{top.computer.alu_in0[15:0]} top.computer.alu_in0[15] top.computer.alu_in0[14] top.computer.alu_in0[13] top.computer.alu_in0[12] top.computer.alu_in0[11] top.computer.alu_in0[10] top.computer.alu_in0[9] top.computer.alu_in0[8] top.computer.alu_in0[7] top.computer.alu_in0[6] top.computer.alu_in0[5] top.computer.alu_in0[4] top.computer.alu_in0[3] top.computer.alu_in0[2] top.computer.alu_in0[1] top.computer.alu_in0[0]
+#{top.computer.alu_in1[15:0]} top.computer.alu_in1[15] top.computer.alu_in1[14] top.computer.alu_in1[13] top.computer.alu_in1[12] top.computer.alu_in1[11] top.computer.alu_in1[10] top.computer.alu_in1[9] top.computer.alu_in1[8] top.computer.alu_in1[7] top.computer.alu_in1[6] top.computer.alu_in1[5] top.computer.alu_in1[4] top.computer.alu_in1[3] top.computer.alu_in1[2] top.computer.alu_in1[1] top.computer.alu_in1[0]
+@28
+#{top.computer.s1_signals.r0[2:0]} top.computer.s1_signals.r0[2] top.computer.s1_signals.r0[1] top.computer.s1_signals.r0[0]
+#{top.computer.s1_signals.r1[2:0]} top.computer.s1_signals.r1[2] top.computer.s1_signals.r1[1] top.computer.s1_signals.r1[0]
+@22
+#{top.computer.s1_signals.op0[15:0]} top.computer.s1_signals.op0[15] top.computer.s1_signals.op0[14] top.computer.s1_signals.op0[13] top.computer.s1_signals.op0[12] top.computer.s1_signals.op0[11] top.computer.s1_signals.op0[10] top.computer.s1_signals.op0[9] top.computer.s1_signals.op0[8] top.computer.s1_signals.op0[7] top.computer.s1_signals.op0[6] top.computer.s1_signals.op0[5] top.computer.s1_signals.op0[4] top.computer.s1_signals.op0[3] top.computer.s1_signals.op0[2] top.computer.s1_signals.op0[1] top.computer.s1_signals.op0[0]
+#{top.computer.s1_signals.op1[15:0]} top.computer.s1_signals.op1[15] top.computer.s1_signals.op1[14] top.computer.s1_signals.op1[13] top.computer.s1_signals.op1[12] top.computer.s1_signals.op1[11] top.computer.s1_signals.op1[10] top.computer.s1_signals.op1[9] top.computer.s1_signals.op1[8] top.computer.s1_signals.op1[7] top.computer.s1_signals.op1[6] top.computer.s1_signals.op1[5] top.computer.s1_signals.op1[4] top.computer.s1_signals.op1[3] top.computer.s1_signals.op1[2] top.computer.s1_signals.op1[1] top.computer.s1_signals.op1[0]
+#{top.computer.s1_signals.mem[15:0]} top.computer.s1_signals.mem[15] top.computer.s1_signals.mem[14] top.computer.s1_signals.mem[13] top.computer.s1_signals.mem[12] top.computer.s1_signals.mem[11] top.computer.s1_signals.mem[10] top.computer.s1_signals.mem[9] top.computer.s1_signals.mem[8] top.computer.s1_signals.mem[7] top.computer.s1_signals.mem[6] top.computer.s1_signals.mem[5] top.computer.s1_signals.mem[4] top.computer.s1_signals.mem[3] top.computer.s1_signals.mem[2] top.computer.s1_signals.mem[1] top.computer.s1_signals.mem[0]
+#{top.computer.s1_signals.res[15:0]} top.computer.s1_signals.res[15] top.computer.s1_signals.res[14] top.computer.s1_signals.res[13] top.computer.s1_signals.res[12] top.computer.s1_signals.res[11] top.computer.s1_signals.res[10] top.computer.s1_signals.res[9] top.computer.s1_signals.res[8] top.computer.s1_signals.res[7] top.computer.s1_signals.res[6] top.computer.s1_signals.res[5] top.computer.s1_signals.res[4] top.computer.s1_signals.res[3] top.computer.s1_signals.res[2] top.computer.s1_signals.res[1] top.computer.s1_signals.res[0]
+#{top.computer.s1_signals.ext[15:0]} top.computer.s1_signals.ext[15] top.computer.s1_signals.ext[14] top.computer.s1_signals.ext[13] top.computer.s1_signals.ext[12] top.computer.s1_signals.ext[11] top.computer.s1_signals.ext[10] top.computer.s1_signals.ext[9] top.computer.s1_signals.ext[8] top.computer.s1_signals.ext[7] top.computer.s1_signals.ext[6] top.computer.s1_signals.ext[5] top.computer.s1_signals.ext[4] top.computer.s1_signals.ext[3] top.computer.s1_signals.ext[2] top.computer.s1_signals.ext[1] top.computer.s1_signals.ext[0]
+@28
+#{top.computer.s1_signals.alu_op[2:0]} top.computer.s1_signals.alu_op[2] top.computer.s1_signals.alu_op[1] top.computer.s1_signals.alu_op[0]
+#{top.computer.s1_signals.flg[2:0]} top.computer.s1_signals.flg[2] top.computer.s1_signals.flg[1] top.computer.s1_signals.flg[0]
+top.computer.s1_signals.cycadv
+top.computer.s1_signals.cal
+top.computer.s1_signals.hlt
+top.computer.s1_signals.jmp
+top.computer.s1_signals.pop
+top.computer.s1_signals.psh
+top.computer.s1_signals.ret
+top.computer.s1_signals.srm
+top.computer.s1_signals.sro
+top.computer.s1_signals.srr
+top.computer.s1_signals.wre
+top.computer.s1_signals.wrf
+top.computer.s1_signals.wrm
+top.computer.s1_signals.wrr
+@200
+-s2_writeback
+@28
+#{top.computer.s2_signals.r0[2:0]} top.computer.s2_signals.r0[2] top.computer.s2_signals.r0[1] top.computer.s2_signals.r0[0]
+#{top.computer.s2_signals.r1[2:0]} top.computer.s2_signals.r1[2] top.computer.s2_signals.r1[1] top.computer.s2_signals.r1[0]
+@22
+#{top.computer.s2_signals.op0[15:0]} top.computer.s2_signals.op0[15] top.computer.s2_signals.op0[14] top.computer.s2_signals.op0[13] top.computer.s2_signals.op0[12] top.computer.s2_signals.op0[11] top.computer.s2_signals.op0[10] top.computer.s2_signals.op0[9] top.computer.s2_signals.op0[8] top.computer.s2_signals.op0[7] top.computer.s2_signals.op0[6] top.computer.s2_signals.op0[5] top.computer.s2_signals.op0[4] top.computer.s2_signals.op0[3] top.computer.s2_signals.op0[2] top.computer.s2_signals.op0[1] top.computer.s2_signals.op0[0]
+#{top.computer.s2_signals.op1[15:0]} top.computer.s2_signals.op1[15] top.computer.s2_signals.op1[14] top.computer.s2_signals.op1[13] top.computer.s2_signals.op1[12] top.computer.s2_signals.op1[11] top.computer.s2_signals.op1[10] top.computer.s2_signals.op1[9] top.computer.s2_signals.op1[8] top.computer.s2_signals.op1[7] top.computer.s2_signals.op1[6] top.computer.s2_signals.op1[5] top.computer.s2_signals.op1[4] top.computer.s2_signals.op1[3] top.computer.s2_signals.op1[2] top.computer.s2_signals.op1[1] top.computer.s2_signals.op1[0]
+#{top.computer.s2_signals.mem[15:0]} top.computer.s2_signals.mem[15] top.computer.s2_signals.mem[14] top.computer.s2_signals.mem[13] top.computer.s2_signals.mem[12] top.computer.s2_signals.mem[11] top.computer.s2_signals.mem[10] top.computer.s2_signals.mem[9] top.computer.s2_signals.mem[8] top.computer.s2_signals.mem[7] top.computer.s2_signals.mem[6] top.computer.s2_signals.mem[5] top.computer.s2_signals.mem[4] top.computer.s2_signals.mem[3] top.computer.s2_signals.mem[2] top.computer.s2_signals.mem[1] top.computer.s2_signals.mem[0]
+#{top.computer.s2_signals.res[15:0]} top.computer.s2_signals.res[15] top.computer.s2_signals.res[14] top.computer.s2_signals.res[13] top.computer.s2_signals.res[12] top.computer.s2_signals.res[11] top.computer.s2_signals.res[10] top.computer.s2_signals.res[9] top.computer.s2_signals.res[8] top.computer.s2_signals.res[7] top.computer.s2_signals.res[6] top.computer.s2_signals.res[5] top.computer.s2_signals.res[4] top.computer.s2_signals.res[3] top.computer.s2_signals.res[2] top.computer.s2_signals.res[1] top.computer.s2_signals.res[0]
+@23
+#{top.computer.s2_signals.ext[15:0]} top.computer.s2_signals.ext[15] top.computer.s2_signals.ext[14] top.computer.s2_signals.ext[13] top.computer.s2_signals.ext[12] top.computer.s2_signals.ext[11] top.computer.s2_signals.ext[10] top.computer.s2_signals.ext[9] top.computer.s2_signals.ext[8] top.computer.s2_signals.ext[7] top.computer.s2_signals.ext[6] top.computer.s2_signals.ext[5] top.computer.s2_signals.ext[4] top.computer.s2_signals.ext[3] top.computer.s2_signals.ext[2] top.computer.s2_signals.ext[1] top.computer.s2_signals.ext[0]
+@28
+#{top.computer.s2_signals.alu_op[2:0]} top.computer.s2_signals.alu_op[2] top.computer.s2_signals.alu_op[1] top.computer.s2_signals.alu_op[0]
+#{top.computer.s2_signals.flg[2:0]} top.computer.s2_signals.flg[2] top.computer.s2_signals.flg[1] top.computer.s2_signals.flg[0]
+top.computer.s2_signals.cycadv
+top.computer.s2_signals.cal
+top.computer.s2_signals.hlt
+top.computer.s2_signals.jmp
+top.computer.s2_signals.pop
+top.computer.s2_signals.psh
+top.computer.s2_signals.ret
+top.computer.s2_signals.srm
+top.computer.s2_signals.sro
+top.computer.s2_signals.srr
+top.computer.s2_signals.wre
+top.computer.s2_signals.wrf
+top.computer.s2_signals.wrm
+top.computer.s2_signals.wrr
+[pattern_trace] 1
+[pattern_trace] 0
