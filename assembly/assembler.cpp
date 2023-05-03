@@ -279,9 +279,29 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
+			if("IP"s == contents[1])
+			{
+				op0 = 0;
+				goto parse_2nd;
+			}
+			if("SP"s == contents[1])
+			{
+				op0 = 1;
+				goto parse_2nd;
+			}
 			if("LR"s == contents[1])
 			{
 				op0 = 2;
+				goto parse_2nd;
+			}
+			if("UI"s == contents[1])
+			{
+				op0 = 4;
+				goto parse_2nd;
+			}
+			if("FL"s == contents[1])
+			{
+				op0 = 5;
 				goto parse_2nd;
 			}
 

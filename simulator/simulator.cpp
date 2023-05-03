@@ -241,9 +241,11 @@ int main(int argc, char* argv[])
 		
 		uint16_t second;
 		if(instr.is_imm)
-			second = instr.op1.imm8;	
+			second = (upper_immiediate << 8) | instr.op1.imm8;	
 		else
 			second = reg[instr.op1.r1];
+
+		upper_immiediate = 0;
 	
 		DEBUG_PRINT((instruction_pointer >> 1) << ' ' << reg0 << ' ' << second << ' ');
 
@@ -335,13 +337,13 @@ int main(int argc, char* argv[])
 		{
 			DEBUG_PRINT("RDX\n");
 			//placeholder
-			reg0 = link_register;
+			reg0 = ext[instr.op1.r1];
 			break;
 		}
 		case Opcode::WRX: 
 		{
 			DEBUG_PRINT("WRX\n");
-			link_register = second;
+			ext[instr.op0.r0] = second;
 			break;
 		}
 		case Opcode::PSH: 
