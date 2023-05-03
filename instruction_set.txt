@@ -42,7 +42,7 @@
 	09                      	#  
 	0A                      	# 
 	0B                      	# 
-	0C  rdx     E0, R0       	# R0 <-- E0      
+	0C  rdx     R0, E0       	# R0 <-- E0      
 	0D  wrx     E0, R1/imm8 	# E0 <-- R1/imm16
 	0E  psh     R0          	# SP <-- SP - 2 ; M[SP] <-- R0
 	0F  pop     R0          	# R0 <-- M[SP]  ; SP    <-- SP + 2;
@@ -72,8 +72,8 @@
 	note that instructins that use imm8 have imm16 in behavior description
 	this is not a mistake see [EXTERNAL_REGISTERS] about register UI and see [EXTENDED_IMM]
 	
-	first operand of RDX and WRX is id of external register
-	this is not consistent with RDM and WRM, this enables loading external register with constant value
+	first operand of WRX is id of external register
+	this is not consistent with RDX, RDM and WRM, this enables loading external register with constant value
 
 	for more detailed explanation see [DETAILED_INSTRUCTION_EXPLANATION] 
 	for instruction encoding see [INSTRUCTION_ENCODING]
@@ -310,8 +310,8 @@
 		external registers altered:
 			---
 
-	RDX E0, R0
-		R0 <-- E0
+	RDX R0, E0
+		E0 <-- R0
 
 		copies contents of external register E0 into R0
 
