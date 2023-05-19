@@ -4,7 +4,7 @@ details on architecture are in instruction_set.txt
 
 the code and this project in general are a bit of a mess
 this will change near the end of the month
-
+ 
 
 simple, pipelined and version with cache seem to have no major bugs
 they are capable of running all programs in assembly/ 
