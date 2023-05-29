@@ -19,7 +19,7 @@
 	architecture:      register-register
 	instruction-limit: 63
 	instruction-count: 42
-	this doc revision:  1 
+	this doc revision:  2 
 	
 	all potential future version WILL BE backwards compatible with previous versions 
 	note that instruction-limit and instruction-count treat instruction's formats as separate instructions
@@ -28,7 +28,7 @@
 [INSTRUCTION_OVERVIEW]
 	number in the opcode in hex
 	fields with no instructions intentionally left blank
-	programs MUST NOT depend on their behavior since in the future the ISA may be extended
+	 programs MUST NOT depend on their behavior since in the future the ISA may be extended
 	
 	00  nop                  	# ---
 	01  hlt ccc              	# IF(FL & ccc) { halt } 
@@ -70,10 +70,10 @@
 	special names denote external registers, see [EXTERNAL_REGISTERS]
 	
 	note that instructins that use imm8 have imm16 in behavior description
-	this is not a mistake see [EXTERNAL_REGISTERS] about register UI and see [EXTENDED_IMM]
+	 this is not a mistake see [EXTERNAL_REGISTERS] about register UI and see [EXTENDED_IMM]
 	
 	first operand of WRX is id of external register
-	this is not consistent with RDX, RDM and WRM, this enables loading external register with constant value
+	 this is not consistent with RDX, RDM and WRM, this enables loading external register with constant value
 
 	for more detailed explanation see [DETAILED_INSTRUCTION_EXPLANATION] 
 	for instruction encoding see [INSTRUCTION_ENCODING]
@@ -85,7 +85,7 @@
 	instructions must be 2B aligned
 
 	JMP, CAL, RET do not require address to be 2B aligned even though they modify IP 
-	for explanation see [EXTERNAL_REGISTERS] about IP 
+	 for explanation see [EXTERNAL_REGISTERS] about IP 
 
 [INSTRUCTION_ENCODING]
 	each instruction is 16bits long 
@@ -95,7 +95,7 @@
 	note that some instructions are valid in both formats (eg instruction doesnt have second operand)
 	if thats the case then both formats may be used 
 	
-	opcodes for both versions of instruction are the same for all formats, what differs is where are they placed  
+	opcodes for both versions of instruction are the same for all formats, what differs is their location 
 	
 	R-format:
 		00000BBB CCCDDDDD
@@ -169,9 +169,11 @@
 		may be modified by:
 			JMP, CAL, RET, WRX
 		
+		TODO find better name for what it denotes
 		note that actual value of the register denotes next instruction NOT where it is in memory 
 		it means that before accessing memory the value is shifted by 1 to the left 
-	
+		the rationale is to allow wider range of addresses to be specified using just 8bits
+
 	SP
 		see [STACK], [STACK_FRAME]
 
