@@ -5,23 +5,17 @@
 ; takes arg1 in R1
 ; it is advised to put smaller value into R1 
 mult:
+	mov 	R2, 0 
 	cmp 	R1, 0 
-	jmp 	LG, mult_count
-	
-	mov 	R0, 0
-	jmp 	LEG, mult_end
+	jmp 	E, mult_end 
 
-mult_count:
-	mov 	R2, R0 
-
-	sub 	R1, 1
 mult_loop:
-	add 	R0, R2
-
+	add 	R2, R0
 	sub 	R1, 1
 	jmp 	G, mult_loop
 
 mult_end:
+	mov 	R0, R2
 	ret
 
 ;takes src  in R0

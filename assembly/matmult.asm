@@ -8,7 +8,13 @@ mult:
 	mov 	R2, 0 
 	cmp 	R1, 0 
 	jmp 	E, mult_end 
-	
+
+;	tst 	R1, 1
+;	jmp 	LG, mult_loop
+;
+;	slr 	R1, 1
+;	sll 	R0, 1
+
 mult_loop:
 	add 	R2, R0
 	sub 	R1, 1
