@@ -214,7 +214,7 @@
 		initial value is not specified but is valid (meaning that one and only one flag bit is 1)
 	
 		set by
-		CMP, MUL, TST, ADD, SUB, NOT, AND, ORR, XOR 
+		MUL, CMP, TST, ADD, SUB, NOT, AND, ORR, XOR 
 
 	CF
 		see [FEATURE_FLAGS]
@@ -416,16 +416,6 @@
 
 		external registers altered:
 			IP if condition is true
-
-	CMP R0, R1/imm8
-		R0 - R1/imm16
-	
-		acts like SUB
-		except doesnt write to register
-		operates on signed numbers
-
-		external registers altered:
-			FL
 	
 	MUL R0, R1/imm8
 		R0 <-- R0 * R1/imm16
@@ -437,6 +427,16 @@
 		see [EXTERNAL_REGISTERS] about CF
 		see [FEATURE_FLAGS]
 		
+		external registers altered:
+			FL
+
+	CMP R0, R1/imm8
+		R0 - R1/imm16
+	
+		acts like SUB
+		except doesnt write to register
+		operates on signed numbers
+
 		external registers altered:
 			FL
 

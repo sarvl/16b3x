@@ -35,7 +35,7 @@ enum class Opcode : uint8_t{
  WRX = 0x0D,
  PSH = 0x0E,
  POP = 0x0F,
-
+ MUL = 0x10,
  CMP = 0x11,
 
  TST = 0x13,
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
 		else if("wrx" == contents[0]) opcode = Opcode::WRX;
 		else if("psh" == contents[0]) opcode = Opcode::PSH;
 		else if("pop" == contents[0]) opcode = Opcode::POP;
-
+		else if("mul" == contents[0]) opcode = Opcode::MUL;
 		else if("cmp" == contents[0]) opcode = Opcode::CMP;
 
 		else if("tst" == contents[0]) opcode = Opcode::TST;
@@ -302,6 +302,11 @@ int main(int argc, char* argv[])
 			if("FL"s == contents[1])
 			{
 				op0 = 5;
+				goto parse_2nd;
+			}
+			if("CF"s == contents[1])
+			{
+				op0 = 7;
 				goto parse_2nd;
 			}
 

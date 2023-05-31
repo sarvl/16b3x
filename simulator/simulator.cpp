@@ -1,3 +1,7 @@
+//TODO
+//fix the sim command 
+//add help
+
 #include <iostream>
 #include <fstream>
 
@@ -6,25 +10,11 @@
 
 #include <unordered_map>
 
-#define DEBUG 1 
+#define DEBUG_PRINT(x)   if(debug)   std::cout << x
+#define DEBUG_WAIT       if(debug)   std::cin.get()
+#define DEBUG_READ(x)    if(debug)   std::getline(x)
 
-#if 1 == DEBUG
-	#define DEBUG_PRINT(x) std::cout << x
-	#define DEBUG_WAIT std::cin.get()
-	#define DEBUG_READ(x) std::getline(x)
-	#define VERBOSE 1
-#else
-	#define DEBUG_PRINT(x) 
-	#define DEBUG_WAIT 
-	#define DEBUG_READ(x) 
-	#define VERBOSE 0
-#endif 
-
-#if 1 == VERBOSE
-	#define VERBOSE_PRINT(x) std::cout << x 
-#else
-	#define VERBOSE_PRINT(x) 
-#endif
+#define VERBOSE_PRINT(x) if(verbose) std::cout << x 
 
 #define SET_FLAGS(x)                         \
 			if((x) > 0)                      \
@@ -47,9 +37,9 @@ enum class Opcode : uint8_t{
  WRX = 0x0D,
  PSH = 0x0E,
  POP = 0x0F,
-
+ MUL = 0x10,
  CMP = 0x11,
-
+ 
  TST = 0x13,
  JMP = 0x14,
  CAL = 0x15,
@@ -84,6 +74,12 @@ namespace Flags{
 
 		return 'I';
 	}
+};
+
+namespace Feature_Flags{
+	enum FFlags : uint16_t{
+		M = 0b0000'0000'0000'0001
+	};
 };
 
 struct Instruction{
@@ -123,13 +119,31 @@ uint8_t  mem[0xFFFF + 1];
 
 int main(int argc, char* argv[])
 {
-	if(1 == argc)
+	if(2 >  argc)
 	{
-		std::cout << "no program specified\n";
+		std::cout << "not enough arguments\n";
 		return 1;
 	}
 
-	std::ifstream file(argv[1]);
+	bool debug   = false;
+	bool verbose = false;
+	if('n' == argv[1][0])
+	{}
+	else if('d' == argv[1][0])
+	{
+		debug   = true;
+	}
+	else if('v' == argv[1][0])
+	{
+		verbose = true;
+	}
+	else if('a' == argv[1][0])
+	{
+		debug   = true;
+		verbose = true;
+	}
+
+	std::ifstream file(argv[2]);
 
 	if(false == file.is_open())
 	{
@@ -137,40 +151,41 @@ int main(int argc, char* argv[])
 		return 2;
 	}
 
-#if 1 == DEBUG
 	std::unordered_map<uint16_t, std::string> debug_info_labels;
-	std::ifstream debug_file;
-
-	if(3 <= argc)
+	if(debug)
 	{
-		debug_file.open(argv[2]);
-
-		if(false == debug_file.is_open())
+		std::ifstream debug_file;
+		
+		if(4 <= argc)
 		{
-			std::cout << "debug file could not have been open\n";
-			return 3;
-		}
+			debug_file.open(argv[3]);
 
-	
-		std::string line;
-		while(std::getline(debug_file, line))
-		{
-			int str_end = 0;
-			int instr = 0;
-			while(' ' != line[str_end])
-				str_end++;
-
-			for(unsigned int i = str_end + 1; i < line.size(); i++)
+			if(false == debug_file.is_open())
 			{
-				instr *= 10;
-				instr += line[i] - '0';
+				std::cout << "debug file could not have been open\n";
+				return 3;
 			}
 
-			debug_info_labels[static_cast<uint16_t>(instr)] = line.substr(0, str_end);
-		}
+		
+			std::string line;
+			while(std::getline(debug_file, line))
+			{
+				int str_end = 0;
+				int instr = 0;
+				while(' ' != line[str_end])
+					str_end++;
 
-	}
-#endif
+				for(unsigned int i = str_end + 1; i < line.size(); i++)
+				{
+					instr *= 10;
+					instr += line[i] - '0';
+				}
+
+				debug_info_labels[static_cast<uint16_t>(instr)] = line.substr(0, str_end);
+			}
+
+		}
+	};
 
 	std::vector<Instruction> instructions;
 	std::string line;
@@ -213,25 +228,26 @@ int main(int argc, char* argv[])
 
 	uint16_t& upper_immiediate    = ext[4];
 	uint16_t& flags_register      = ext[5];
-	uint16_t& data_segment        = ext[6];
-	uint16_t& code_segment        = ext[7];
+	
+	uint16_t& feature_register    = ext[7];
+
+	feature_register = Feature_Flags::M;
 
 	uint32_t cycle_count = 0;
 
 	flags_register = 0x1;
 	stack_pointer = 0x0;
 
-	#if 1 == DEBUG
 	bool run = false;
-	#endif
 	while(true)
 	{
 		cycle_count++;
-	#if 1 == DEBUG
-		if(false == run) std::getline(std::cin, line);
-		if("exit" == line) goto end;
-		if(0 != line.size()) run = true;
-	#endif
+		if(debug)
+		{
+			if(false == run) std::getline(std::cin, line);
+			if("exit" == line) goto end;
+			if(0 != line.size()) run = true;
+		}
 
 		const auto& instr = instructions[instruction_pointer >> 1];
 
@@ -336,14 +352,14 @@ int main(int argc, char* argv[])
 		case Opcode::RDX: 
 		{
 			DEBUG_PRINT("RDX\n");
-			//placeholder
 			reg0 = ext[instr.op1.r1];
 			break;
 		}
 		case Opcode::WRX: 
 		{
 			DEBUG_PRINT("WRX\n");
-			ext[instr.op0.r0] = second;
+			if(instr.op0.r0 != 7) //dont write to feature flags
+				ext[instr.op0.r0] = second;
 			break;
 		}
 		case Opcode::PSH: 
@@ -376,9 +392,18 @@ int main(int argc, char* argv[])
 			VERBOSE_PRINT("POP " << reg0 << " TO R" << +instr.op0.r0 << "\n");
 			break;
 		}
-		//case Opcode::
+		case Opcode::MUL:
 		{
-		//	break;
+			DEBUG_PRINT("MUL\n");
+			const int16_t temp = reg0 * second;
+			
+			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " * " << second << "  (" << static_cast<uint16_t>(reg0 * second) << ")\n");
+			
+			SET_FLAGS(temp);
+			reg0 = temp;
+			
+
+			break;
 		}
 		case Opcode::CMP: 
 		{
@@ -414,22 +439,25 @@ int main(int argc, char* argv[])
 		{
 			DEBUG_PRINT("JMP\n");
 
-			#if 1 == VERBOSE
-			const auto& fnd = debug_info_labels.find(second);
-			if(debug_info_labels.end() != fnd)
-				VERBOSE_PRINT("JMP TO " << fnd->second);
-			else
-				VERBOSE_PRINT("JMP TO " << second);
-			#endif	
+			if(verbose)
+			{
+				const auto& fnd = debug_info_labels.find(second);
+				if(debug_info_labels.end() != fnd)
+				{   VERBOSE_PRINT("JMP TO " << fnd->second);}
+				else
+				{	VERBOSE_PRINT("JMP TO " << second);     }
+			}
 
 			if(flags_register & ccc)
 			{
 				instruction_pointer = second << 1;
-				#if 1 == DEBUG
-				if(debug_info_labels.end() != fnd
-				&& fnd->second == line)
-					run = false;
-				#endif
+				if(debug)
+				{
+					const auto& fnd = debug_info_labels.find(second);
+					if(debug_info_labels.end() != fnd
+					&& fnd->second == line)
+						run = false;
+				}
 
 				VERBOSE_PRINT("\n");
 				continue;
@@ -442,23 +470,27 @@ int main(int argc, char* argv[])
 		{
 			DEBUG_PRINT("CAL\n");
 			
-			#if 1 == VERBOSE
-			const auto& fnd = debug_info_labels.find(second);
-			if(debug_info_labels.end() != fnd)
-				VERBOSE_PRINT("CAL TO " << fnd->second);
-			else
-				VERBOSE_PRINT("CAL TO " << second);
-			#endif
+			if(verbose)
+			{
+				const auto& fnd = debug_info_labels.find(second);
+				if(debug_info_labels.end() != fnd)
+				{	VERBOSE_PRINT("CAL TO " << fnd->second);}
+				else
+				{	VERBOSE_PRINT("CAL TO " << second);     }
+			}
 
 			if(flags_register & ccc)
 			{
 				link_register = instruction_pointer;
 				instruction_pointer = second << 1;
-				#if 1 == DEBUG
-				if(debug_info_labels.end() != fnd
-				&& fnd->second == line)
-					run = false;
-				#endif
+				
+				if(debug)
+				{
+					const auto& fnd = debug_info_labels.find(second);
+					if(debug_info_labels.end() != fnd
+					&& fnd->second == line)
+						run = false;
+				}
 				VERBOSE_PRINT("\n");
 				continue;
 			}
@@ -478,9 +510,9 @@ int main(int argc, char* argv[])
 				instruction_pointer = link_register;
 
 				VERBOSE_PRINT("\n");
-				#if 1 == DEBUG
-				run = false;
-				#endif
+				if(debug)
+					run = false;
+				
 				continue;
 			}
 
