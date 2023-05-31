@@ -9,17 +9,18 @@
 	[CALLING_CONVETION]
 	[EXTENDED_IMM]
 	[DURING_EVERY_CYCLE]
+	[FEATURE_FLAGS]
 	[DETAILED_INSTRUCTION_EXPLANATION]
 	[KNOWN_LIMITATIONS]
 
 [OVERVIEW]
-	version:           0 
-	codename:          16b30
+	version:           1 
+	codename:          16b31
 	endianness:        big endian
 	architecture:      register-register
 	instruction-limit: 63
-	instruction-count: 42
-	this doc revision:  2 
+	instruction-count: 44
+	this doc revision:  0 
 	
 	all potential future version WILL BE backwards compatible with previous versions 
 	note that instruction-limit and instruction-count treat instruction's formats as separate instructions
@@ -32,7 +33,7 @@
 	
 	00  nop                  	# ---
 	01  hlt ccc              	# IF(FL & ccc) { halt } 
-	02                       	#  
+	02                       	# 
 	03                       	#  
 	04                       	#   
 	05  mov     R0, R1/imm8 	# R0 <-- R1/imm16
@@ -46,7 +47,7 @@
 	0D  wrx     E0, R1/imm8 	# E0 <-- R1/imm16
 	0E  psh     R0          	# SP <-- SP - 2 ; M[SP] <-- R0
 	0F  pop     R0          	# R0 <-- M[SP]  ; SP    <-- SP + 2;
-	10                      	#  
+	10M mul     R0, R1/imm8 	# R0 <-- R0 * R1/imm16
 	11  cmp     R0, R1/imm8 	# R0 - R1/imm16 
 	12                      	#  
 	13  tst     R0, R1/imm8 	# R0 & R1/imm16 
@@ -77,6 +78,10 @@
 
 	for more detailed explanation see [DETAILED_INSTRUCTION_EXPLANATION] 
 	for instruction encoding see [INSTRUCTION_ENCODING]
+
+	letter after a number (eg 10M) means that this feature requires flag to be set
+	see [DETAILED_INSTRUCTION_EXPLANATION] about that instruction
+	for general info about feature flags see [FEATURE_FLAGS]
 
 [MEMORY_ACCESS]
 	memory is byte addressed
@@ -162,7 +167,7 @@
 	4 UI ; Upper Immiediate    ; 8 LSbits denote 8 MSb of imm16 when instruction uses imm8, see [EXTENDED_IMM] 
 	5 FL ; Flags register      ; 3 LSbits of this register denote flags set by previous instruction 
 	6 
-	7 
+	7 CF ; CPU feature flags   ; each bit denotes whether an extension is present or not see [FEATURE_FLAGS]
 	
 	IP
 		points to NEXT instruction
@@ -209,7 +214,16 @@
 		initial value is not specified but is valid (meaning that one and only one flag bit is 1)
 	
 		set by
-		CMP, TST, ADD, SUB, NOT, AND, ORR, XOR 
+		CMP, MUL, TST, ADD, SUB, NOT, AND, ORR, XOR 
+
+	CF
+		see [FEATURE_FLAGS]
+
+		note that this register was not present in first version of CPU
+		therefore reading from it may not return x0000
+
+		reading from this register will return 16 flags 
+		writing to this register must not have an effect
 	
 [STACK]
 	controlled by SP via PSH and POP or manually with RDX, WRX, RDM, WRM, ADD, SUB
@@ -268,6 +282,18 @@
 	IP <-- IP + 1 ; unless executed instruction changes it 
 	UI <-- 0      ; unless executed instruction changes it 
 
+[FEATURE_FLAGS]
+	some instructions may not be present on particular implementations of the ISA 
+	therefore it is necessary to be able to tell whether program is able to use it or not 
+
+	any instruction that has flag near its name MAY NOT BE PRESENT 
+
+	reading from CF (see [EXTERNAL_REGISTERS]) will result in 16bits flag array
+	flags from MSb to LSb:
+		0000 0000 0000 000M
+
+		M - MUL, if present MUL instruction does exist
+		
 
 [DETAILED_INSTRUCTION_EXPLANATION]
 
@@ -398,6 +424,19 @@
 		except doesnt write to register
 		operates on signed numbers
 
+		external registers altered:
+			FL
+	
+	MUL R0, R1/imm8
+		R0 <-- R0 * R1/imm16
+
+		performs UNSIGNED multiplication on the operands
+		result is truncated to 16bits 
+
+		requiers M flag to be set in CF register
+		see [EXTERNAL_REGISTERS] about CF
+		see [FEATURE_FLAGS]
+		
 		external registers altered:
 			FL
 
