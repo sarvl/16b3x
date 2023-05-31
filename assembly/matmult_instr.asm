@@ -21,20 +21,13 @@ createmat3x3_loop:
 ;takes col adr of B in R1
 ;returns their dot product
 matmult3x3_rowcol:
-	rdx 	R7, LR
-	psh 	R7
-
 	mov 	R3, 3
 	mov 	R7, 0
 matmult3x3_rowcol_loop:
-	psh 	R0
-	psh 	R1
-	rdm 	R0, R0
-	rdm 	R1, R1
-	mul 	R0, R1
-	add 	R7, R0
-	pop 	R1
-	pop 	R0
+	rdm 	R4, R0
+	rdm 	R5, R1
+	mul 	R4, R5
+	add 	R7, R4
 
 	add 	R0, 2
 	add 	R1, 6
@@ -43,8 +36,6 @@ matmult3x3_rowcol_loop:
 
 	mov 	R0, R7
 
-	pop 	R7
-	wrx 	LR, R7
 	ret
 
 

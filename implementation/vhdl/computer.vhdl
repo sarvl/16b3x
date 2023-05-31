@@ -43,6 +43,14 @@ ARCHITECTURE behav OF computer IS
 			oc: OUT std_ulogic);
 	END COMPONENT adder_16bit; 
 
+	COMPONENT multiplier IS 
+		PORT (
+			i0: IN  std_ulogic_vector(15 DOWNTO 0);
+			i1: IN  std_ulogic_vector(15 DOWNTO 0);
+			
+			o0: OUT std_ulogic_vector(15 DOWNTO 0));
+	END COMPONENT multiplier; 
+
 	COMPONENT reg_file IS 
 		PORT(
 			i0  : IN  std_ulogic_vector(15 DOWNTO 0);
@@ -115,6 +123,7 @@ ARCHITECTURE behav OF computer IS
 
 
 	SIGNAL  alu_out     : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL  mul_out     : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  ram_adr     : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 	SIGNAL  ram_in      : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  ram_out     : std_ulogic_vector(15 DOWNTO 0);
@@ -167,6 +176,9 @@ BEGIN
 	                   o0  => ram_out,
 	                   we  => controls.wrm,
 	                   clk => clk);
+	mul0: multiplier PORT MAP(i0 => op0,
+	                          i1 => op1,
+	                          o0 => mul_out);
 
 	
 	cntrl: control PORT MAP(instr    => instr,
@@ -242,11 +254,13 @@ BEGIN
 	rdi   <= op1     WHEN controls.sro = '1'
 	    ELSE alu_out WHEN controls.srr = '1'
 	    ELSE ram_out WHEN controls.srm = '1' 
+		ELSE mul_out WHEN controls.mul = '1'
 	    ELSE r_ip.o0 WHEN controls.sre = '1' AND r1 = "000"
 	    ELSE r_sp.o0 WHEN controls.sre = '1' AND r1 = "001" 
 	    ELSE r_lr.o0 WHEN controls.sre = '1' AND r1 = "010" 
 	    ELSE r_ui.o0 WHEN controls.sre = '1' AND r1 = "100" 
 	    ELSE r_fl.o0 WHEN controls.sre = '1' AND r1 = "101" 
+	    ELSE x"0001" WHEN controls.sre = '1' AND r1 = "111" 
 	    ELSE UNAFFECTED;
 
 	--input to external register

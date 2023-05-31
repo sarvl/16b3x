@@ -1,6 +1,7 @@
 /*
 	DUs in file in order:
 		ALU
+		multiplier
 		16bit adder
 		full adder
 		shifter left
@@ -19,6 +20,9 @@
 		101 - o0 <=  i0 ⊕ i1
 		110 - o0 <=  i0 << i1
 		111 - o0 <=  i0 >> i1
+	
+	multiplier
+		performs unsigned multiplication
 	
 	shifts operate modulo 2^4 on i1
 	all instructions operate modulo 2^16 on result
@@ -108,6 +112,78 @@ BEGIN
 
 END ARCHITECTURE behav;
 
+
+--16bit multiplier 
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY multiplier IS 
+	PORT (
+		i0: IN  std_ulogic_vector(15 DOWNTO 0);
+		i1: IN  std_ulogic_vector(15 DOWNTO 0);
+		
+		o0: OUT std_ulogic_vector(15 DOWNTO 0));
+END ENTITY multiplier; 
+
+ARCHITECTURE behav OF multiplier IS
+	COMPONENT adder_16bit IS 
+		PORT (
+			i0: IN  std_ulogic_vector(15 DOWNTO 0);
+			i1: IN  std_ulogic_vector(15 DOWNTO 0);
+			ic: IN  std_ulogic;
+		
+			o0: OUT std_ulogic_vector(15 DOWNTO 0);
+			oc: OUT std_ulogic);
+	END COMPONENT adder_16bit; 
+
+	SIGNAL s0, s1, s2, s3, s4, s5, s6, s7 : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL s8, s9, sA, sB, sC, sD, sE, sF : std_ulogic_vector(15 DOWNTO 0);
+	
+	SIGNAL v0, v1, v2, v3, v4, v5, v6, v7 : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL v8, v9, vA, vB, vC, vD         : std_ulogic_vector(15 DOWNTO 0);
+
+BEGIN
+	--perform shifts and filter them 
+	s0 <= (i0(15 DOWNTO  0)                        ) AND (15 DOWNTO 0 => i1( 0));
+	s1 <= (i0(14 DOWNTO  0) & ( 0 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 1));
+	s2 <= (i0(13 DOWNTO  0) & ( 1 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 2));
+	s3 <= (i0(12 DOWNTO  0) & ( 2 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 3));
+	s4 <= (i0(11 DOWNTO  0) & ( 3 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 4));
+	s5 <= (i0(10 DOWNTO  0) & ( 4 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 5));
+	s6 <= (i0( 9 DOWNTO  0) & ( 5 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 6));
+	s7 <= (i0( 8 DOWNTO  0) & ( 6 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 7));
+	s8 <= (i0( 7 DOWNTO  0) & ( 7 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 8));
+	s9 <= (i0( 6 DOWNTO  0) & ( 8 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 9));
+	sA <= (i0( 5 DOWNTO  0) & ( 9 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(10));
+	sB <= (i0( 4 DOWNTO  0) & (10 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(11));
+	sC <= (i0( 3 DOWNTO  0) & (11 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(12));
+	sD <= (i0( 2 DOWNTO  0) & (12 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(13));
+	sE <= (i0( 1 DOWNTO  0) & (13 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(14));
+	sF <= (i0( 0 DOWNTO  0) & (14 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(15));
+
+	--combine results
+	--                       i0, i1, ic,  o0, oc
+	a0: adder_16bit PORT MAP(s0, s1, '0', v0, OPEN);
+	a1: adder_16bit PORT MAP(s2, s3, '0', v1, OPEN);
+	a2: adder_16bit PORT MAP(s4, s5, '0', v2, OPEN);
+	a3: adder_16bit PORT MAP(s6, s7, '0', v3, OPEN);
+	a4: adder_16bit PORT MAP(s8, s9, '0', v4, OPEN);
+	a5: adder_16bit PORT MAP(sa, sb, '0', v5, OPEN);
+	a6: adder_16bit PORT MAP(sc, sd, '0', v6, OPEN);
+	a7: adder_16bit PORT MAP(se, sf, '0', v7, OPEN);
+
+	a8: adder_16bit PORT MAP(v0, v1, '0', v8, OPEN);
+	a9: adder_16bit PORT MAP(v2, v3, '0', v9, OPEN);
+	aa: adder_16bit PORT MAP(v4, v5, '0', va, OPEN);
+	ab: adder_16bit PORT MAP(v6, v7, '0', vb, OPEN);
+
+	ac: adder_16bit PORT MAP(v8, v9, '0', vc, OPEN);
+	ad: adder_16bit PORT MAP(va, vb, '0', vd, OPEN);
+
+	ae: adder_16bit PORT MAP(vc, vd, '0', o0, OPEN);
+
+
+END ARCHITECTURE behav;
 
 --16bit adder
 LIBRARY ieee;

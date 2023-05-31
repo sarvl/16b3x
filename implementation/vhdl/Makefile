@@ -44,7 +44,7 @@ control.o: control.vhdl
 	@echo -e ${CY}analysing control.vhdl${CD}
 	@ghdl -a --std=08 control.vhdl
 
-computer.o: computer.vhdl
+computer.o: control.o computer.vhdl
 	@echo -e ${CY}analysing computer.vhdl${CD}
 	@ghdl -a --std=08 computer.vhdl
 	
