@@ -91,6 +91,7 @@ ARCHITECTURE behav OF computer IS
 			o0  : OUT std_ulogic_vector(15 DOWNTO 0);
 
 			we  : IN  std_ulogic;
+			rdy : OUT std_ulogic := '0';
 			clk : IN  std_ulogic);
 	END COMPONENT ram;
 
@@ -128,6 +129,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL  ram_in      : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  ram_out     : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  dat_adr     : std_ulogic_vector(15 DOWNTO 0) := x"0000";
+	SIGNAL  mem_rdy     : std_ulogic := '0';
 
 
 	SIGNAL 	r_ip : t_register := (x"0000", x"0000", '0');
@@ -152,8 +154,11 @@ BEGIN
 		--whenever hlt = 0 there is no need to continue the simulation
 		assert controls.hlt = '0' 
 			report "simulation stopped by hlt signal" & CR severity failure;
-		
-		clk <= NOT controls.hlt; WAIT FOR clk_period / 2;
+		clk <= '1'; WAIT FOR clk_period / 2;
+
+		IF mem_rdy /= '1' THEN
+			WAIT UNTIL mem_rdy = '1';
+		END IF;
 	END PROCESS;
 
 	rgf0: reg_file PORT MAP(rd  => r0,
@@ -175,6 +180,7 @@ BEGIN
 	                   i0  => ram_in,
 	                   o0  => ram_out,
 	                   we  => controls.wrm,
+					   rdy => mem_rdy,
 	                   clk => clk);
 	mul0: multiplier PORT MAP(i0 => op0,
 	                          i1 => op1,

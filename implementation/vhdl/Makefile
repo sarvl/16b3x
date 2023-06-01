@@ -26,7 +26,7 @@ elaborate:
 	@ghdl -e --std=08 computer
 
 
-analyse_simple: alu.o registers.o ram.o control.o computer.o 
+analyse_simple: alu.o registers.o ram.o control.o computer_simple.o 
 	
 alu.o: alu.vhdl
 	@echo -e ${CY}analysing alu.vhdl${CD}
@@ -44,18 +44,18 @@ control.o: control.vhdl
 	@echo -e ${CY}analysing control.vhdl${CD}
 	@ghdl -a --std=08 control.vhdl
 
-computer.o: control.o computer.vhdl
-	@echo -e ${CY}analysing computer.vhdl${CD}
-	@ghdl -a --std=08 computer.vhdl
+computer_simple.o: control.o computer_simple.vhdl
+	@echo -e ${CY}analysing computer_simple.vhdl${CD}
+	@ghdl -a --std=08 computer_simple.vhdl
 	
 alu.vhdl:
 	@touch alu.vhdl
 registers.vhdl:
-	@touch alu.vhdl
+	@touch registers.vhdl
 ram.vhdl:
-	@touch alu.vhdl
+	@touch ram.vhdl
 control.vhdl:
-	@touch alu.vhdl
-computer.vhdl:
-	@touch alu.vhdl
+	@touch control.vhdl
+computer_simple.vhdl:
+	@touch computer_simple.vhdl
 

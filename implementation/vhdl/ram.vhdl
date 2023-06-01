@@ -31,6 +31,7 @@ ENTITY ram IS
 		o0  : OUT std_ulogic_vector(15 DOWNTO 0);
 
 		we  : IN  std_ulogic := '0';
+		rdy : OUT std_ulogic := '0';
 		clk : IN  std_ulogic);
 END ENTITY ram;
 
@@ -147,7 +148,13 @@ BEGIN
 
 	data(addr) <= i0 WHEN we = '1' AND rising_edge(clk)
 	         ELSE UNAFFECTED;
-	o0 <= data(addr); 
+	o0  <= data(addr); 
 
+	--models delay
+	--rdy <= '1' AFTER 10 NS, '0' AFTER 10.5 NS WHEN rising_edge(clk)
+	--  ELSE UNAFFECTED;
+	--stub 
+	rdy <= '1';
 
-END ARCHITECTURE behav;
+END ARCHITECTURE behav; 
+
