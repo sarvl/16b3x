@@ -19,22 +19,29 @@ createmat3x3_loop:
 
 ;takes row adr of A in R0
 ;takes col adr of B in R1
-;returns their dot product
+;takes where to write in R2
+;writes dot product to R2
+;unrolled to improve performance
 matmult3x3_rowcol:
-	mov 	R3, 3
-	mov 	R7, 0
-matmult3x3_rowcol_loop:
+	rdm 	R7, R0
+	rdm 	R5, R1
+	mul 	R7, R5
+	add 	R0, 2
+	add 	R1, 6
+	
+	rdm 	R4, R0
+	rdm 	R5, R1
+	mul 	R4, R5
+	add 	R7, R4
+	add 	R0, 2
+	add 	R1, 6
+	
 	rdm 	R4, R0
 	rdm 	R5, R1
 	mul 	R4, R5
 	add 	R7, R4
 
-	add 	R0, 2
-	add 	R1, 6
-	sub 	R3, 1
-	jmp 	G, matmult3x3_rowcol_loop
-
-	mov 	R0, R7
+	wrm 	R7, R2
 
 	ret
 
@@ -48,35 +55,37 @@ matmult3x3:
 	rdx 	R7, LR
 	psh 	R7
 
-	mov 	R4, 3
+;precompute starting addresses
+	wrm 	R1, 200
+	add 	R1, 2
+	wrm 	R1, 202
+	add 	R1, 2
+	wrm 	R1, 204
+
+	mov 	R6, 3
 matmult3x3_loop_outer:
-	psh 	R4
-	psh 	R0
-	psh 	R1
+	wrm 	R0, 254
 
-	mov 	R3, 3
-matmult3x3_loop:
-	psh 	R3
-	psh 	R0
-	psh 	R1
-	psh 	R2
+;unrolled loop
+	rdm 	R1, 200
+	;R0 alreade what is should be
 	cal 	LEG, matmult3x3_rowcol
-	pop 	R2
-	wrm 	R0, R2
 	add 	R2, 2
-	pop 	R1
-	add 	R1, 2 
-	pop 	R0
+	
+	rdm 	R0, 254
+	rdm 	R1, 202
+	cal 	LEG, matmult3x3_rowcol
+	add 	R2, 2
+	
+	rdm 	R0, 254
+	rdm 	R1, 204
+	cal 	LEG, matmult3x3_rowcol
+	add 	R2, 2
 
-	pop 	R3
-	sub 	R3, 1
-	jmp 	G, matmult3x3_loop
 
-	pop 	R1
-	pop 	R0
+	rdm 	R0, 254
 	add 	R0, 6
-	pop 	R4
-	sub 	R4, 1
+	sub 	R6, 1
 	jmp 	G, matmult3x3_loop_outer
 
 

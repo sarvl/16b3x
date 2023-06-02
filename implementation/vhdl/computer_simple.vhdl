@@ -109,7 +109,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL   clk        : std_ulogic := '0';
 
 
-	SIGNAL   instr      : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL   instr      : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 	SIGNAL   r0         : std_ulogic_vector( 2 DOWNTO 0);
 	SIGNAL   r1         : std_ulogic_vector( 2 DOWNTO 0);
 	SIGNAL   rdi        : std_ulogic_vector(15 DOWNTO 0);
