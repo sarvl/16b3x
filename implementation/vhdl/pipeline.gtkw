@@ -1,0 +1,216 @@
+[*]
+[*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
+[*] Sun Jun  4 20:23:24 2023
+[*]
+[dumpfile] "(null)"
+[savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/pipeline.gtkw"
+[timestart] 24880000
+[size] 1366 768
+[pos] -1 -1
+*-22.122679 44970000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.computer.
+[sst_width] 273
+[signals_width] 188
+[sst_expanded] 1
+[sst_vpaned_height] 352
+@200
+-clock
+@28
+top.computer.clk
+@200
+-
+-reg_file
+@28
+top.computer.rgf0.we
+#{top.computer.rgf0.rd[2:0]} top.computer.rgf0.rd[2] top.computer.rgf0.rd[1] top.computer.rgf0.rd[0]
+#{top.computer.rgf0.r0[2:0]} top.computer.rgf0.r0[2] top.computer.rgf0.r0[1] top.computer.rgf0.r0[0]
+#{top.computer.rgf0.r1[2:0]} top.computer.rgf0.r1[2] top.computer.rgf0.r1[1] top.computer.rgf0.r1[0]
+@22
+#{top.computer.rgf0.d0[15:0]} top.computer.rgf0.d0[15] top.computer.rgf0.d0[14] top.computer.rgf0.d0[13] top.computer.rgf0.d0[12] top.computer.rgf0.d0[11] top.computer.rgf0.d0[10] top.computer.rgf0.d0[9] top.computer.rgf0.d0[8] top.computer.rgf0.d0[7] top.computer.rgf0.d0[6] top.computer.rgf0.d0[5] top.computer.rgf0.d0[4] top.computer.rgf0.d0[3] top.computer.rgf0.d0[2] top.computer.rgf0.d0[1] top.computer.rgf0.d0[0]
+#{top.computer.rgf0.d1[15:0]} top.computer.rgf0.d1[15] top.computer.rgf0.d1[14] top.computer.rgf0.d1[13] top.computer.rgf0.d1[12] top.computer.rgf0.d1[11] top.computer.rgf0.d1[10] top.computer.rgf0.d1[9] top.computer.rgf0.d1[8] top.computer.rgf0.d1[7] top.computer.rgf0.d1[6] top.computer.rgf0.d1[5] top.computer.rgf0.d1[4] top.computer.rgf0.d1[3] top.computer.rgf0.d1[2] top.computer.rgf0.d1[1] top.computer.rgf0.d1[0]
+#{top.computer.rgf0.d2[15:0]} top.computer.rgf0.d2[15] top.computer.rgf0.d2[14] top.computer.rgf0.d2[13] top.computer.rgf0.d2[12] top.computer.rgf0.d2[11] top.computer.rgf0.d2[10] top.computer.rgf0.d2[9] top.computer.rgf0.d2[8] top.computer.rgf0.d2[7] top.computer.rgf0.d2[6] top.computer.rgf0.d2[5] top.computer.rgf0.d2[4] top.computer.rgf0.d2[3] top.computer.rgf0.d2[2] top.computer.rgf0.d2[1] top.computer.rgf0.d2[0]
+#{top.computer.rgf0.d3[15:0]} top.computer.rgf0.d3[15] top.computer.rgf0.d3[14] top.computer.rgf0.d3[13] top.computer.rgf0.d3[12] top.computer.rgf0.d3[11] top.computer.rgf0.d3[10] top.computer.rgf0.d3[9] top.computer.rgf0.d3[8] top.computer.rgf0.d3[7] top.computer.rgf0.d3[6] top.computer.rgf0.d3[5] top.computer.rgf0.d3[4] top.computer.rgf0.d3[3] top.computer.rgf0.d3[2] top.computer.rgf0.d3[1] top.computer.rgf0.d3[0]
+#{top.computer.rgf0.d4[15:0]} top.computer.rgf0.d4[15] top.computer.rgf0.d4[14] top.computer.rgf0.d4[13] top.computer.rgf0.d4[12] top.computer.rgf0.d4[11] top.computer.rgf0.d4[10] top.computer.rgf0.d4[9] top.computer.rgf0.d4[8] top.computer.rgf0.d4[7] top.computer.rgf0.d4[6] top.computer.rgf0.d4[5] top.computer.rgf0.d4[4] top.computer.rgf0.d4[3] top.computer.rgf0.d4[2] top.computer.rgf0.d4[1] top.computer.rgf0.d4[0]
+#{top.computer.rgf0.d5[15:0]} top.computer.rgf0.d5[15] top.computer.rgf0.d5[14] top.computer.rgf0.d5[13] top.computer.rgf0.d5[12] top.computer.rgf0.d5[11] top.computer.rgf0.d5[10] top.computer.rgf0.d5[9] top.computer.rgf0.d5[8] top.computer.rgf0.d5[7] top.computer.rgf0.d5[6] top.computer.rgf0.d5[5] top.computer.rgf0.d5[4] top.computer.rgf0.d5[3] top.computer.rgf0.d5[2] top.computer.rgf0.d5[1] top.computer.rgf0.d5[0]
+#{top.computer.rgf0.d6[15:0]} top.computer.rgf0.d6[15] top.computer.rgf0.d6[14] top.computer.rgf0.d6[13] top.computer.rgf0.d6[12] top.computer.rgf0.d6[11] top.computer.rgf0.d6[10] top.computer.rgf0.d6[9] top.computer.rgf0.d6[8] top.computer.rgf0.d6[7] top.computer.rgf0.d6[6] top.computer.rgf0.d6[5] top.computer.rgf0.d6[4] top.computer.rgf0.d6[3] top.computer.rgf0.d6[2] top.computer.rgf0.d6[1] top.computer.rgf0.d6[0]
+#{top.computer.rgf0.d7[15:0]} top.computer.rgf0.d7[15] top.computer.rgf0.d7[14] top.computer.rgf0.d7[13] top.computer.rgf0.d7[12] top.computer.rgf0.d7[11] top.computer.rgf0.d7[10] top.computer.rgf0.d7[9] top.computer.rgf0.d7[8] top.computer.rgf0.d7[7] top.computer.rgf0.d7[6] top.computer.rgf0.d7[5] top.computer.rgf0.d7[4] top.computer.rgf0.d7[3] top.computer.rgf0.d7[2] top.computer.rgf0.d7[1] top.computer.rgf0.d7[0]
+@200
+-ext_regs
+-ip
+@28
+top.computer.reg_ip.we
+@22
+#{top.computer.reg_ip.i0[15:0]} top.computer.reg_ip.i0[15] top.computer.reg_ip.i0[14] top.computer.reg_ip.i0[13] top.computer.reg_ip.i0[12] top.computer.reg_ip.i0[11] top.computer.reg_ip.i0[10] top.computer.reg_ip.i0[9] top.computer.reg_ip.i0[8] top.computer.reg_ip.i0[7] top.computer.reg_ip.i0[6] top.computer.reg_ip.i0[5] top.computer.reg_ip.i0[4] top.computer.reg_ip.i0[3] top.computer.reg_ip.i0[2] top.computer.reg_ip.i0[1] top.computer.reg_ip.i0[0]
+#{top.computer.reg_ip.o0[15:0]} top.computer.reg_ip.o0[15] top.computer.reg_ip.o0[14] top.computer.reg_ip.o0[13] top.computer.reg_ip.o0[12] top.computer.reg_ip.o0[11] top.computer.reg_ip.o0[10] top.computer.reg_ip.o0[9] top.computer.reg_ip.o0[8] top.computer.reg_ip.o0[7] top.computer.reg_ip.o0[6] top.computer.reg_ip.o0[5] top.computer.reg_ip.o0[4] top.computer.reg_ip.o0[3] top.computer.reg_ip.o0[2] top.computer.reg_ip.o0[1] top.computer.reg_ip.o0[0]
+#{top.computer.delayed_ip[15:0]} top.computer.delayed_ip[15] top.computer.delayed_ip[14] top.computer.delayed_ip[13] top.computer.delayed_ip[12] top.computer.delayed_ip[11] top.computer.delayed_ip[10] top.computer.delayed_ip[9] top.computer.delayed_ip[8] top.computer.delayed_ip[7] top.computer.delayed_ip[6] top.computer.delayed_ip[5] top.computer.delayed_ip[4] top.computer.delayed_ip[3] top.computer.delayed_ip[2] top.computer.delayed_ip[1] top.computer.delayed_ip[0]
+@200
+-sp
+@28
+top.computer.reg_sp.we
+@22
+#{top.computer.reg_sp.i0[15:0]} top.computer.reg_sp.i0[15] top.computer.reg_sp.i0[14] top.computer.reg_sp.i0[13] top.computer.reg_sp.i0[12] top.computer.reg_sp.i0[11] top.computer.reg_sp.i0[10] top.computer.reg_sp.i0[9] top.computer.reg_sp.i0[8] top.computer.reg_sp.i0[7] top.computer.reg_sp.i0[6] top.computer.reg_sp.i0[5] top.computer.reg_sp.i0[4] top.computer.reg_sp.i0[3] top.computer.reg_sp.i0[2] top.computer.reg_sp.i0[1] top.computer.reg_sp.i0[0]
+#{top.computer.reg_sp.o0[15:0]} top.computer.reg_sp.o0[15] top.computer.reg_sp.o0[14] top.computer.reg_sp.o0[13] top.computer.reg_sp.o0[12] top.computer.reg_sp.o0[11] top.computer.reg_sp.o0[10] top.computer.reg_sp.o0[9] top.computer.reg_sp.o0[8] top.computer.reg_sp.o0[7] top.computer.reg_sp.o0[6] top.computer.reg_sp.o0[5] top.computer.reg_sp.o0[4] top.computer.reg_sp.o0[3] top.computer.reg_sp.o0[2] top.computer.reg_sp.o0[1] top.computer.reg_sp.o0[0]
+@200
+-lr
+@28
+top.computer.reg_lr.we
+@22
+#{top.computer.reg_lr.i0[15:0]} top.computer.reg_lr.i0[15] top.computer.reg_lr.i0[14] top.computer.reg_lr.i0[13] top.computer.reg_lr.i0[12] top.computer.reg_lr.i0[11] top.computer.reg_lr.i0[10] top.computer.reg_lr.i0[9] top.computer.reg_lr.i0[8] top.computer.reg_lr.i0[7] top.computer.reg_lr.i0[6] top.computer.reg_lr.i0[5] top.computer.reg_lr.i0[4] top.computer.reg_lr.i0[3] top.computer.reg_lr.i0[2] top.computer.reg_lr.i0[1] top.computer.reg_lr.i0[0]
+#{top.computer.reg_lr.o0[15:0]} top.computer.reg_lr.o0[15] top.computer.reg_lr.o0[14] top.computer.reg_lr.o0[13] top.computer.reg_lr.o0[12] top.computer.reg_lr.o0[11] top.computer.reg_lr.o0[10] top.computer.reg_lr.o0[9] top.computer.reg_lr.o0[8] top.computer.reg_lr.o0[7] top.computer.reg_lr.o0[6] top.computer.reg_lr.o0[5] top.computer.reg_lr.o0[4] top.computer.reg_lr.o0[3] top.computer.reg_lr.o0[2] top.computer.reg_lr.o0[1] top.computer.reg_lr.o0[0]
+@200
+-ui
+@28
+top.computer.reg_ui.we
+@22
+#{top.computer.reg_ui.i0[15:0]} top.computer.reg_ui.i0[15] top.computer.reg_ui.i0[14] top.computer.reg_ui.i0[13] top.computer.reg_ui.i0[12] top.computer.reg_ui.i0[11] top.computer.reg_ui.i0[10] top.computer.reg_ui.i0[9] top.computer.reg_ui.i0[8] top.computer.reg_ui.i0[7] top.computer.reg_ui.i0[6] top.computer.reg_ui.i0[5] top.computer.reg_ui.i0[4] top.computer.reg_ui.i0[3] top.computer.reg_ui.i0[2] top.computer.reg_ui.i0[1] top.computer.reg_ui.i0[0]
+#{top.computer.reg_ui.o0[15:0]} top.computer.reg_ui.o0[15] top.computer.reg_ui.o0[14] top.computer.reg_ui.o0[13] top.computer.reg_ui.o0[12] top.computer.reg_ui.o0[11] top.computer.reg_ui.o0[10] top.computer.reg_ui.o0[9] top.computer.reg_ui.o0[8] top.computer.reg_ui.o0[7] top.computer.reg_ui.o0[6] top.computer.reg_ui.o0[5] top.computer.reg_ui.o0[4] top.computer.reg_ui.o0[3] top.computer.reg_ui.o0[2] top.computer.reg_ui.o0[1] top.computer.reg_ui.o0[0]
+@200
+-fl
+@28
+top.computer.reg_fl.we
+@22
+#{top.computer.reg_fl.i0[15:0]} top.computer.reg_fl.i0[15] top.computer.reg_fl.i0[14] top.computer.reg_fl.i0[13] top.computer.reg_fl.i0[12] top.computer.reg_fl.i0[11] top.computer.reg_fl.i0[10] top.computer.reg_fl.i0[9] top.computer.reg_fl.i0[8] top.computer.reg_fl.i0[7] top.computer.reg_fl.i0[6] top.computer.reg_fl.i0[5] top.computer.reg_fl.i0[4] top.computer.reg_fl.i0[3] top.computer.reg_fl.i0[2] top.computer.reg_fl.i0[1] top.computer.reg_fl.i0[0]
+#{top.computer.reg_fl.o0[15:0]} top.computer.reg_fl.o0[15] top.computer.reg_fl.o0[14] top.computer.reg_fl.o0[13] top.computer.reg_fl.o0[12] top.computer.reg_fl.o0[11] top.computer.reg_fl.o0[10] top.computer.reg_fl.o0[9] top.computer.reg_fl.o0[8] top.computer.reg_fl.o0[7] top.computer.reg_fl.o0[6] top.computer.reg_fl.o0[5] top.computer.reg_fl.o0[4] top.computer.reg_fl.o0[3] top.computer.reg_fl.o0[2] top.computer.reg_fl.o0[1] top.computer.reg_fl.o0[0]
+@28
+#{top.computer.flcmp[2:0]} top.computer.flcmp[2] top.computer.flcmp[1] top.computer.flcmp[0]
+@200
+-
+-arith
+@c00022
+#{top.computer.alu_out[15:0]} top.computer.alu_out[15] top.computer.alu_out[14] top.computer.alu_out[13] top.computer.alu_out[12] top.computer.alu_out[11] top.computer.alu_out[10] top.computer.alu_out[9] top.computer.alu_out[8] top.computer.alu_out[7] top.computer.alu_out[6] top.computer.alu_out[5] top.computer.alu_out[4] top.computer.alu_out[3] top.computer.alu_out[2] top.computer.alu_out[1] top.computer.alu_out[0]
+@28
+top.computer.alu_out[15]
+top.computer.alu_out[14]
+top.computer.alu_out[13]
+top.computer.alu_out[12]
+top.computer.alu_out[11]
+top.computer.alu_out[10]
+top.computer.alu_out[9]
+top.computer.alu_out[8]
+top.computer.alu_out[7]
+top.computer.alu_out[6]
+top.computer.alu_out[5]
+top.computer.alu_out[4]
+top.computer.alu_out[3]
+top.computer.alu_out[2]
+top.computer.alu_out[1]
+top.computer.alu_out[0]
+@1401200
+-group_end
+@22
+#{top.computer.mul_out[15:0]} top.computer.mul_out[15] top.computer.mul_out[14] top.computer.mul_out[13] top.computer.mul_out[12] top.computer.mul_out[11] top.computer.mul_out[10] top.computer.mul_out[9] top.computer.mul_out[8] top.computer.mul_out[7] top.computer.mul_out[6] top.computer.mul_out[5] top.computer.mul_out[4] top.computer.mul_out[3] top.computer.mul_out[2] top.computer.mul_out[1] top.computer.mul_out[0]
+@200
+-
+-ram
+@28
+top.computer.ram0.we
+@420
+top.computer.ram0.addr
+@28
+top.computer.mem_rdy
+@22
+#{top.computer.ram_adr[15:0]} top.computer.ram_adr[15] top.computer.ram_adr[14] top.computer.ram_adr[13] top.computer.ram_adr[12] top.computer.ram_adr[11] top.computer.ram_adr[10] top.computer.ram_adr[9] top.computer.ram_adr[8] top.computer.ram_adr[7] top.computer.ram_adr[6] top.computer.ram_adr[5] top.computer.ram_adr[4] top.computer.ram_adr[3] top.computer.ram_adr[2] top.computer.ram_adr[1] top.computer.ram_adr[0]
+#{top.computer.dat_adr[15:0]} top.computer.dat_adr[15] top.computer.dat_adr[14] top.computer.dat_adr[13] top.computer.dat_adr[12] top.computer.dat_adr[11] top.computer.dat_adr[10] top.computer.dat_adr[9] top.computer.dat_adr[8] top.computer.dat_adr[7] top.computer.dat_adr[6] top.computer.dat_adr[5] top.computer.dat_adr[4] top.computer.dat_adr[3] top.computer.dat_adr[2] top.computer.dat_adr[1] top.computer.dat_adr[0]
+#{top.computer.ipp1[15:0]} top.computer.ipp1[15] top.computer.ipp1[14] top.computer.ipp1[13] top.computer.ipp1[12] top.computer.ipp1[11] top.computer.ipp1[10] top.computer.ipp1[9] top.computer.ipp1[8] top.computer.ipp1[7] top.computer.ipp1[6] top.computer.ipp1[5] top.computer.ipp1[4] top.computer.ipp1[3] top.computer.ipp1[2] top.computer.ipp1[1] top.computer.ipp1[0]
+#{top.computer.ram_in[15:0]} top.computer.ram_in[15] top.computer.ram_in[14] top.computer.ram_in[13] top.computer.ram_in[12] top.computer.ram_in[11] top.computer.ram_in[10] top.computer.ram_in[9] top.computer.ram_in[8] top.computer.ram_in[7] top.computer.ram_in[6] top.computer.ram_in[5] top.computer.ram_in[4] top.computer.ram_in[3] top.computer.ram_in[2] top.computer.ram_in[1] top.computer.ram_in[0]
+#{top.computer.ram_out[15:0]} top.computer.ram_out[15] top.computer.ram_out[14] top.computer.ram_out[13] top.computer.ram_out[12] top.computer.ram_out[11] top.computer.ram_out[10] top.computer.ram_out[9] top.computer.ram_out[8] top.computer.ram_out[7] top.computer.ram_out[6] top.computer.ram_out[5] top.computer.ram_out[4] top.computer.ram_out[3] top.computer.ram_out[2] top.computer.ram_out[1] top.computer.ram_out[0]
+@200
+-
+-control
+@28
+top.computer.stall
+@29
+top.computer.clk
+@200
+-stage0_if
+@22
+#{top.computer.ram_out[15:0]} top.computer.ram_out[15] top.computer.ram_out[14] top.computer.ram_out[13] top.computer.ram_out[12] top.computer.ram_out[11] top.computer.ram_out[10] top.computer.ram_out[9] top.computer.ram_out[8] top.computer.ram_out[7] top.computer.ram_out[6] top.computer.ram_out[5] top.computer.ram_out[4] top.computer.ram_out[3] top.computer.ram_out[2] top.computer.ram_out[1] top.computer.ram_out[0]
+#{top.computer.instr[15:0]} top.computer.instr[15] top.computer.instr[14] top.computer.instr[13] top.computer.instr[12] top.computer.instr[11] top.computer.instr[10] top.computer.instr[9] top.computer.instr[8] top.computer.instr[7] top.computer.instr[6] top.computer.instr[5] top.computer.instr[4] top.computer.instr[3] top.computer.instr[2] top.computer.instr[1] top.computer.instr[0]
+#{top.computer.cntrl.opcode[4:0]} top.computer.cntrl.opcode[4] top.computer.cntrl.opcode[3] top.computer.cntrl.opcode[2] top.computer.cntrl.opcode[1] top.computer.cntrl.opcode[0]
+@200
+-stage1_id
+@28
+top.computer.stage1_id.controls.cycadv
+top.computer.stage1_id.controls.ret
+top.computer.stage1_id.controls.cal
+top.computer.stage1_id.controls.jmp
+top.computer.stage1_id.controls.pop
+top.computer.stage1_id.controls.psh
+top.computer.stage1_id.controls.mul
+top.computer.stage1_id.controls.iim
+top.computer.stage1_id.controls.wrf
+top.computer.stage1_id.controls.wre
+top.computer.stage1_id.controls.wrm
+top.computer.stage1_id.controls.wrr
+top.computer.stage1_id.controls.srr
+top.computer.stage1_id.controls.sre
+top.computer.stage1_id.controls.sro
+top.computer.stage1_id.controls.srm
+top.computer.stage1_id.controls.hlt
+#{top.computer.stage1_id.r0[2:0]} top.computer.stage1_id.r0[2] top.computer.stage1_id.r0[1] top.computer.stage1_id.r0[0]
+#{top.computer.stage1_id.r1[2:0]} top.computer.stage1_id.r1[2] top.computer.stage1_id.r1[1] top.computer.stage1_id.r1[0]
+@22
+#{top.computer.stage1_id.rdi[15:0]} top.computer.stage1_id.rdi[15] top.computer.stage1_id.rdi[14] top.computer.stage1_id.rdi[13] top.computer.stage1_id.rdi[12] top.computer.stage1_id.rdi[11] top.computer.stage1_id.rdi[10] top.computer.stage1_id.rdi[9] top.computer.stage1_id.rdi[8] top.computer.stage1_id.rdi[7] top.computer.stage1_id.rdi[6] top.computer.stage1_id.rdi[5] top.computer.stage1_id.rdi[4] top.computer.stage1_id.rdi[3] top.computer.stage1_id.rdi[2] top.computer.stage1_id.rdi[1] top.computer.stage1_id.rdi[0]
+#{top.computer.stage1_id.op0[15:0]} top.computer.stage1_id.op0[15] top.computer.stage1_id.op0[14] top.computer.stage1_id.op0[13] top.computer.stage1_id.op0[12] top.computer.stage1_id.op0[11] top.computer.stage1_id.op0[10] top.computer.stage1_id.op0[9] top.computer.stage1_id.op0[8] top.computer.stage1_id.op0[7] top.computer.stage1_id.op0[6] top.computer.stage1_id.op0[5] top.computer.stage1_id.op0[4] top.computer.stage1_id.op0[3] top.computer.stage1_id.op0[2] top.computer.stage1_id.op0[1] top.computer.stage1_id.op0[0]
+#{top.computer.stage1_id.op1[15:0]} top.computer.stage1_id.op1[15] top.computer.stage1_id.op1[14] top.computer.stage1_id.op1[13] top.computer.stage1_id.op1[12] top.computer.stage1_id.op1[11] top.computer.stage1_id.op1[10] top.computer.stage1_id.op1[9] top.computer.stage1_id.op1[8] top.computer.stage1_id.op1[7] top.computer.stage1_id.op1[6] top.computer.stage1_id.op1[5] top.computer.stage1_id.op1[4] top.computer.stage1_id.op1[3] top.computer.stage1_id.op1[2] top.computer.stage1_id.op1[1] top.computer.stage1_id.op1[0]
+@28
+#{top.computer.stage1_id.alu_op[2:0]} top.computer.stage1_id.alu_op[2] top.computer.stage1_id.alu_op[1] top.computer.stage1_id.alu_op[0]
+@200
+-signal2_ex
+@28
+top.computer.stage2_ex.controls.cycadv
+top.computer.stage2_ex.controls.ret
+top.computer.stage2_ex.controls.cal
+top.computer.stage2_ex.controls.jmp
+top.computer.stage2_ex.controls.pop
+top.computer.stage2_ex.controls.psh
+top.computer.stage2_ex.controls.mul
+top.computer.stage2_ex.controls.iim
+top.computer.stage2_ex.controls.wrf
+top.computer.stage2_ex.controls.wre
+top.computer.stage2_ex.controls.wrm
+top.computer.stage2_ex.controls.wrr
+top.computer.stage2_ex.controls.srr
+top.computer.stage2_ex.controls.sre
+top.computer.stage2_ex.controls.sro
+top.computer.stage2_ex.controls.srm
+top.computer.stage2_ex.controls.hlt
+#{top.computer.stage2_ex.r0[2:0]} top.computer.stage2_ex.r0[2] top.computer.stage2_ex.r0[1] top.computer.stage2_ex.r0[0]
+#{top.computer.stage2_ex.r1[2:0]} top.computer.stage2_ex.r1[2] top.computer.stage2_ex.r1[1] top.computer.stage2_ex.r1[0]
+@22
+#{top.computer.stage2_ex.rdi[15:0]} top.computer.stage2_ex.rdi[15] top.computer.stage2_ex.rdi[14] top.computer.stage2_ex.rdi[13] top.computer.stage2_ex.rdi[12] top.computer.stage2_ex.rdi[11] top.computer.stage2_ex.rdi[10] top.computer.stage2_ex.rdi[9] top.computer.stage2_ex.rdi[8] top.computer.stage2_ex.rdi[7] top.computer.stage2_ex.rdi[6] top.computer.stage2_ex.rdi[5] top.computer.stage2_ex.rdi[4] top.computer.stage2_ex.rdi[3] top.computer.stage2_ex.rdi[2] top.computer.stage2_ex.rdi[1] top.computer.stage2_ex.rdi[0]
+#{top.computer.stage2_ex.op0[15:0]} top.computer.stage2_ex.op0[15] top.computer.stage2_ex.op0[14] top.computer.stage2_ex.op0[13] top.computer.stage2_ex.op0[12] top.computer.stage2_ex.op0[11] top.computer.stage2_ex.op0[10] top.computer.stage2_ex.op0[9] top.computer.stage2_ex.op0[8] top.computer.stage2_ex.op0[7] top.computer.stage2_ex.op0[6] top.computer.stage2_ex.op0[5] top.computer.stage2_ex.op0[4] top.computer.stage2_ex.op0[3] top.computer.stage2_ex.op0[2] top.computer.stage2_ex.op0[1] top.computer.stage2_ex.op0[0]
+#{top.computer.stage2_ex.op1[15:0]} top.computer.stage2_ex.op1[15] top.computer.stage2_ex.op1[14] top.computer.stage2_ex.op1[13] top.computer.stage2_ex.op1[12] top.computer.stage2_ex.op1[11] top.computer.stage2_ex.op1[10] top.computer.stage2_ex.op1[9] top.computer.stage2_ex.op1[8] top.computer.stage2_ex.op1[7] top.computer.stage2_ex.op1[6] top.computer.stage2_ex.op1[5] top.computer.stage2_ex.op1[4] top.computer.stage2_ex.op1[3] top.computer.stage2_ex.op1[2] top.computer.stage2_ex.op1[1] top.computer.stage2_ex.op1[0]
+@28
+#{top.computer.stage2_ex.alu_op[2:0]} top.computer.stage2_ex.alu_op[2] top.computer.stage2_ex.alu_op[1] top.computer.stage2_ex.alu_op[0]
+@200
+-stage3_wb
+@28
+top.computer.stage3_wb.controls.cycadv
+top.computer.stage3_wb.controls.ret
+top.computer.stage3_wb.controls.cal
+top.computer.stage3_wb.controls.jmp
+top.computer.stage3_wb.controls.pop
+top.computer.stage3_wb.controls.psh
+top.computer.stage3_wb.controls.mul
+top.computer.stage3_wb.controls.iim
+top.computer.stage3_wb.controls.wrf
+top.computer.stage3_wb.controls.wre
+top.computer.stage3_wb.controls.wrm
+top.computer.stage3_wb.controls.wrr
+top.computer.stage3_wb.controls.srr
+top.computer.stage3_wb.controls.sre
+top.computer.stage3_wb.controls.sro
+top.computer.stage3_wb.controls.srm
+top.computer.stage3_wb.controls.hlt
+#{top.computer.stage3_wb.r0[2:0]} top.computer.stage3_wb.r0[2] top.computer.stage3_wb.r0[1] top.computer.stage3_wb.r0[0]
+#{top.computer.stage3_wb.r1[2:0]} top.computer.stage3_wb.r1[2] top.computer.stage3_wb.r1[1] top.computer.stage3_wb.r1[0]
+@22
+#{top.computer.stage3_wb.rdi[15:0]} top.computer.stage3_wb.rdi[15] top.computer.stage3_wb.rdi[14] top.computer.stage3_wb.rdi[13] top.computer.stage3_wb.rdi[12] top.computer.stage3_wb.rdi[11] top.computer.stage3_wb.rdi[10] top.computer.stage3_wb.rdi[9] top.computer.stage3_wb.rdi[8] top.computer.stage3_wb.rdi[7] top.computer.stage3_wb.rdi[6] top.computer.stage3_wb.rdi[5] top.computer.stage3_wb.rdi[4] top.computer.stage3_wb.rdi[3] top.computer.stage3_wb.rdi[2] top.computer.stage3_wb.rdi[1] top.computer.stage3_wb.rdi[0]
+#{top.computer.stage3_wb.op0[15:0]} top.computer.stage3_wb.op0[15] top.computer.stage3_wb.op0[14] top.computer.stage3_wb.op0[13] top.computer.stage3_wb.op0[12] top.computer.stage3_wb.op0[11] top.computer.stage3_wb.op0[10] top.computer.stage3_wb.op0[9] top.computer.stage3_wb.op0[8] top.computer.stage3_wb.op0[7] top.computer.stage3_wb.op0[6] top.computer.stage3_wb.op0[5] top.computer.stage3_wb.op0[4] top.computer.stage3_wb.op0[3] top.computer.stage3_wb.op0[2] top.computer.stage3_wb.op0[1] top.computer.stage3_wb.op0[0]
+#{top.computer.stage3_wb.op1[15:0]} top.computer.stage3_wb.op1[15] top.computer.stage3_wb.op1[14] top.computer.stage3_wb.op1[13] top.computer.stage3_wb.op1[12] top.computer.stage3_wb.op1[11] top.computer.stage3_wb.op1[10] top.computer.stage3_wb.op1[9] top.computer.stage3_wb.op1[8] top.computer.stage3_wb.op1[7] top.computer.stage3_wb.op1[6] top.computer.stage3_wb.op1[5] top.computer.stage3_wb.op1[4] top.computer.stage3_wb.op1[3] top.computer.stage3_wb.op1[2] top.computer.stage3_wb.op1[1] top.computer.stage3_wb.op1[0]
+@28
+#{top.computer.stage3_wb.alu_op[2:0]} top.computer.stage3_wb.alu_op[2] top.computer.stage3_wb.alu_op[1] top.computer.stage3_wb.alu_op[0]
+[pattern_trace] 1
+[pattern_trace] 0

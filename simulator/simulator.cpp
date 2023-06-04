@@ -111,6 +111,29 @@ constexpr uint32_t hex_val(const char hex)
 		return hex - 'A' + 10;
 }
 
+constexpr const char* ext_reg(const uint8_t id)
+{
+	switch(id)
+	{
+	case 0:
+		return "IP";
+	case 1:
+		return "SP";
+	case 2:
+		return "LR";
+	case 3:
+		return "INVALID";
+	case 4:
+		return "UI";
+	case 5:
+		return "FL";
+	case 6:
+		return "INVALID";
+	case 7:
+		return "CF";
+	}
+	return "INVALID";
+}
 
 
 uint16_t ext[8];
@@ -244,28 +267,40 @@ int main(int argc, char* argv[])
 		cycle_count++;
 		if(debug)
 		{
-			if(false == run) std::getline(std::cin, line);
+			if(false  == run) std::getline(std::cin, line);
 			if("exit" == line) goto end;
+			if("p r"  == line)
+			{
+				std::cout << "INTERNAL\n";
+				for(int i = 0; i <= 7; i++)
+					std::cout << "\tR" << i << ": " << reg[i] << '\n';
+				std::cout << "EXTERNAL\n";
+				for(int i = 0; i <= 7; i++)
+					std::cout << "\tE" << i << ": " << ext[i] << '\n';
+
+				line.clear();
+			}
 			if(0 != line.size()) run = true;
 		}
 
-		const auto& instr = instructions[instruction_pointer >> 1];
+		const auto& instr = instructions[instruction_pointer];
 
 		uint16_t& reg0 = reg[instr.op0.r0];
 		
 		const uint16_t ccc = instr.op0.ccc;
 		
+		const uint16_t ui_saved = upper_immiediate;
 		uint16_t second;
 		if(instr.is_imm)
-			second = (upper_immiediate << 8) | instr.op1.imm8;	
+			second = (ui_saved << 8) | instr.op1.imm8;	
 		else
 			second = reg[instr.op1.r1];
 
 		upper_immiediate = 0;
 	
-		DEBUG_PRINT((instruction_pointer >> 1) << ' ' << reg0 << ' ' << second << ' ');
+		DEBUG_PRINT((instruction_pointer) << ' ' << reg0 << ' ' << second << ' ');
 
-		instruction_pointer += 2;
+		instruction_pointer++;
 
 		switch(instr.op)
 		{
@@ -352,14 +387,26 @@ int main(int argc, char* argv[])
 		case Opcode::RDX: 
 		{
 			DEBUG_PRINT("RDX\n");
-			reg0 = ext[instr.op1.r1];
+			if(4 == instr.op1.r1) //UI
+			{
+				reg0 = ui_saved;
+				VERBOSE_PRINT("R" << +instr.op0.r0 << " <= UI (" << reg0 << ")\n");
+			}
+			else
+			{
+				reg0 = ext[instr.op1.r1];
+				VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << ext_reg(instr.op1.r1) << " (" << reg0 << ")\n");
+			}
 			break;
 		}
 		case Opcode::WRX: 
 		{
 			DEBUG_PRINT("WRX\n");
 			if(instr.op0.r0 != 7) //dont write to feature flags
+			{
 				ext[instr.op0.r0] = second;
+				VERBOSE_PRINT(ext_reg(instr.op0.r0) << " <= " << second << "\n");
+			}
 			break;
 		}
 		case Opcode::PSH: 
@@ -450,7 +497,7 @@ int main(int argc, char* argv[])
 
 			if(flags_register & ccc)
 			{
-				instruction_pointer = second << 1;
+				instruction_pointer = second;
 				if(debug)
 				{
 					const auto& fnd = debug_info_labels.find(second);
@@ -482,7 +529,7 @@ int main(int argc, char* argv[])
 			if(flags_register & ccc)
 			{
 				link_register = instruction_pointer;
-				instruction_pointer = second << 1;
+				instruction_pointer = second;
 				
 				if(debug)
 				{

@@ -363,9 +363,39 @@ parse_2nd:
 			if('0' > contents[2][0]
 			|| '9' < contents[2][0])
 			{
-				if("LR" == contents[2])
+				if("IP"s == contents[2])
+				{
+					op1 = 0;
+					is_imm = false;
+					goto place_instr;
+				}
+				if("SP"s == contents[2])
+				{
+					op1 = 1;
+					is_imm = false;
+					goto place_instr;
+				}
+				if("LR"s == contents[2])
 				{
 					op1 = 2;
+					is_imm = false;
+					goto place_instr;
+				}
+				if("UI"s == contents[2])
+				{
+					op1 = 4;
+					is_imm = false;
+					goto place_instr;
+				}
+				if("FL"s == contents[2])
+				{
+					op1 = 5;
+					is_imm = false;
+					goto place_instr;
+				}
+				if("CF"s == contents[2])
+				{
+					op1 = 7;
 					is_imm = false;
 					goto place_instr;
 				}

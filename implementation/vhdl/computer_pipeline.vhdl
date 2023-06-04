@@ -2,7 +2,7 @@
 	DUs in file
 		computer
 
-	this computer is {not pipelined; sub scalar; in order} 
+	this computer is {pipelined; sub scalar; in order} 
 	implementation of isa specified in intruction_set.txt
 
 */
@@ -11,6 +11,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 USE work.p_control.ALL;
+USE work.p_stage.ALL;
 
 ENTITY computer IS 
 END ENTITY computer;
@@ -104,24 +105,24 @@ ARCHITECTURE behav OF computer IS
 			controls : OUT t_controls);
 	END COMPONENT control;
 
+	COMPONENT stage IS
+		PORT(
+			i0  : IN  t_stage;
+			o0  : OUT t_stage := (controls => (OTHERS => '0'), r0 | r1 | alu_op => (OTHERS => '0'), rdi | op0 | op1 => (OTHERS => '0'));
+	
+			clk : IN  std_ulogic);
+	END COMPONENT stage;
 
+	--to model pipeline speedup, arbitrarly can be set to lower value
 	CONSTANT clk_period : time       :=  1 NS;
 	SIGNAL   clk        : std_ulogic := '0';
 
 
-	SIGNAL   instr      : std_ulogic_vector(15 DOWNTO 0) := x"0000";
-	SIGNAL   r0         : std_ulogic_vector( 2 DOWNTO 0);
-	SIGNAL   r1         : std_ulogic_vector( 2 DOWNTO 0);
-	SIGNAL   rdi        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL   r0o        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL   r1o        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL   op0        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL   op1        : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL   imm08      : std_ulogic_vector( 7 DOWNTO 0);
-	SIGNAL 	 alu_op     : std_ulogic_vector( 2 DOWNTO 0);
+	SIGNAL  instr       : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 
-	SIGNAL 	controls    : t_controls;
-
+	SIGNAL  rdi         : std_ulogic_vector(15 DOWNTO 0); 
+	SIGNAL 	r0o         : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL 	r1o         : std_ulogic_vector(15 DOWNTO 0);
 
 	SIGNAL  alu_out     : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  mul_out     : std_ulogic_vector(15 DOWNTO 0);
@@ -139,12 +140,21 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL 	r_fl : t_register := (x"0000", x"0000", '0');
 
 
+	SIGNAL  delayed_ip : std_ulogic_vector(15 DOWNTO 0) := x"0000";
+
+
 	SIGNAL 	spp2  : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL 	sps2  : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL 	ipp1  : std_ulogic_vector(15 DOWNTO 0);
 
 	SIGNAL 	flcmp : std_ulogic_vector( 2 DOWNTO 0);
 
+	--SIGNAL stage0 : t_stage; -- not needed since there are NO signals then
+	SIGNAL 	stage1_id : t_stage;
+	SIGNAL 	stage2_ex : t_stage;
+	SIGNAL 	stage3_wb : t_stage;
+
+	SIGNAL  stall     : std_ulogic := '0';
 
 BEGIN 
 	PROCESS IS 
@@ -152,7 +162,7 @@ BEGIN
 		clk <= '0' ;             WAIT FOR clk_period / 2;
 		
 		--whenever hlt = 0 there is no need to continue the simulation
-		assert controls.hlt = '0' 
+		assert stage3_wb.controls.hlt = '0' 
 			report "simulation stopped by hlt signal" & CR severity failure;
 		clk <= '1'; WAIT FOR clk_period / 2;
 
@@ -163,35 +173,35 @@ BEGIN
 		END IF;
 	END PROCESS;
 
-	rgf0: reg_file PORT MAP(rd  => r0,
-	                        r0  => r0,
-	                        r1  => r1,
-	                        i0  => rdi,
+	rgf0: reg_file PORT MAP(rd  => stage3_wb.r0,
+	                        r0  => stage1_id.r0,
+	                        r1  => stage1_id.r1,
+	                        i0  => stage3_wb.rdi,
 	                        o0  => r0o,
 	                        o1  => r1o,
-	                        we  => controls.wrr,
+	                        we  => stage3_wb.controls.wrr,
 	                        clk => clk);
 
-	alu0: alu PORT MAP(i0 => op0,
-	                   i1 => op1,
+	alu0: alu PORT MAP(i0 => stage2_ex.op0,
+	                   i1 => stage2_ex.op1,
 	                   o0 => alu_out,
-	                   op => alu_op);
+	                   op => stage2_ex.alu_op);
 
-	
 	ram0: ram PORT MAP(a0  => ram_adr,
 	                   i0  => ram_in,
 	                   o0  => ram_out,
-	                   we  => controls.wrm,
+	                   we  => stage2_ex.controls.wrm,
 					   rdy => mem_rdy,
 	                   clk => clk);
-	mul0: multiplier PORT MAP(i0 => op0,
-	                          i1 => op1,
+
+	mul0: multiplier PORT MAP(i0 => stage2_ex.op0,
+	                          i1 => stage2_ex.op1,
 	                          o0 => mul_out);
 
 	
 	cntrl: control PORT MAP(instr    => instr,
-	                        controls => controls,
-	                        alu_op   => alu_op,  
+	                        controls => stage1_id.controls,
+	                        alu_op   => stage1_id.alu_op,  
 	                        clk      => clk);
 
 	reg_ip: reg_16bit PORT MAP(i0  => r_ip.i0,
@@ -231,81 +241,105 @@ BEGIN
 	                            o0 => ipp1,
 	                            oc => OPEN);
 	
+	
+	s2_d: stage PORT MAP(i0  => stage1_id,
+	                     o0  => stage2_ex,
+	                     clk => clk);
+	s3_d: stage PORT MAP(i0  => (controls => stage2_ex.controls, alu_op => stage2_ex.alu_op,
+	                             r0       => stage2_ex.r0,       r1     => stage2_ex.r1,
+	                             op0      => stage2_ex.op0,      op1    => stage2_ex.op1, 
+	                             rdi      => rdi),
+	                     o0  => stage3_wb,
+	                     clk => clk);
 
+	stall <= '1' WHEN stage2_ex.controls.jmp = '1' AND flcmp /= "000"
+	    ELSE '1' WHEN stage2_ex.controls.cal = '1' AND flcmp /= "000"
+	    ELSE '1' WHEN stage2_ex.controls.ret = '1' AND flcmp /= "000"
+	    ELSE '1' WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "000"
+	    ELSE '0';
 	--retrievieng instruction, only when new instruction should be taken
-	instr <= ram_out WHEN controls.cycadv = '1'
+	instr <= x"0000" WHEN stall = '1' 
+	    ELSE ram_out WHEN stage2_ex.controls.cycadv = '1' AND rising_edge(clk)
 	    ELSE UNAFFECTED;
 	
-	--retrieviegn control stuff from instruction that does not require control
-	imm08 <= instr( 7 DOWNTO 0);
-	r0    <= instr(10 DOWNTO 8);
-	r1    <= instr( 7 DOWNTO 5);
+	--retrieving control stuff from instruction that does not require control
+	stage1_id.r0 <= instr(10 DOWNTO 8);
+	stage1_id.r1 <= instr( 7 DOWNTO 5);
 	
 	--retrievieng data from reg file
-	op0 <= r0o;
-	op1 <= r1o WHEN controls.iim /= '1'
-	  ELSE r_ui.o0(7 DOWNTO 0) & imm08;
+	stage1_id.op0 <=           rdi WHEN stage2_ex.r0 = stage1_id.r0 AND stage2_ex.controls.wrr = '1'
+	            ELSE stage3_wb.rdi WHEN stage3_wb.r0 = stage1_id.r0 AND stage3_wb.controls.wrr = '1'
+	            ELSE r0o;
+	stage1_id.op1 <= r_ui.i0(7 DOWNTO 0) & instr( 7 DOWNTO 0) WHEN stage1_id.controls.iim = '1'
+	            ELSE           rdi WHEN stage2_ex.r0 = stage1_id.r1 AND stage2_ex.controls.wrr = '1'
+	            ELSE stage3_wb.rdi WHEN stage3_wb.r0 = stage1_id.r1 AND stage3_wb.controls.wrr = '1'
+	            ELSE r1o; 
 
 	--memory stuff
-	ram_adr <= r_ip.o0(14 DOWNTO 0) & "0" WHEN controls.cycadv = '1'
+	ram_adr <= r_ip.o0(14 DOWNTO 0) & "0" WHEN stage2_ex.controls.cycadv = '1'
 	      ELSE dat_adr;
 	
-	ram_in  <= op0 WHEN controls.wrm = '1'
+	ram_in  <= stage2_ex.op0 WHEN stage2_ex.controls.wrm = '1'
 	      ELSE UNAFFECTED;
 	
-	dat_adr <= sps2    WHEN controls.psh = '1'
-	      ELSE r_sp.o0 WHEN controls.pop = '1'
-	      ELSE op1     WHEN controls.wrm = '1' OR controls.srm = '1'
+	dat_adr <= sps2          WHEN stage2_ex.controls.psh = '1'
+	      ELSE r_sp.o0       WHEN stage2_ex.controls.pop = '1'
+	      ELSE stage2_ex.op1 WHEN stage2_ex.controls.wrm = '1' OR stage2_ex.controls.srm = '1'
 	      ELSE x"0000";
 
 	--input to reg file
-	rdi   <= op1     WHEN controls.sro = '1'
-	    ELSE alu_out WHEN controls.srr = '1'
-	    ELSE ram_out WHEN controls.srm = '1' 
-		ELSE mul_out WHEN controls.mul = '1'
-	    ELSE r_ip.o0 WHEN controls.sre = '1' AND r1 = "000"
-	    ELSE r_sp.o0 WHEN controls.sre = '1' AND r1 = "001" 
-	    ELSE r_lr.o0 WHEN controls.sre = '1' AND r1 = "010" 
-	    ELSE r_ui.o0 WHEN controls.sre = '1' AND r1 = "100" 
-	    ELSE r_fl.o0 WHEN controls.sre = '1' AND r1 = "101" 
-	    ELSE x"0001" WHEN controls.sre = '1' AND r1 = "111" 
-	    ELSE UNAFFECTED;
+	rdi <= stage2_ex.op1 WHEN stage2_ex.controls.sro = '1'
+	  ELSE alu_out       WHEN stage2_ex.controls.srr = '1'
+	  ELSE ram_out       WHEN stage2_ex.controls.srm = '1' 
+	  ELSE mul_out       WHEN stage2_ex.controls.mul = '1'
+	  ELSE r_ip.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "000"
+	  ELSE r_sp.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "001" 
+	  ELSE r_lr.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "010" 
+	  ELSE r_ui.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "100" 
+	  ELSE r_fl.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "101" 
+	  ELSE x"0001"       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "111" 
+	  ELSE UNAFFECTED;
+
 
 	--input to external register
 
-	r_sp.i0 <= spp2 WHEN controls.pop = '1'
-	      ELSE sps2 WHEN controls.psh = '1'
-	      ELSE op1  WHEN controls.wre = '1' AND r0 = "001"
+	r_sp.i0 <= spp2           WHEN stage2_ex.controls.pop = '1'
+	      ELSE sps2           WHEN stage2_ex.controls.psh = '1'
+	      ELSE stage2_ex.op1  WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "001"
 	      ELSE UNAFFECTED;
-	r_sp.we <= '1' WHEN  controls.pop = '1' 
-	                 OR  controls.psh = '1'
-	                 OR (controls.wre = '1' AND r0 = "001")
+	r_sp.we <= '1' WHEN  stage2_ex.controls.pop = '1' 
+	                 OR  stage2_ex.controls.psh = '1'
+	                 OR (stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "001")
 		  ELSE '0';
 	
-	r_ui.i0 <= op1 WHEN controls.wre = '1' AND r0 = "100"
+	r_ui.i0 <= stage2_ex.op1 WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "100"
 	      ELSE x"0000";
 	
-	r_ip.i0 <= op1     WHEN controls.jmp = '1' AND flcmp /= "000" 
-	      ELSE op1     WHEN controls.cal = '1' AND flcmp /= "000" 
-	      ELSE r_lr.o0 WHEN controls.ret = '1' AND flcmp /= "000" 
-	      ELSE op1     WHEN controls.wre = '1' AND r0     = "000" 
+	r_ip.i0 <= stage2_ex.op1 WHEN stage2_ex.controls.jmp = '1' AND flcmp        /= "000" 
+	      ELSE stage2_ex.op1 WHEN stage2_ex.controls.cal = '1' AND flcmp        /= "000" 
+	      ELSE r_lr.o0       WHEN stage2_ex.controls.ret = '1' AND flcmp        /= "000" 
+	      ELSE stage2_ex.op1 WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0  = "000" 
 	      ELSE ipp1;
-	r_ip.we <= controls.cycadv;
+	r_ip.we <= stage2_ex.controls.cycadv;
 
-	r_fl.i0 <= op1     WHEN controls.wre = '1' AND r0 = "101" 
-	      ELSE x"0004" WHEN alu_out(15)  = '1'
-	      ELSE x"0002" WHEN alu_out      = x"0000"     
+	delayed_ip <= r_ip.o0    WHEN rising_edge(clk)
+	      ELSE UNAFFECTED;
+
+	r_fl.i0 <= stage2_ex.op1 WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "101" 
+	      ELSE x"0004"       WHEN alu_out(15)  = '1'
+	      ELSE x"0002"       WHEN alu_out      = x"0000"     
 	      ELSE x"0001";
-	r_fl.we <= controls.wrf;
+	r_fl.we <= stage2_ex.controls.wrf;
 
-	r_lr.i0 <= ipp1 WHEN  controls.cal = '1' AND flcmp /= "000" 
-	      ELSE op1  WHEN  controls.wre = '1' AND r0     = "010"
+	r_lr.i0 <= delayed_ip    WHEN stage2_ex.controls.cal = '1' AND flcmp        /= "000" 
+	      ELSE stage2_ex.op1 WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0  = "010"
 		  ELSE UNAFFECTED;
-	r_lr.we <= '1'  WHEN (controls.cal = '1' AND flcmp /= "000")
-	                  OR (controls.wre = '1' AND r0     = "010")
+	r_lr.we <= '1'  WHEN (stage2_ex.controls.cal = '1' AND flcmp        /= "000")
+	                  OR (stage2_ex.controls.wre = '1' AND stage2_ex.r0  = "010")
 		  ELSE '0';
 
 	--flag comparison
-	flcmp <= r0 AND r_fl.o0(2 DOWNTO 0);
+	flcmp <= stage1_id.r0 AND r_fl.i0(2 DOWNTO 0) WHEN stage2_ex.controls.wrf = '1'
+	    ELSE stage2_ex.r0 AND r_fl.o0(2 DOWNTO 0);
 
 END ARCHITECTURE behav;
