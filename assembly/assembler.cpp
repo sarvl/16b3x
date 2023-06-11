@@ -102,7 +102,13 @@ bool error = false;
 void print_Error(const std::string& str, const int line_num)
 {
 	std::cout << "\033[0;31mERROR:\033[0m " << str << "\n";
-	std::cout << "\033[0;35m\tline:\033[0m " << line_num << "\n";
+	std::cout << "\033[0;36m\tline:\033[0m " << line_num << "\n";
+	error = true;
+}
+void print_Warning(const std::string& str, const int line_num)
+{
+	std::cout << "\033[0;35mWARNIGN:\033[0m " << str << "\n";
+	std::cout << "\033[0;36m\tline:\033[0m " << line_num << "\n";
 	error = true;
 }
 
@@ -184,6 +190,40 @@ int main(int argc, char* argv[])
 
 			labels.emplace_back(std::move(contents[0]), instructions.size());
 
+			continue;
+		}
+		//attribute
+		if('[' == contents[0][0] && ']' == contents.back().back())
+		{
+			if("[ALIGN" == contents[0])
+			{
+				if(2 != contents.size())
+				{
+					print_Warning("Not a valid argument coun for alignment", line_num);
+				}
+				uint16_t num = 0;
+				for(const char c : contents[1])
+				{
+					if(']' == c)
+						break;
+
+					if('0' > c
+					|| '9' < c)
+					{
+						print_Warning("Not a valid number for alignment", line_num);
+						continue;
+					}
+	
+					num = num * 10 + c - '0';
+				}
+
+				while(instructions.size() % num != 0)
+					instructions.emplace_back(Opcode::NOP, 0, false, 0);
+			}
+			else
+			{
+				print_Warning("unknown attribute", line_num);
+			}
 			continue;
 		}
 
