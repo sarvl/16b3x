@@ -97,11 +97,12 @@ ARCHITECTURE behav OF computer IS
 
 	COMPONENT control IS 
 		PORT(
-			instr    : IN  std_ulogic_vector(15 DOWNTO 0);
-			clk      : IN  std_ulogic := '0';
+			instr         : IN  std_ulogic_vector(15 DOWNTO 0);
+			clk           : IN  std_ulogic := '0';
+			can_skip_wait : IN  std_ulogic := '0'; 
 		
-			alu_op   : OUT std_ulogic_vector( 2 DOWNTO 0);
-			controls : OUT t_controls);
+			alu_op        : OUT std_ulogic_vector( 2 DOWNTO 0);
+			controls      : OUT t_controls);
 	END COMPONENT control;
 
 
@@ -191,7 +192,8 @@ BEGIN
 	
 	cntrl: control PORT MAP(instr    => instr,
 	                        controls => controls,
-	                        alu_op   => alu_op,  
+	                        alu_op   => alu_op, 
+	                        can_skip_wait => '0',
 	                        clk      => clk);
 
 	reg_ip: reg_16bit PORT MAP(i0  => r_ip.i0,

@@ -27,8 +27,9 @@ USE ieee.numeric_std.ALL;
 ENTITY ram IS
 	PORT(
 		a0  : IN  std_ulogic_vector(15 DOWNTO 0) := x"0000";
-		i0  : IN  std_ulogic_vector(15 DOWNTO 0);
-		o0  : OUT std_ulogic_vector(15 DOWNTO 0);
+		i0s : IN  std_ulogic_vector(15 DOWNTO 0);
+		o0s : OUT std_ulogic_vector(15 DOWNTO 0);
+		o0d : OUT std_ulogic_vector(31 DOWNTO 0) := x"00000000";
 
 		we  : IN  std_ulogic := '0';
 		rdy : OUT std_ulogic := '0';
@@ -71,11 +72,11 @@ ARCHITECTURE behav OF ram IS
 		05 => x"0F000000",
 	*/
 	--pipeline_stresstest.asm
---	/*
+	/*
 		00 => x"28050105", 01 => x"F0026C01", 02 => x"2A00FA07", 03 => x"C0010010", 04 => x"CA01A306",
 		05 => x"6C01048C", 06 => x"6A14B700", 07 => x"2D098504", 08 => x"3D643664", 09 => x"05BD6815",
 		10 => x"AF0E0F00",
---	*/
+	*/
 	--matmult.asm
 	/*
 		00 => x"A7422A00", 01 => x"8900A207", 02 => x"0218C901", 03 => x"A1040045", 04 => x"B7002909",
@@ -99,7 +100,7 @@ ARCHITECTURE behav OF ram IS
 		25 => x"35A036A2", 26 => x"37A40F00",
 	*/
 	--matmult_instr.asm
-	/*
+--	/*
 		00 => x"A7342909", 01 => x"C0100107", 02 => x"C802C901", 03 => x"A103B700", 04 => x"07060526",
 		05 => x"07B0C002", 06 => x"C1060406", 07 => x"052604B0", 08 => x"0798C002", 09 => x"C1060406",
 		10 => x"052604B0", 11 => x"07980747", 12 => x"B700074C", 13 => x"770039C8", 14 => x"C10239CA",
@@ -109,15 +110,56 @@ ARCHITECTURE behav OF ram IS
 		30 => x"6C022900", 31 => x"6C032A00", 32 => x"AF196C03", 33 => x"2F0000E6", 34 => x"C70201E6",
 		35 => x"C70202E6", 36 => x"C70203E6", 37 => x"C70204E6", 38 => x"C70205E6", 39 => x"C70206E6",
 		40 => x"C70207E6", 41 => x"0F000000",
+--	*/
+	--oooe_simplest.asm
+	/*
+		00 => x"28002901", 01 => x"2A022B03", 02 => x"00380278", 03 => x"01190279", 04 => x"005D017D",
+		05 => x"00180138", 06 => x"0F000000",
+	*/
+	--oooe_alu_conflict_0.asm
+	/*
+		00 => x"28012902", 01 => x"2A042B08", 02 => x"00580318", 03 => x"02380218", 04 => x"0F000000",
+	*/
+	--oooe_alu_conflict_1.asm
+	/*
+		00 => x"28012902", 01 => x"2A042B08", 02 => x"00580318", 03 => x"02380278", 04 => x"0F000000",
+	*/
+	--oooe_alu_conflict_2.asm
+	/*
+		00 => x"28012902", 01 => x"2A042B08", 02 => x"00580318", 03 => x"02780465", 04 => x"0F000000",
+	*/
+	--oooe_alu_conflict_3.asm
+	/*
+		00 => x"28012902", 01 => x"2A042B08", 02 => x"C0010118", 03 => x"02380358", 04 => x"2C102D20",
+		05 => x"00000000", 06 => x"0F000000",
+	*/
+	--oooe_memory_0.asm
+	/*
+		00 => x"28642968", 01 => x"38643968", 02 => x"35643668", 03 => x"0F000000",
+	*/
+	--oooe_branch_aligned.asm
+	/*
+		00 => x"28012902", 01 => x"2A042B08", 02 => x"0351A10A", 03 => x"2C642D68", 04 => x"0F000000",
+		05 => x"2C102D20", 06 => x"0F000000",
+	*/
+	--oooe_branch_misaligned.asm
+	/*
+		00 => x"28012902", 01 => x"2A042B08", 02 => x"0351A109", 03 => x"2C642D68", 04 => x"0F002C10",
+		05 => x"2D200F00",
+	*/
+	--oooe_fib.asm
+	/*
+		00 => x"28002F07", 01 => x"29018F00", 02 => x"A60C0000", 03 => x"02050025", 04 => x"0158CF01",
+		05 => x"A3060000", 06 => x"38500F00",
 	*/
 	OTHERS => x"00000000"
 	);
 
 	SIGNAL addr     : integer RANGE 16383 DOWNTO 0;
-	SIGNAL mem_data : std_ulogic_vector(31 DOWNTO 0);
+	SIGNAL mem_data : std_ulogic_vector(31 DOWNTO 0) := x"00000000";
 	SIGNAL ms_half  : std_ulogic;
 
-	SIGNAL mem_out     : std_ulogic_vector(31 DOWNTO 0);
+	SIGNAL mem_out     : std_ulogic_vector(31 DOWNTO 0) := x"00000000";
 	SIGNAL mem_in      : std_ulogic_vector(31 DOWNTO 0);
 BEGIN
 	--LSb is ignored
@@ -130,16 +172,17 @@ BEGIN
 	ms_half  <= NOT a0(1);
 	mem_data <= data(addr);
 
-	mem_in <= mem_data(31 DOWNTO 16) & i0 WHEN ms_half = '0'
-	     ELSE i0 & mem_data(15 DOWNTO  0);
+	mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
+	     ELSE i0s & mem_data(15 DOWNTO  0);
 
 	data(addr) <= mem_in WHEN we = '1' AND rising_edge(clk)
 	         ELSE UNAFFECTED;
 
 	mem_out <= mem_data; 
 
-	o0  <= mem_out(31 DOWNTO 16) WHEN ms_half = '1'
+	o0s <= mem_out(31 DOWNTO 16) WHEN ms_half = '1'
 	  ELSE mem_out(15 DOWNTO  0); 
+	o0d <= mem_out;
 
 	--models delay
 	--rdy <= '1' AFTER 10 NS, '0' AFTER 10.5   NS WHEN rising_edge(clk)

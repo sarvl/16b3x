@@ -4,15 +4,21 @@ CY := '\033[0;33m' #color yellow
 
 ALU  := alu
 REGS := registers
+#REGS := registers_oooe
 RAM  := ram
 #RAM  := ram_cache
+#RAM  := ram_oooe
 CTRL := control
 CPU  := computer_simple
 #CPU  := computer_pipeline
+#CPU  := computer_oooe
+
+WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Wspecs -Wport-bounds -Wruntime-error -Wunused -Wnowrite -Wothers -Wuseless
+#WARN := 
 
 FILES := ${ALU}.o ${RAM}.o ${CTRL}.o ${REGS}.o  ${CPU}.o 
 
-UPPER_LIMIT := 2000ns
+UPPER_LIMIT := 4000ns
 
 default:
 	@echo -e no option specified
@@ -48,44 +54,60 @@ run: clear
 
 elaborate:
 	@echo -e ${CR}elaborating${CD}
-	@ghdl -e --std=08 computer
+	@ghdl -e --std=08 ${WARN} computer
 
 analyse: ${FILES}
 
 alu.o: alu.vhdl
 	@echo -e ${CY}analysing alu.vhdl${CD}
-	@ghdl -a --std=08 alu.vhdl
+	@ghdl -a --std=08 ${WARN} alu.vhdl
 
 registers.o: registers.vhdl
 	@echo -e ${CY}analysing registers.vhdl${CD}
-	@ghdl -a --std=08 registers.vhdl
+	@ghdl -a --std=08 ${WARN} registers.vhdl
+
+registers_oooe.o: registers_oooe.vhdl
+	@echo -e ${CY}analysing registers_oooe.vhdl${CD}
+	@ghdl -a --std=08 ${WARN} registers_oooe.vhdl
 
 ram.o: ram.vhdl
 	@echo -e ${CY}analysing ram.vhdl${CD}
-	@ghdl -a --std=08 ram.vhdl
+	@ghdl -a --std=08 ${WARN} ram.vhdl
 
 ram_cache.o: ram_cache.vhdl
 	@echo -e ${CY}analysing ram_cache.vhdl${CD}
-	@ghdl -a --std=08 ram_cache.vhdl
+	@ghdl -a --std=08 ${WARN} ram_cache.vhdl
+
+ram_oooe.o: ram_oooe.vhdl
+	@echo -e ${CY}analysing ram_oooe.vhdl${CD}
+	@ghdl -a --std=08 ${WARN} ram_oooe.vhdl
 
 control.o: control.vhdl
 	@echo -e ${CY}analysing control.vhdl${CD}
-	@ghdl -a --std=08 control.vhdl
+	@ghdl -a --std=08 ${WARN} control.vhdl
 
 computer_simple.o: control.o computer_simple.vhdl
 	@echo -e ${CY}analysing computer_simple.vhdl${CD}
-	@ghdl -a --std=08 computer_simple.vhdl
+	@ghdl -a --std=08 ${WARN} computer_simple.vhdl
 
 computer_pipeline.o: control.o computer_pipeline.vhdl
 	@echo -e ${CY}analysing computer_pipeline.vhdl${CD}
-	@ghdl -a --std=08 computer_pipeline.vhdl
+	@ghdl -a --std=08 ${WARN} computer_pipeline.vhdl
+
+computer_oooe.o: control.o computer_oooe.vhdl
+	@echo -e ${CY}analysing computer_oooe.vhdl${CD}
+	@ghdl -a --std=08 ${WARN} computer_oooe.vhdl
 	
 alu.vhdl:
 	@touch alu.vhdl
 registers.vhdl:
 	@touch registers.vhdl
+registers_oooe.vhdl:
+	@touch registers_oooe.vhdl
 ram_cache.vhdl:
 	@touch ram_cache.vhdl
+ram_oooe.vhdl:
+	@touch ram_oooe.vhdl
 ram.vhdl:
 	@touch ram.vhdl
 control.vhdl:
@@ -94,4 +116,6 @@ computer_simple.vhdl:
 	@touch computer_simple.vhdl
 computer_pipeline.vhdl:
 	@touch computer_pipeline.vhdl
+computer_oooe.vhdl:
+	@touch computer_oooe.vhdl
 

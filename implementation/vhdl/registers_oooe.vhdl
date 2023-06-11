@@ -14,6 +14,10 @@
 		we,   when '1', enable write
 		clk,  synchronization
 
+
+		IT ASSUMES THERE IS NO SIMULTANEOUS WRITE TO THE SAME REGISTER FROM 2 SOURCES
+		IF THERE IS THEN GOOD LUCK
+
 	reg	
 		provides support for storing single bit 
 		input on i0, output on o0
@@ -45,17 +49,27 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY reg_file IS 
 	PORT(
-		i0  : IN  std_ulogic_vector(15 DOWNTO 0);
+		i0f : IN  std_ulogic_vector(15 DOWNTO 0);
+		i0s : IN  std_ulogic_vector(15 DOWNTO 0);
 		
-		o0  : OUT std_ulogic_vector(15 DOWNTO 0);
-		o1  : OUT std_ulogic_vector(15 DOWNTO 0);
+		o0f : OUT std_ulogic_vector(15 DOWNTO 0);
+		o1f : OUT std_ulogic_vector(15 DOWNTO 0);
+		
+		o0s : OUT std_ulogic_vector(15 DOWNTO 0);
+		o1s : OUT std_ulogic_vector(15 DOWNTO 0);
 
 		
-		rd  : IN  std_ulogic_vector(2 DOWNTO 0);
-		r0  : IN  std_ulogic_vector(2 DOWNTO 0);
-		r1  : IN  std_ulogic_vector(2 DOWNTO 0);
+		rdf : IN  std_ulogic_vector(2 DOWNTO 0);
+		r0f : IN  std_ulogic_vector(2 DOWNTO 0);
+		r1f : IN  std_ulogic_vector(2 DOWNTO 0);
+		
+		rds : IN  std_ulogic_vector(2 DOWNTO 0);
+		r0s : IN  std_ulogic_vector(2 DOWNTO 0);
+		r1s : IN  std_ulogic_vector(2 DOWNTO 0);
 
-		we  : IN  std_ulogic;
+		wef : IN  std_ulogic;
+		wes : IN  std_ulogic;
+
 		clk : IN  std_ulogic);
 
 END ENTITY reg_file;
@@ -74,20 +88,22 @@ ARCHITECTURE behav OF reg_file IS
 	SIGNAL d0, d1, d2, d3, d4, d5, d6, d7 : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL w0, w1, w2, w3, w4, w5, w6, w7 : std_ulogic;
 
+	SIGNAL i0, i1, i2, i3, i4, i5, i6, i7 : std_ulogic_vector(15 DOWNTO 0);
+
 BEGIN
 
 	--                      in  out  we  clk
 	ur0: reg_16bit PORT MAP(i0, d0,  w0, clk);
-	ur1: reg_16bit PORT MAP(i0, d1,  w1, clk);
-	ur2: reg_16bit PORT MAP(i0, d2,  w2, clk);
-	ur3: reg_16bit PORT MAP(i0, d3,  w3, clk);
-	ur4: reg_16bit PORT MAP(i0, d4,  w4, clk);
-	ur5: reg_16bit PORT MAP(i0, d5,  w5, clk);
-	ur6: reg_16bit PORT MAP(i0, d6,  w6, clk);
-	ur7: reg_16bit PORT MAP(i0, d7,  w7, clk);
+	ur1: reg_16bit PORT MAP(i1, d1,  w1, clk);
+	ur2: reg_16bit PORT MAP(i2, d2,  w2, clk);
+	ur3: reg_16bit PORT MAP(i3, d3,  w3, clk);
+	ur4: reg_16bit PORT MAP(i4, d4,  w4, clk);
+	ur5: reg_16bit PORT MAP(i5, d5,  w5, clk);
+	ur6: reg_16bit PORT MAP(i6, d6,  w6, clk);
+	ur7: reg_16bit PORT MAP(i7, d7,  w7, clk);
 
 	
-	WITH r0 SELECT o0 <= 
+	WITH r0f SELECT o0f <= 
 		d0 WHEN "000", 
 		d1 WHEN "001", 
 		d2 WHEN "010", 
@@ -97,7 +113,7 @@ BEGIN
 		d6 WHEN "110", 
 		d7 WHEN OTHERS; 
 	
-	WITH r1 SELECT o1 <= 
+	WITH r1f SELECT o1f <= 
 		d0 WHEN "000", 
 		d1 WHEN "001", 
 		d2 WHEN "010", 
@@ -107,14 +123,60 @@ BEGIN
 		d6 WHEN "110", 
 		d7 WHEN OTHERS; 
 
-	w0 <= '1' WHEN rd = "000" AND we = '1' ELSE '0';
-	w1 <= '1' WHEN rd = "001" AND we = '1' ELSE '0';
-	w2 <= '1' WHEN rd = "010" AND we = '1' ELSE '0';
-	w3 <= '1' WHEN rd = "011" AND we = '1' ELSE '0';
-	w4 <= '1' WHEN rd = "100" AND we = '1' ELSE '0';
-	w5 <= '1' WHEN rd = "101" AND we = '1' ELSE '0';
-	w6 <= '1' WHEN rd = "110" AND we = '1' ELSE '0';
-	w7 <= '1' WHEN rd = "111" AND we = '1' ELSE '0';
+	WITH r0s SELECT o0s <= 
+		d0 WHEN "000", 
+		d1 WHEN "001", 
+		d2 WHEN "010", 
+		d3 WHEN "011", 
+		d4 WHEN "100", 
+		d5 WHEN "101", 
+		d6 WHEN "110", 
+		d7 WHEN OTHERS; 
+	
+	WITH r1s SELECT o1s <= 
+		d0 WHEN "000", 
+		d1 WHEN "001", 
+		d2 WHEN "010", 
+		d3 WHEN "011", 
+		d4 WHEN "100", 
+		d5 WHEN "101", 
+		d6 WHEN "110", 
+		d7 WHEN OTHERS; 
+
+	w0 <= '1' WHEN (rdf = "000" AND wef = '1')
+	            OR (rds = "000" AND wes = '1') ELSE '0';
+	w1 <= '1' WHEN (rdf = "001" AND wef = '1')
+	            OR (rds = "001" AND wes = '1') ELSE '0';
+	w2 <= '1' WHEN (rdf = "010" AND wef = '1')
+	            OR (rds = "010" AND wes = '1') ELSE '0';
+	w3 <= '1' WHEN (rdf = "011" AND wef = '1')
+	            OR (rds = "011" AND wes = '1') ELSE '0';
+	w4 <= '1' WHEN (rdf = "100" AND wef = '1')
+	            OR (rds = "100" AND wes = '1') ELSE '0';
+	w5 <= '1' WHEN (rdf = "101" AND wef = '1')
+	            OR (rds = "101" AND wes = '1') ELSE '0';
+	w6 <= '1' WHEN (rdf = "110" AND wef = '1')
+	            OR (rds = "110" AND wes = '1') ELSE '0';
+	w7 <= '1' WHEN (rdf = "111" AND wef = '1')
+	            OR (rds = "111" AND wes = '1') ELSE '0';
+	
+	i0 <= i0f WHEN (rdf = "000" AND wef = '1')
+	 ELSE i0s;
+	i1 <= i0f WHEN (rdf = "001" AND wef = '1')
+	 ELSE i0s;
+	i2 <= i0f WHEN (rdf = "010" AND wef = '1')
+	 ELSE i0s;
+	i3 <= i0f WHEN (rdf = "011" AND wef = '1')
+	 ELSE i0s;
+	i4 <= i0f WHEN (rdf = "100" AND wef = '1')
+	 ELSE i0s;
+	i5 <= i0f WHEN (rdf = "101" AND wef = '1')
+	 ELSE i0s;
+	i6 <= i0f WHEN (rdf = "110" AND wef = '1')
+	 ELSE i0s;
+	i7 <= i0f WHEN (rdf = "111" AND wef = '1')
+
+ ELSE i0s;
 
 END ARCHITECTURE behav;
 
@@ -173,7 +235,6 @@ END ENTITY reg_16bit;
 
 ARCHITECTURE behav OF reg_16bit IS 
 BEGIN
-	
 	o0 <= i0 WHEN rising_edge(clk) AND we = '1'
 	 ELSE UNAFFECTED;
 

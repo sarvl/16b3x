@@ -54,11 +54,12 @@ USE work.p_control.ALL;
 
 ENTITY control IS 
 	PORT(
-		instr    : IN  std_ulogic_vector(15 DOWNTO 0);
-		clk      : IN  std_ulogic := '0';
+		instr         : IN  std_ulogic_vector(15 DOWNTO 0);
+		clk           : IN  std_ulogic := '0';
+		can_skip_wait : IN  std_ulogic := '0'; 
 	
-		alu_op   : OUT std_ulogic_vector( 2 DOWNTO 0);
-		controls : OUT t_controls);
+		alu_op        : OUT std_ulogic_vector( 2 DOWNTO 0);
+		controls      : OUT t_controls);
 END ENTITY control;
 
 
@@ -147,10 +148,9 @@ ARCHITECTURE behav OF control IS
 	);
 
 
-	SIGNAL next_cycle : std_ulogic := '0';
 	SIGNAL opcode     : std_ulogic_vector( 4 DOWNTO 0) := "00000";
 	SIGNAL curind     : std_ulogic_vector( 0 DOWNTO 0) := "0";
-	SIGNAL signals    : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL signals    : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 
 BEGIN
 
@@ -163,7 +163,8 @@ BEGIN
 
 	--these 2 assignments allow instructions that need it to take 2 cycles 
 	signals <= rom(to_integer(unsigned(curind)))(to_integer(unsigned(opcode))) AFTER 1 ps;
-	curind  <= "1" WHEN signals(15) = '0' AND rising_edge(clk)
+	curind  <= "0" WHEN can_skip_wait = '1'
+	      ELSE "1" WHEN signals(15) = '0' AND rising_edge(clk)
 	      ELSE "0" WHEN rising_edge(clk)
 	      ELSE UNAFFECTED;
 
