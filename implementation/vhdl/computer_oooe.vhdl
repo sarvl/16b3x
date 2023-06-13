@@ -219,6 +219,10 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL  branch_taken  : std_ulogic := '0';
 	SIGNAL  branch_unalign: std_ulogic := '0';
 
+	SIGNAL  early_branch  : std_ulogic := '0';
+	SIGNAL  early_flags   : std_ulogic_vector(2 DOWNTO 0);
+	SIGNAL  early_target  : std_ulogic_vector(15 DOWNTO 0);
+
 BEGIN 
 	PROCESS IS 
 	BEGIN
@@ -583,16 +587,26 @@ BEGIN
 	r_ui.i0 <= eu_0.op1 WHEN eu_0.ctrl.controls.wre = '1' AND eu_0.ctrl.r0 = "100"
 	      ELSE x"0000";
 	
-	r_ip.i0 <= eu_0.op1 WHEN eu_0.ctrl.controls.jmp = '1' AND flcmp     /= "000" 
-	      ELSE eu_1.op1 WHEN eu_1.ctrl.controls.jmp = '1' AND flcmp     /= "000" 
+	early_branch <= '1' WHEN falling_edge(clk) AND bufi_0.controls.jmp = '1' AND bufi_0.controls.iim = '1' AND early_flags /= "000"
+	           ELSE '0' WHEN falling_edge(clk)
+	           ELSE UNAFFECTED;
+	early_flags  <= bufi_0.r0 AND r_fl.i0(2 DOWNTO 0) WHEN rising_edge(clk'delayed(10 PS)) AND (eu_0.ctrl.controls.wrf = '1' OR eu_1.ctrl.controls.wrf = '1')
+	           ELSE bufi_0.r0 AND r_fl.o0(2 DOWNTO 0) WHEN rising_edge(clk'delayed(10 PS))
+	           ELSE UNAFFECTED;
+	early_target <= x"00" & bufi_0.instr(7 DOWNTO 0) WHEN falling_edge(clk);
+
+	-- try to predict sooner
+	--this will fail when previous instruction sets the upper immiediate
+	r_ip.i0 <= early_target WHEN early_branch = '1'
+	      ELSE eu_0.op1 WHEN eu_0.ctrl.controls.jmp = '1' AND flcmp     /= "000" 
 	      ELSE eu_0.op1 WHEN eu_0.ctrl.controls.cal = '1' AND flcmp     /= "000" 
-	      ELSE eu_1.op1 WHEN eu_1.ctrl.controls.cal = '1' AND flcmp     /= "000" 
 	      ELSE r_lr.o0  WHEN eu_0.ctrl.controls.ret = '1' AND flcmp     /= "000" 
 	      ELSE eu_0.op1 WHEN eu_0.ctrl.controls.wre = '1' AND eu_0.ctrl.r0  = "000" 
-	      ELSE eu_1.op1 WHEN eu_1.ctrl.controls.wre = '1' AND eu_1.ctrl.r0  = "000" 
 	      ELSE ipp2;
 	--when two instructions in buffers, DO NOT load new ones
-	r_ip.we <= '1' WHEN (cycadv = '1' AND b3_src /= df) OR (eu_0.ctrl.controls.jmp = '1' OR eu_0.ctrl.controls.cal = '1' OR eu_0.ctrl.controls.ret = '1')
+	r_ip.we <= '1' WHEN  early_branch = '1'
+	                 OR (cycadv = '1' AND b3_src /= df) 
+	                 OR (eu_0.ctrl.controls.jmp = '1' OR eu_0.ctrl.controls.cal = '1' OR eu_0.ctrl.controls.ret = '1')
 	      ELSE '0';
 
 	r_fl.i0 <= eu_0.op1 WHEN eu_0.ctrl.controls.wre = '1' AND eu_0.ctrl.r0 = "101" 
@@ -616,6 +630,7 @@ BEGIN
 	    ELSE eu_1.ctrl.r0 AND r_fl.o0(2 DOWNTO 0);
 	
 	branch_taken <= '0' WHEN falling_edge(clk) AND branch_taken = '1'
+	           ELSE '1' WHEN early_branch = '1'
 	           ELSE '1' WHEN falling_edge(clk) AND flcmp /= "000" 
 					     AND (  eu_0.ctrl.controls.jmp = '1' OR eu_0.ctrl.controls.cal = '1' OR eu_0.ctrl.controls.ret = '1'
 					         OR eu_1.ctrl.controls.jmp = '1' OR eu_1.ctrl.controls.cal = '1' OR eu_1.ctrl.controls.ret = '1')

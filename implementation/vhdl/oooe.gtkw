@@ -1,14 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Sun Jun 11 19:03:28 2023
+[*] Sun Jun 11 22:09:33 2023
 [*]
 [dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/wave.ghw"
-[dumpfile_mtime] "Sun Jun 11 18:58:51 2023"
-[dumpfile_size] 2130357
+[dumpfile_mtime] "Sun Jun 11 22:08:52 2023"
+[dumpfile_size] 2445833
 [savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/oooe.gtkw"
 [timestart] 0
-[size] 1366 768
-[pos] -1 -1
+[size] 1920 1080
+[pos] -966 -41
 *-22.017590 5500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.computer.
@@ -16,7 +16,7 @@
 [sst_width] 273
 [signals_width] 229
 [sst_expanded] 1
-[sst_vpaned_height] 432
+[sst_vpaned_height] 480
 @200
 -clock
 @28
@@ -37,11 +37,6 @@ top.computer.branch_taken
 top.computer.branch_unalign
 @200
 -
--
-@22
-#{top.computer.ram0.data[25][31:0]} top.computer.ram0.data[25][31] top.computer.ram0.data[25][30] top.computer.ram0.data[25][29] top.computer.ram0.data[25][28] top.computer.ram0.data[25][27] top.computer.ram0.data[25][26] top.computer.ram0.data[25][25] top.computer.ram0.data[25][24] top.computer.ram0.data[25][23] top.computer.ram0.data[25][22] top.computer.ram0.data[25][21] top.computer.ram0.data[25][20] top.computer.ram0.data[25][19] top.computer.ram0.data[25][18] top.computer.ram0.data[25][17] top.computer.ram0.data[25][16] top.computer.ram0.data[25][15] top.computer.ram0.data[25][14] top.computer.ram0.data[25][13] top.computer.ram0.data[25][12] top.computer.ram0.data[25][11] top.computer.ram0.data[25][10] top.computer.ram0.data[25][9] top.computer.ram0.data[25][8] top.computer.ram0.data[25][7] top.computer.ram0.data[25][6] top.computer.ram0.data[25][5] top.computer.ram0.data[25][4] top.computer.ram0.data[25][3] top.computer.ram0.data[25][2] top.computer.ram0.data[25][1] top.computer.ram0.data[25][0]
-#{top.computer.ram0.data[26][31:0]} top.computer.ram0.data[26][31] top.computer.ram0.data[26][30] top.computer.ram0.data[26][29] top.computer.ram0.data[26][28] top.computer.ram0.data[26][27] top.computer.ram0.data[26][26] top.computer.ram0.data[26][25] top.computer.ram0.data[26][24] top.computer.ram0.data[26][23] top.computer.ram0.data[26][22] top.computer.ram0.data[26][21] top.computer.ram0.data[26][20] top.computer.ram0.data[26][19] top.computer.ram0.data[26][18] top.computer.ram0.data[26][17] top.computer.ram0.data[26][16] top.computer.ram0.data[26][15] top.computer.ram0.data[26][14] top.computer.ram0.data[26][13] top.computer.ram0.data[26][12] top.computer.ram0.data[26][11] top.computer.ram0.data[26][10] top.computer.ram0.data[26][9] top.computer.ram0.data[26][8] top.computer.ram0.data[26][7] top.computer.ram0.data[26][6] top.computer.ram0.data[26][5] top.computer.ram0.data[26][4] top.computer.ram0.data[26][3] top.computer.ram0.data[26][2] top.computer.ram0.data[26][1] top.computer.ram0.data[26][0]
-@200
 -
 -buffer
 @28
@@ -99,7 +94,7 @@ top.computer.we_f
 #{top.computer.eu_1.ctrl.r1[2:0]} top.computer.eu_1.ctrl.r1[2] top.computer.eu_1.ctrl.r1[1] top.computer.eu_1.ctrl.r1[0]
 @22
 #{top.computer.eu_1.rdi[15:0]} top.computer.eu_1.rdi[15] top.computer.eu_1.rdi[14] top.computer.eu_1.rdi[13] top.computer.eu_1.rdi[12] top.computer.eu_1.rdi[11] top.computer.eu_1.rdi[10] top.computer.eu_1.rdi[9] top.computer.eu_1.rdi[8] top.computer.eu_1.rdi[7] top.computer.eu_1.rdi[6] top.computer.eu_1.rdi[5] top.computer.eu_1.rdi[4] top.computer.eu_1.rdi[3] top.computer.eu_1.rdi[2] top.computer.eu_1.rdi[1] top.computer.eu_1.rdi[0]
-@29
+@28
 top.computer.we_s
 @200
 -internal
