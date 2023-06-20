@@ -11,6 +11,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 USE work.p_control.ALL;
+USE std.env.finish;
 
 ENTITY computer IS 
 END ENTITY computer;
@@ -153,8 +154,10 @@ BEGIN
 		clk <= '0' ;             WAIT FOR clk_period / 2;
 		
 		--whenever hlt = 0 there is no need to continue the simulation
-		assert controls.hlt = '0' 
-			report "simulation stopped by hlt signal" & CR severity failure;
+		IF controls.hlt = '1' THEN
+			finish;
+		END IF;
+
 		clk <= '1'; WAIT FOR clk_period / 2;
 
 		--so that it looks nicer on the gtkwave
