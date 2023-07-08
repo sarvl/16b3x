@@ -48,8 +48,9 @@ USE ieee.numeric_std.ALL;
 ENTITY ram IS
 	PORT(
 		a0  : IN  std_ulogic_vector(15 DOWNTO 0) := x"0000";
-		i0  : IN  std_ulogic_vector(15 DOWNTO 0);
-		o0  : OUT std_ulogic_vector(15 DOWNTO 0);
+		i0s : IN  std_ulogic_vector(15 DOWNTO 0);
+		o0s : OUT std_ulogic_vector(15 DOWNTO 0);
+		o0d : OUT std_ulogic_vector(31 DOWNTO 0) := x"00000000";
 
 		we  : IN  std_ulogic := '0';
 		rdy : OUT std_ulogic := '0';
@@ -171,8 +172,8 @@ BEGIN
 	ms_half  <= NOT a0(1);
 	mem_data <= data(addr);
 
-	mem_in <= mem_data(31 DOWNTO 16) & i0 WHEN ms_half = '0'
-	     ELSE i0 & mem_data(15 DOWNTO  0);
+	mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
+	     ELSE i0s & mem_data(15 DOWNTO  0);
 
 	data(addr) <= mem_in WHEN we = '1' AND rising_edge(clk)
 	         ELSE UNAFFECTED;
@@ -180,8 +181,9 @@ BEGIN
 	mem_out <= mem_data  WHEN cache_valid /= '1'
 	      ELSE cache_data;
 
-	o0  <= mem_out(31 DOWNTO 16) WHEN ms_half = '1'
+	o0s <= mem_out(31 DOWNTO 16) WHEN ms_half = '1'
 	  ELSE mem_out(15 DOWNTO  0); 
+	o0d <= mem_out;
 
 	cache_in <= mem_in   WHEN we
 	       ELSE mem_data;

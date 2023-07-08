@@ -87,11 +87,12 @@ ARCHITECTURE behav OF computer IS
 	
 	COMPONENT ram IS
 		PORT(
-			a0  : IN  std_ulogic_vector(15 DOWNTO 0);
-			i0  : IN  std_ulogic_vector(15 DOWNTO 0);
-			o0  : OUT std_ulogic_vector(15 DOWNTO 0);
-
-			we  : IN  std_ulogic;
+			a0  : IN  std_ulogic_vector(15 DOWNTO 0) := x"0000";
+			i0s : IN  std_ulogic_vector(15 DOWNTO 0);
+			o0s : OUT std_ulogic_vector(15 DOWNTO 0);
+			o0d : OUT std_ulogic_vector(31 DOWNTO 0) := x"00000000";
+	
+			we  : IN  std_ulogic := '0';
 			rdy : OUT std_ulogic := '0';
 			clk : IN  std_ulogic);
 	END COMPONENT ram;
@@ -183,8 +184,9 @@ BEGIN
 
 	
 	ram0: ram PORT MAP(a0  => ram_adr,
-	                   i0  => ram_in,
-	                   o0  => ram_out,
+	                   i0s => ram_in,
+	                   o0s => ram_out,
+	                   o0d => OPEN,
 	                   we  => controls.wrm,
 					   rdy => mem_rdy,
 	                   clk => clk);

@@ -20,11 +20,13 @@
 	architecture:      register-register
 	instruction-limit: 63
 	instruction-count: 44
-	this doc revision:  0 
+	this doc revision:  1 
 	
 	all potential future version WILL BE backwards compatible with previous versions 
 	note that instruction-limit and instruction-count treat instruction's formats as separate instructions
 		even when 2 different formats behave exactly the same
+
+	negative numbers are represented in Two's complement form
 	
 [INSTRUCTION_OVERVIEW]
 	number in the opcode in hex
@@ -36,34 +38,34 @@
 	02                       	# 
 	03                       	#  
 	04                       	#   
-	05  mov     R0, R1/imm8 	# R0 <-- R1/imm16
-	06  rdm     R0, R1/imm8 	# R0 <-- M[R1/imm16]
-	07  wrm     R0, R1/imm8 	# M[R1/imm16] <-- R0
+	05  mov     Rd, Rs/imm8 	# Rd <-- Rs/imm16
+	06  rdm     Rd, Rs/imm8 	# Rd <-- M[Rs/imm16]
+	07  wrm     Rd, Rs/imm8 	# M[Rs/imm16] <-- Rd
 	08                      	#  
 	09                      	#  
 	0A                      	# 
 	0B                      	# 
-	0C  rdx     R0, E0       	# R0 <-- E0      
-	0D  wrx     E0, R1/imm8 	# E0 <-- R1/imm16
-	0E  psh     R0          	# SP <-- SP - 2 ; M[SP] <-- R0
-	0F  pop     R0          	# R0 <-- M[SP]  ; SP    <-- SP + 2;
-	10M mul     R0, R1/imm8 	# R0 <-- R0 * R1/imm16
-	11  cmp     R0, R1/imm8 	# R0 - R1/imm16 
+	0C  rdx     Rd, Es       	# Rd <-- Es      
+	0D  wrx     Ed, Rs/imm8 	# Ed <-- Rs/imm16
+	0E  psh     Rd          	# SP <-- SP - 2 ; M[SP] <-- Rd
+	0F  pop     Rd          	# Rd <-- M[SP]  ; SP    <-- SP + 2;
+	10M mul     Rd, Rs/imm8 	# Rd <-- Rd * Rs/imm16
+	11  cmp     Rd, Rs/imm8 	# Rd - Rs/imm16 
 	12                      	#  
-	13  tst     R0, R1/imm8 	# R0 & R1/imm16 
-	14  jmp ccc     R1/imm8 	# IF(FL & ccc) { IP <-- R0/imm16 }
-	15  cal ccc     R1/imm8 	# IF(FL & ccc) { LR <-- IP + 2; IP <-- R0/imm16 }
+	13  tst     Rd, Rs/imm8 	# Rd & Rs/imm16 
+	14  jmp ccc     Rs/imm8 	# IF(FL & ccc) { IP <-- Rd/imm16 }
+	15  cal ccc     Rs/imm8 	# IF(FL & ccc) { LR <-- IP + 2; IP <-- Rd/imm16 }
 	16  ret ccc             	# IF(FL & ccc) { IP <-- LR }
 	17                      	#  
-	18  add     R0, R1/imm8 	# R0 <-- R0 +  R1/imm16
-	19  sub     R0, R1/imm8 	# R0 <-- R0 -  R1/imm16
-	1A  not     R0, R1/imm8 	# R0 <--    ~  R1/imm16
-	1B  and     R0, R1/imm8 	# R0 <-- R0 &  R1/imm16
-	1C  orr     R0, R1/imm8 	# R0 <-- R0 |  R1/imm16
-	1D  xor     R0, R1/imm8 	# R0 <-- R0 ^  R1/imm16
-	1E  sll     R0, R1/imm4 	# R0 <-- R0 << R1/imm4
-	1F  slr     R0, R1/imm4 	# R0 <-- R0 >> R1/imm4
-	
+	18  add     Rd, Rs/imm8 	# Rd <-- Rd +  Rs/imm16
+	19  sub     Rd, Rs/imm8 	# Rd <-- Rd -  Rs/imm16
+	1A  not     Rd, Rs/imm8 	# Rd <--    ~  Rs/imm16
+	1B  and     Rd, Rs/imm8 	# Rd <-- Rd &  Rs/imm16
+	1C  orr     Rd, Rs/imm8 	# Rd <-- Rd |  Rs/imm16
+	1D  xor     Rd, Rs/imm8 	# Rd <-- Rd ^  Rs/imm16
+	1E  sll     Rd, Rs/imm4 	# Rd <-- Rd << Rs/imm4
+	1F  slr     Rd, Rs/imm4 	# Rd <-- Rd >> Rs/imm4
+ 
 	where:
 	M[x] means memory at address x
 	Rx   means value of register x
@@ -107,8 +109,8 @@
 		
 		from MSb to LSb:
 		     5 bits are 0 
-		then 3 bits denote R0/ccc/E0
-		then 3 bits denote R1
+		then 3 bits denote Rd/ccc/Ed
+		then 3 bits denote Rs/Es
 		then 5 bits denote opcode
 	
 	
@@ -117,7 +119,7 @@
 	
 		from MSb to LSb
 		     5 bits denote opcode
-		then 3 bits denote R0/ccc
+		then 3 bits denote Rd/ccc/Ed
 		then 8 bits denote imm8
 	
 		if instruction uses imm4 instead of imm8 then 4LSb have to be used 
@@ -136,15 +138,15 @@
 		R0 is identified by 000
 		R4 is identified by 100
 	
-		therefore encoding is 00000 000 100 10100 => 00000000 10010100 => 0094
+		therefore encoding is 00000 000 100 10100 => 00000000 10010100 => x0094
 	
 		encoding of jmp E 5 
 		opcode for jmp: 10 ; in binary : 10000
-		uses ccc and immiedite therefore I-format
-		E is ccc decoded to 010 
+		uses ccc and immiediate therefore I-format
+		E is ccc encoded to 010 
 		5 in binary is 101 ; extended to 8 bits 00000101
 	
-		therefore encoding is 10000 010 00000101  => 10000010 00000101 => 8205
+		therefore encoding is 10000 010 00000101  => 10000010 00000101 => x8205
 	
 	
 [INTERNAL_REGISTERS]
@@ -157,7 +159,8 @@
 	6 R6 ; GP 6  
 	7 R7 ; GP 7  
 
-	any register can be used in any place where R0 or R1 is used in instruction description
+	any register can be used in any place where Rd or Rs is used in instruction description
+	all internal registers are 0 initialized
 
 [EXTERNAL_REGISTERS]
 	0 IP ; Instruction Pointer ; points to NEXT instruction 
@@ -168,13 +171,16 @@
 	5 FL ; Flags register      ; 3 LSbits of this register denote flags set by previous instruction 
 	6 
 	7 CF ; CPU feature flags   ; each bit denotes whether an extension is present or not see [FEATURE_FLAGS]
+
+	all external registers are 0 initialized with the exception of:
+		FL, that has exactly 1 flag bit set 
+		CF, that has flag bits set depending on the features of CPU
 	
 	IP
-		points to NEXT instruction
+		points to instruction to be executed, NOT the currently executed one 
 		may be modified by:
 			JMP, CAL, RET, WRX
 		
-		TODO find better name for what it denotes
 		note that actual value of the register denotes next instruction NOT where it is in memory 
 		it means that before accessing memory the value is shifted by 1 to the left 
 		the rationale is to allow wider range of addresses to be specified using just 8bits
@@ -203,10 +209,10 @@
 	
 	FL 
 		contains 3 flag bits
-		00000000 0000LEG
-		 L - less
-		 E - equal
-		 G - greater
+		00000000 00000LEG
+		 L - result < 0, that is MSb = 1
+		 E - result = 0, that is all bits = 0
+		 G - result > 0, that is L = 0 and E = 0
 	
 		architecture must support at least these 3 bits to be read and written
 		write/read from other bits does not have to have an effect 
@@ -228,9 +234,6 @@
 [STACK]
 	controlled by SP via PSH and POP or manually with RDX, WRX, RDM, WRM, ADD, SUB
 	stack MUST be 2B aligned 
-
-	SP is not initialized by default 
-	it is advised to initialize it to x0000 so that first PSH will put data at xFFFF/xFFFE
 
 	SP points to the data on top of the stack NOT where that data would go 
 	in other words, PSH first decreases SP then puts data, POP first gets data then increases SP 
@@ -303,71 +306,71 @@
 			---
 
 	HLT ccc
-		IF(F & ccc) 
+		IF(FL & ccc) 
 		{
 			halt
 		}
 
-		conditionally pauses execution of the processor
-		there is no way to resume it other than to restart it
+		conditionally stops execution of the processor
+		once stopped there is no way to resume it other than to restart it
 
 		external registers altered:
 			---
 	
-	MOV R0, R1/imm8
-		R0 <-- R1/imm16
+	MOV Rd, Rs/imm8
+		Rd <-- Rs/imm16
 
-		copies second operand into R0
-
-		external registers altered:
-			---
-
-	RDM R0, R1/imm8
-		R0 <-- M[R1/imm16]
-
-		copies contents of memory pointed to by second operand into R0
+		copies second operand into Rd
 
 		external registers altered:
 			---
 
-	WRM R0, R1/imm8
-		M[R1/imm16] <-- R0
+	RDM Rd, Rs/imm8
+		Rd <-- M[Rs/imm16]
+
+		copies contents of memory pointed to by second operand into Rd
+
+		external registers altered:
+			---
+
+	WRM Rd, Rs/imm8
+		M[Rs/imm16] <-- Rd
 		
-		copies contents of R0 into memory pointed to by second operand  
+		copies contents of Rd into memory pointed to by second operand  
 
 		external registers altered:
 			---
 
-	RDX R0, E0
-		E0 <-- R0
+	RDX Rd, E0
+		E0 <-- Rd
 
-		copies contents of external register E0 into R0
+		copies contents of external register E0 into Rd
 
 		external registers altered:
 			---
 
-	WRX E0, R1/imm16
-		E0 <-- R1/imm16
+	WRX E0, Rs/imm16
+		E0 <-- Rs/imm16
 		
 		copies second operand into external register E0
 
 		external registers altered:
 			E0, possibly any one
 
-	PSH R0          	
+	PSH Rd          	
 		SP <-- SP - 2
-		M[SP] <-- R0
+		M[SP] <-- Rd
 
 		decreases SP by 2 
 		THEN
-		copies contents of R0 into memory at address held by SP
+		copies contents of Rd into memory at address held by SP
 
 		
 		external registers altered:
 			SP
 
-	POP R0
-		R0 <-- M[SP]
+	POP Rd
+		Rd <-- M[SP]
 		SP <-- SP + 2;
 
 		copies contents of memory at address held by SP
@@ -378,10 +381,10 @@
 		external registers altered:
 			SP
 
-	JMP ccc R1/imm8
+	JMP ccc Rs/imm8
 		IF(FL & ccc) 
 		{ 
-			IP <-- R0/imm16
+			IP <-- Rd/imm16
 		}
 
 		if flags register anded with condition codes yields nonzero value
@@ -390,17 +393,17 @@
 		external registers altered:
 			IP if condition is true 
 
-	CAL ccc R1/imm8
+	CAL ccc Rs/imm8
 		IF(FL & ccc) 
 		{ 
 			LR <-- IP
-			IP <-- R0/imm16 
+			IP <-- Rd/imm16 
 		}
 		
 		if flags register anded with condition codes yields non zero value
 			saves value of IP into LR
 			THEN
-			changes the IP to either contents of R0 or extended immiediate
+			changes the IP to either contents of Rd or extended immiediate
 
 		external registers altered:
 			LR and IP if condition is true 
@@ -417,8 +420,8 @@
 		external registers altered:
 			IP if condition is true
 	
-	MUL R0, R1/imm8
-		R0 <-- R0 * R1/imm16
+	MUL Rd, Rs/imm8
+		Rd <-- Rd * Rs/imm16
 
 		performs UNSIGNED multiplication on the operands
 		result is truncated to 16bits 
@@ -430,8 +433,8 @@
 		external registers altered:
 			FL
 
-	CMP R0, R1/imm8
-		R0 - R1/imm16
+	CMP Rd, Rs/imm8
+		Rd - Rs/imm16
 	
 		acts like SUB
 		except doesnt write to register
@@ -440,8 +443,8 @@
 		external registers altered:
 			FL
 
-	TST R0, R1/imm8
-		R0 & R1/imm16
+	TST Rd, Rs/imm8
+		Rd & Rs/imm16
 		
 		acts like AND 
 		except doesnt write to register
@@ -449,65 +452,65 @@
 		external registers altered:
 			FL
 
-	ADD R0, R1/imm8
-		R0 <-- R0 +  R1/imm16
+	ADD Rd, Rs/imm8
+		Rd <-- Rd +  Rs/imm16
 
 		performs arithmetic addition on the operands
-		stores result in R0
+		stores result in Rd
 
 		external registers altered:
 			FL
 	
-	SUB R0, R1/imm8
-		R0 <-- R0 +  R1/imm16
+	SUB Rd, Rs/imm8
+		Rd <-- Rd +  Rs/imm16
 
 		performs arithmetic subtraction on the operands
-		stores result in R0
+		stores result in Rd
 
 		external registers altered:
 			FL
 
-	NOT R0, R1/imm8
-		R0 <-- ~ R1/imm16
+	NOT Rd, Rs/imm8
+		Rd <-- ~ Rs/imm16
 
 		performs logical not on second operand 
-		stores result in R0
+		stores result in Rd
 
 		external registers altered:
 			FL
 
-	AND R0, R1/imm8
-		R0 <-- R0 &  R1/imm16
+	AND Rd, Rs/imm8
+		Rd <-- Rd &  Rs/imm16
 
 		performs logical and on the operands
-		stores result in R0
+		stores result in Rd
 
 		external registers altered:
 			FL
 
-	ORR R0, R1/imm8
-		R0 <-- R0 |  R1/imm16
+	ORR Rd, Rs/imm8
+		Rd <-- Rd |  Rs/imm16
 
 		performs logical or on the operands
-		stores result in R0
+		stores result in Rd
 
 		external registers altered:
 			FL
 
-	XOR R0, R1/imm8
-		R0 <-- R0 ^  R1/imm16
+	XOR Rd, Rs/imm8
+		Rd <-- Rd ^  Rs/imm16
 
 		performs logical xor on the operands
-		stores result in R0
+		stores result in Rd
 
 		external registers altered:
 			FL
 
-	SLL R0, R1/imm4
-		R0 <-- R0 << R1/imm4
+	SLL Rd, Rs/imm4
+		Rd <-- Rd << Rs/imm4
 
 		performs logical shift left on the operands
-		stores result in R0
+		stores result in Rd
 		
 		only 4LSb of second operand matter
 		the rest are ignored
@@ -515,11 +518,11 @@
 		external registers altered:
 			FL
 
-	SLR R0, R1/imm4
-		R0 <-- R0 >> R1/imm4
+	SLR Rd, Rs/imm4
+		Rd <-- Rd >> Rs/imm4
 
 		performs logical shift right on the operands
-		stores result in R0
+		stores result in Rd
 
 		only 4LSb of second operand matter
 		the rest are ignored
