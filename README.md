@@ -55,15 +55,15 @@ MODE is one of these
 ## Some Showcase
 
 ### Cache Speedup
-this image contains instructions executed when cache and waiting for memory enabled
-by arbitrary decision cache is 10x faster than CPU
+this image contains instructions executed when cache and waiting for memory enabled  
+by arbitrary decision cache is 10x faster than RAM  
 when clock signal is denser that means that instructions or data are in cache and CPU doesnt have to wait for RAM 
 ![image](https://github.com/sarvl/16bit_cpu/assets/95301979/ed061dde-7528-46f1-8f3b-18533318eef4)
 
 
 ### Superscalar Execution
-this image shows that more than one instruction is executing at once (two different `instr` signals)
-additionaly it features a buffer for waiting instructions and whether each instruction in the buffer depends on another
+this image shows that more than one instruction is executing at once (two different `instr` signals)  
+additionaly it features a buffer for waiting instructions and whether each instruction in the buffer depends on another  
 ![image](https://github.com/sarvl/16bit_cpu/assets/95301979/53f97dfb-ae1e-4899-b839-0e625e2093d5)
 
 
