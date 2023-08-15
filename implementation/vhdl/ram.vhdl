@@ -33,6 +33,7 @@ ENTITY ram IS
 
 		we  : IN  std_ulogic := '0';
 		rdy : OUT std_ulogic := '0';
+		hlt : IN  std_ulogic := '0';
 		clk : IN  std_ulogic);
 END ENTITY ram;
 

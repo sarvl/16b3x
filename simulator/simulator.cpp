@@ -1,7 +1,3 @@
-//TODO
-//fix the sim command 
-//add help
-
 #include <iostream>
 #include <fstream>
 #include <iomanip>

@@ -94,6 +94,7 @@ ARCHITECTURE behav OF computer IS
 	
 			we  : IN  std_ulogic := '0';
 			rdy : OUT std_ulogic := '0';
+			hlt : IN  std_ulogic := '0';
 			clk : IN  std_ulogic);
 	END COMPONENT ram;
 
@@ -130,7 +131,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL  mul_out     : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  ram_adr     : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 	SIGNAL  ram_in      : std_ulogic_vector(15 DOWNTO 0);
-	SIGNAL  ram_out     : std_ulogic_vector(15 DOWNTO 0);
+	SIGNAL  ram_out     : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 	SIGNAL  dat_adr     : std_ulogic_vector(15 DOWNTO 0) := x"0000";
 	SIGNAL  mem_rdy     : std_ulogic := '0';
 
@@ -155,7 +156,8 @@ BEGIN
 		clk <= '0' ;             WAIT FOR clk_period / 2;
 		
 		--whenever hlt = 0 there is no need to continue the simulation
-		IF controls.hlt = '1' THEN
+		IF controls.hlt = '1' AND flcmp /= "000" THEN
+			WAIT FOR clk_period; --give RAM time to react
 			finish;
 		END IF;
 
@@ -188,7 +190,8 @@ BEGIN
 	                   o0s => ram_out,
 	                   o0d => OPEN,
 	                   we  => controls.wrm,
-					   rdy => mem_rdy,
+	                   rdy => mem_rdy,
+	                   hlt => controls.hlt,
 	                   clk => clk);
 	mul0: multiplier PORT MAP(i0 => op0,
 	                          i1 => op1,
@@ -270,7 +273,7 @@ BEGIN
 	    ELSE alu_out WHEN controls.srr = '1'
 	    ELSE ram_out WHEN controls.srm = '1' 
 		ELSE mul_out WHEN controls.mul = '1'
-	    ELSE r_ip.o0 WHEN controls.sre = '1' AND r1 = "000"
+	    ELSE r_ip.i0 WHEN controls.sre = '1' AND r1 = "000"
 	    ELSE r_sp.o0 WHEN controls.sre = '1' AND r1 = "001" 
 	    ELSE r_lr.o0 WHEN controls.sre = '1' AND r1 = "010" 
 	    ELSE r_ui.o0 WHEN controls.sre = '1' AND r1 = "100" 
@@ -303,7 +306,8 @@ BEGIN
 	      ELSE x"0004" WHEN alu_out(15)  = '1'
 	      ELSE x"0002" WHEN alu_out      = x"0000"     
 	      ELSE x"0001";
-	r_fl.we <= controls.wrf;
+	r_fl.we <= '1'     WHEN controls.wrf = '1' OR (controls.wre = '1' AND r0 = "101")
+	      ELSE '0';
 
 	r_lr.i0 <= ipp1 WHEN  controls.cal = '1' AND flcmp /= "000" 
 	      ELSE op1  WHEN  controls.wre = '1' AND r0     = "010"

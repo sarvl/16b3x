@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
 [*] Sun Jun  4 20:23:24 2023
 [*]
-[dumpfile] "(null)"
+[dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/wave.ghw"
 [savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/pipeline.gtkw"
 [timestart] 24880000
 [size] 1366 768

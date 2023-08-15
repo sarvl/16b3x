@@ -7,18 +7,19 @@ REGS := registers
 #REGS := registers_oooe
 RAM  := ram
 #RAM  := ram_cache
-#RAM  := ram_oooe
 CTRL := control
-CPU  := computer_simple
-#CPU  := computer_pipeline
+#CPU  := computer_simple
+CPU  := computer_pipeline
 #CPU  := computer_oooe
 
 WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Wspecs -Wport-bounds -Wruntime-error -Wunused -Wnowrite -Wothers -Wuseless
 #WARN := 
 
-FILES := ${ALU}.o ${RAM}.o ${CTRL}.o ${REGS}.o  ${CPU}.o 
+FILES       := ${ALU}.o ${RAM}.o ${CTRL}.o ${REGS}.o  ${CPU}.o 
+FILES_TESTS := ${ALU}.o ram_tests.o ${CTRL}.o ${REGS}.o  ${CPU}.o 
 
-UPPER_LIMIT := 4000ns
+UPPER_LIMIT       :=  4000ns
+UPPER_LIMIT_TESTS := 10000ns
 
 default:
 	@echo -e no option specified
@@ -47,15 +48,22 @@ clear:
 
 computer: clear analyse elaborate
 remake: clean refresh computer
+tests: clear analyse_tests elaborate
+remake_tests: clean refresh tests 
 
 run: clear
 	@echo -e ${CR}running simulation${CD}
 	@ghdl -r computer --wave=wave.ghw --stop-time=${UPPER_LIMIT}
 
+test: clear
+	@echo -e ${CR}running simulation${CD}
+	@ghdl -r computer --stop-time=${UPPER_LIMIT_TESTS}
+
 elaborate:
 	@echo -e ${CR}elaborating${CD}
 	@ghdl -e --std=08 ${WARN} computer
 
+analyse_tests: ${FILES_TESTS}
 analyse: ${FILES}
 
 alu.o: alu.vhdl
@@ -78,9 +86,9 @@ ram_cache.o: ram_cache.vhdl
 	@echo -e ${CY}analysing ram_cache.vhdl${CD}
 	@ghdl -a --std=08 ${WARN} ram_cache.vhdl
 
-ram_oooe.o: ram_oooe.vhdl
-	@echo -e ${CY}analysing ram_oooe.vhdl${CD}
-	@ghdl -a --std=08 ${WARN} ram_oooe.vhdl
+ram_tests.o: ram_tests.vhdl
+	@echo -e ${CY}analysing ram_tests.vhdl${CD}
+	@ghdl -a --std=08 ${WARN} ram_tests.vhdl
 
 control.o: control.vhdl
 	@echo -e ${CY}analysing control.vhdl${CD}
@@ -104,12 +112,12 @@ registers.vhdl:
 	@touch registers.vhdl
 registers_oooe.vhdl:
 	@touch registers_oooe.vhdl
-ram_cache.vhdl:
-	@touch ram_cache.vhdl
-ram_oooe.vhdl:
-	@touch ram_oooe.vhdl
 ram.vhdl:
 	@touch ram.vhdl
+ram_cache.vhdl:
+	@touch ram_cache.vhdl
+ram_tests.vhdl:
+	@touch ram_tests.vhdl
 control.vhdl:
 	@touch control.vhdl
 computer_simple.vhdl:

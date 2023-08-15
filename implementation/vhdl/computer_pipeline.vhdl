@@ -88,12 +88,14 @@ ARCHITECTURE behav OF computer IS
 	
 	COMPONENT ram IS
 		PORT(
-			a0  : IN  std_ulogic_vector(15 DOWNTO 0);
-			i0  : IN  std_ulogic_vector(15 DOWNTO 0);
-			o0  : OUT std_ulogic_vector(15 DOWNTO 0);
-
-			we  : IN  std_ulogic;
+			a0  : IN  std_ulogic_vector(15 DOWNTO 0) := x"0000";
+			i0s : IN  std_ulogic_vector(15 DOWNTO 0);
+			o0s : OUT std_ulogic_vector(15 DOWNTO 0);
+			o0d : OUT std_ulogic_vector(31 DOWNTO 0) := x"00000000";
+	
+			we  : IN  std_ulogic := '0';
 			rdy : OUT std_ulogic := '0';
+			hlt : IN  std_ulogic := '0';
 			clk : IN  std_ulogic);
 	END COMPONENT ram;
 
@@ -150,6 +152,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL 	ipp1  : std_ulogic_vector(15 DOWNTO 0);
 
 	SIGNAL 	flcmp : std_ulogic_vector( 2 DOWNTO 0);
+	SIGNAL 	flcmp_delayed : std_ulogic_vector( 2 DOWNTO 0);
 
 	--SIGNAL stage0 : t_stage; -- not needed since there are NO signals then
 	SIGNAL 	stage1_id : t_stage;
@@ -164,7 +167,7 @@ BEGIN
 		clk <= '0' ;             WAIT FOR clk_period / 2;
 		
 		--whenever hlt = 0 there is no need to continue the simulation
-		IF stage3_wb.controls.hlt = '1' THEN
+		IF stage3_wb.controls.hlt = '1' AND flcmp_delayed /= "000" THEN
 			finish;
 		END IF;
 
@@ -192,10 +195,12 @@ BEGIN
 	                   op => stage2_ex.alu_op);
 
 	ram0: ram PORT MAP(a0  => ram_adr,
-	                   i0  => ram_in,
-	                   o0  => ram_out,
+	                   i0s => ram_in,
+	                   o0s => ram_out,
+	                   o0d => OPEN,
 	                   we  => stage2_ex.controls.wrm,
 					   rdy => mem_rdy,
+	                   hlt => stage3_wb.controls.hlt,
 	                   clk => clk);
 
 	mul0: multiplier PORT MAP(i0 => stage2_ex.op0,
@@ -297,7 +302,7 @@ BEGIN
 	  ELSE alu_out       WHEN stage2_ex.controls.srr = '1'
 	  ELSE ram_out       WHEN stage2_ex.controls.srm = '1' 
 	  ELSE mul_out       WHEN stage2_ex.controls.mul = '1'
-	  ELSE r_ip.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "000"
+	  ELSE delayed_ip    WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "000"
 	  ELSE r_sp.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "001" 
 	  ELSE r_lr.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "010" 
 	  ELSE r_ui.o0       WHEN stage2_ex.controls.sre = '1' AND stage2_ex.r1 = "100" 
@@ -334,7 +339,9 @@ BEGIN
 	      ELSE x"0004"       WHEN alu_out(15)  = '1'
 	      ELSE x"0002"       WHEN alu_out      = x"0000"     
 	      ELSE x"0001";
-	r_fl.we <= stage2_ex.controls.wrf;
+	r_fl.we <= '1' WHEN  stage2_ex.controls.wrf = '1' 
+	                 OR (stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "101")
+	      ELSE '0';
 
 	r_lr.i0 <= delayed_ip    WHEN stage2_ex.controls.cal = '1' AND flcmp        /= "000" 
 	      ELSE stage2_ex.op1 WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0  = "010"
@@ -345,6 +352,10 @@ BEGIN
 
 	--flag comparison
 	flcmp <= stage1_id.r0 AND r_fl.i0(2 DOWNTO 0) WHEN stage2_ex.controls.wrf = '1'
+	                                                OR (stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "101")
 	    ELSE stage2_ex.r0 AND r_fl.o0(2 DOWNTO 0);
+
+	flcmp_delayed <= flcmp WHEN rising_edge(clk)
+	            ELSE UNAFFECTED;
 
 END ARCHITECTURE behav;
