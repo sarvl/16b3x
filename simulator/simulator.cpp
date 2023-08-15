@@ -4,11 +4,13 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 #include <string>
-#include <vector>
 
 #include <unordered_map>
+
+#include <cstdint>
 
 #define DEBUG_PRINT(x)   if(debug)   std::cout << x
 #define DEBUG_WAIT       if(debug)   std::cin.get()
@@ -22,8 +24,39 @@
 			else if((x) < 0)                 \
 				flags_register = Flags::L;   \
 			else                             \
-				flags_register = Flags::E;   \
-			;
+				flags_register = Flags::E;   
+
+#define PAD_ZERO(x, y) std::setfill('0') << std::setw(x) << (y) 
+			
+
+void input_handle_args(
+	int   argc       ,
+	char* argv[]     ,
+	bool& print_help ,
+	bool& debug      ,
+	bool& verbose    ,
+	bool& long_input ,
+	bool& dump_mem   ,
+	bool& dump_reg   ,
+	bool& symbols    ,
+	bool& perf       ,
+	std::string& code,
+	std::string& syms 
+	);
+
+int input_read_syms(
+	std::unordered_map<uint16_t, std::string>& symbols,	
+	std::string const&                         file_name
+	);
+int input_read_instr(
+	uint8_t*           mem       ,
+	bool*              modified  ,
+	bool        const  long_input,
+	std::string const& file_name
+	);
+
+void output_print_help();
+
 
 enum class Opcode : uint8_t{
  NOP = 0x00,
@@ -63,7 +96,7 @@ namespace Flags{
 	};
 
 
-	char to_char(const Flags fl)
+	constexpr char to_char(const Flags fl)
 	{
 		if(fl == Flags::L)
 			return 'L';
@@ -103,13 +136,32 @@ struct Instruction{
 	{}
 };
 
-constexpr uint32_t hex_val(const char hex)
+Instruction decode(uint16_t const val)
 {
-	if(hex <= '9')
-		return hex - '0';
+	Opcode  opc;
+	uint8_t op0;
+	uint8_t op1;
+	bool i_format = true;
+	
+	op0 = (val & 0x0700) >> 8;
+	
+	//if first 5 bits are 0
+	if(0 == (val & 0xF800))
+	{
+		i_format = false;
+
+		opc = static_cast<Opcode>(val & 0x001F);
+		op1 = (val >> 5) & 0x7;
+	}
 	else
-		return hex - 'A' + 10;
+	{
+		opc = static_cast<Opcode>(val >> 11);
+		op1 = val & 0x00FF;
+	}
+
+	return Instruction(opc, op0, i_format, op1);
 }
+
 
 constexpr const char* ext_reg(const uint8_t id)
 {
@@ -138,113 +190,63 @@ constexpr const char* ext_reg(const uint8_t id)
 
 uint16_t ext[8];
 uint16_t reg[8];
-uint8_t  mem[0xFFFF + 1];
+uint8_t  mem[0x10000];
+bool     modified[0x10000];
 
 int main(int argc, char* argv[])
 {
-	if(2 >  argc)
+	bool print_help = false;
+	bool debug      = false;
+	bool verbose    = false;
+	bool long_input = false;
+	bool dump_mem   = false;
+	bool dump_reg   = false;
+	bool symbols_rd = false;
+	bool perf       = false;
+	//to be implemented:
+	//bool perf_oooe  = false; 
+
+	std::string file_name_code;
+	std::string file_name_syms;
+	std::unordered_map<uint16_t, std::string> symbols;	
+	std::string line;
+
+	//extracted to another file to reduce clutter here
+	input_handle_args(argc, argv    ,
+	                  print_help    ,
+	                  debug         ,
+	                  verbose       ,
+	                  long_input    ,
+	                  dump_mem      ,
+	                  dump_reg      ,
+	                  symbols_rd    ,
+	                  perf          ,
+					  file_name_code,
+					  file_name_syms);
+
+	if(print_help)
 	{
-		std::cout << "not enough arguments\n";
+		output_print_help();
+		return 0;
+	}
+	
+	if(0 == file_name_code.size())
+	{
+		std::cout << "ERROR: not enough arguments\n";
 		return 1;
 	}
 
-	bool debug   = false;
-	bool verbose = false;
-	if('n' == argv[1][0])
-	{}
-	else if('d' == argv[1][0])
+	if(0 != input_read_instr(&mem[0], &modified[0], long_input, file_name_code))
 	{
-		debug   = true;
-	}
-	else if('v' == argv[1][0])
-	{
-		verbose = true;
-	}
-	else if('a' == argv[1][0])
-	{
-		debug   = true;
-		verbose = true;
-	}
-
-	std::ifstream file(argv[2]);
-
-	if(false == file.is_open())
-	{
-		std::cout << "file could not have been open\n";
+		std::cout << "ERROR: could not open file with program\n";
 		return 2;
 	}
-
-	std::unordered_map<uint16_t, std::string> debug_info_labels;
-	if(debug)
-	{
-		std::ifstream debug_file;
-		
-		if(4 <= argc)
+	if(symbols_rd)
+		if(0 != input_read_syms(symbols, file_name_syms))
 		{
-			debug_file.open(argv[3]);
-
-			if(false == debug_file.is_open())
-			{
-				std::cout << "debug file could not have been open\n";
-				return 3;
-			}
-
-		
-			std::string line;
-			while(std::getline(debug_file, line))
-			{
-				int str_end = 0;
-				int instr = 0;
-				while(' ' != line[str_end])
-					str_end++;
-
-				for(unsigned int i = str_end + 1; i < line.size(); i++)
-				{
-					instr *= 10;
-					instr += line[i] - '0';
-				}
-
-				debug_info_labels[static_cast<uint16_t>(instr)] = line.substr(0, str_end);
-			}
-
+			std::cout << "ERROR: could not open file with debug symbols\n";
 		}
-	};
-
-	std::vector<Instruction> instructions;
-	std::string line;
-	while(std::getline(file, line))
-	{
-		const uint16_t val = (hex_val(line[0]) << 12)
-		                   | (hex_val(line[1]) <<  8)
-		                   | (hex_val(line[2]) <<  4)
-		                   | (hex_val(line[3]) <<  0);
-
-		Opcode  opc;
-		uint8_t op0;
-		uint8_t op1;
-		bool r_format = false;
-		
-		op0 = (val & 0x0700) >> 8;
-		
-		//if first 5 bits are 0
-		if(0 == (val & 0xF800))
-		{
-			r_format = true;
-
-			opc = static_cast<Opcode>(val & 0x001F);
-			op1 = (val >> 5) & 0x7;
-		}
-		else
-		{
-			opc = static_cast<Opcode>(val >> 11);
-			op1 = val & 0x00FF;
-		}
-
-
-		instructions.emplace_back(opc, op0, ! r_format, op1);
-	}
-
-
+	
 	uint16_t& instruction_pointer = ext[0];
 	uint16_t& stack_pointer       = ext[1];
 	uint16_t& link_register       = ext[2];
@@ -256,7 +258,13 @@ int main(int argc, char* argv[])
 
 	feature_register = Feature_Flags::M;
 
-	uint32_t cycle_count = 0;
+
+	uint32_t instruction_count = 0;
+	uint32_t memory_references = 0;
+	uint32_t stack_operations  = 0;
+	uint32_t branches          = 0;
+	uint32_t branches_taken    = 0;
+	uint32_t arithmetic        = 0;
 
 	flags_register = 0x1;
 	stack_pointer = 0x0;
@@ -264,7 +272,7 @@ int main(int argc, char* argv[])
 	bool run = false;
 	while(true)
 	{
-		cycle_count++;
+		instruction_count++;
 		if(debug)
 		{
 			if(false  == run) std::getline(std::cin, line);
@@ -283,7 +291,10 @@ int main(int argc, char* argv[])
 			if(0 != line.size()) run = true;
 		}
 
-		const auto& instr = instructions[instruction_pointer];
+
+		const uint16_t instr_val = (static_cast<uint16_t>(mem[2 * instruction_pointer]) << 8)
+		                         |  static_cast<uint16_t>(mem[2 * instruction_pointer + 1]);
+		const auto& instr = decode(instr_val);
 
 		uint16_t& reg0 = reg[instr.op0.r0];
 		
@@ -342,6 +353,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::RDM: 
 		{
+			memory_references++;
+
 			DEBUG_PRINT("RDM\n");
 			const uint16_t MSB = mem[second + 0];
 			const uint16_t LSB = mem[second + 1];
@@ -349,12 +362,16 @@ int main(int argc, char* argv[])
 			reg0 = MSB << 8
 			     | LSB << 0;
 			
+			modified[second + 1] = true;
+			modified[second + 0] = true;
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << "\n"); 
 
 			break;
 		}
 		case Opcode::WRM: 
 		{
+			memory_references++;
+
 			DEBUG_PRINT("WRM\n");
 			
 			const uint8_t MSB = static_cast<uint8_t>(reg0 >> 8);
@@ -362,6 +379,9 @@ int main(int argc, char* argv[])
 
 			mem[second + 0] = MSB;
 			mem[second + 1] = LSB;
+			
+			modified[second + 1] = true;
+			modified[second + 0] = true;
 			
 			VERBOSE_PRINT("M[" << second + 0 << "] <= " << +MSB << "\n");
 			VERBOSE_PRINT("M[" << second + 1 << "] <= " << +LSB << "\n");
@@ -411,14 +431,20 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::PSH: 
 		{
+			memory_references++;
+			stack_operations++;
+
 			DEBUG_PRINT("PSH\n");
 			stack_pointer -= 2;
 
 			uint8_t f = static_cast<uint8_t>(reg0 >> 8);
 			uint8_t s = static_cast<uint8_t>(reg0 >> 0);
 			
-			mem[stack_pointer + 1] = f;
-			mem[stack_pointer + 0] = s;
+			mem[stack_pointer + 0] = f;
+			mem[stack_pointer + 1] = s;
+			
+			modified[stack_pointer + 1] = true;
+			modified[stack_pointer + 0] = true;
 
 			VERBOSE_PRINT("PUSH " << reg0 << " FROM R" << +instr.op0.r0 << "\n");
 
@@ -426,10 +452,16 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::POP: 
 		{
+			memory_references++;
+			stack_operations++;
+
 			DEBUG_PRINT("POP\n");
 			
-			uint16_t f = mem[stack_pointer + 1];
-			uint16_t s = mem[stack_pointer + 0];
+			uint16_t f = mem[stack_pointer + 0];
+			uint16_t s = mem[stack_pointer + 1];
+
+			modified[stack_pointer + 1] = true;
+			modified[stack_pointer + 0] = true;
 
 			reg0 = f << 8 
 			     | s << 0;
@@ -441,6 +473,9 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::MUL:
 		{
+			arithmetic++;
+
+
 			DEBUG_PRINT("MUL\n");
 			const int16_t temp = reg0 * second;
 			
@@ -449,7 +484,6 @@ int main(int argc, char* argv[])
 			SET_FLAGS(temp);
 			reg0 = temp;
 			
-
 			break;
 		}
 		case Opcode::CMP: 
@@ -484,12 +518,14 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::JMP: 
 		{
+			branches++;
+
 			DEBUG_PRINT("JMP\n");
 
 			if(verbose)
 			{
-				const auto& fnd = debug_info_labels.find(second);
-				if(debug_info_labels.end() != fnd)
+				const auto& fnd = symbols.find(second);
+				if(symbols.end() != fnd)
 				{   VERBOSE_PRINT("JMP TO " << fnd->second);}
 				else
 				{	VERBOSE_PRINT("JMP TO " << second);     }
@@ -497,11 +533,12 @@ int main(int argc, char* argv[])
 
 			if(flags_register & ccc)
 			{
+				branches_taken++;
 				instruction_pointer = second;
 				if(debug)
 				{
-					const auto& fnd = debug_info_labels.find(second);
-					if(debug_info_labels.end() != fnd
+					const auto& fnd = symbols.find(second);
+					if(symbols.end() != fnd
 					&& fnd->second == line)
 						run = false;
 				}
@@ -515,12 +552,13 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::CAL: 
 		{
+			branches++;
 			DEBUG_PRINT("CAL\n");
 			
 			if(verbose)
 			{
-				const auto& fnd = debug_info_labels.find(second);
-				if(debug_info_labels.end() != fnd)
+				const auto& fnd = symbols.find(second);
+				if(symbols.end() != fnd)
 				{	VERBOSE_PRINT("CAL TO " << fnd->second);}
 				else
 				{	VERBOSE_PRINT("CAL TO " << second);     }
@@ -528,13 +566,14 @@ int main(int argc, char* argv[])
 
 			if(flags_register & ccc)
 			{
+				branches_taken++;
 				link_register = instruction_pointer;
 				instruction_pointer = second;
 				
 				if(debug)
 				{
-					const auto& fnd = debug_info_labels.find(second);
-					if(debug_info_labels.end() != fnd
+					const auto& fnd = symbols.find(second);
+					if(symbols.end() != fnd
 					&& fnd->second == line)
 						run = false;
 				}
@@ -548,12 +587,14 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::RET: 
 		{
+			branches++;
 			DEBUG_PRINT("RET\n");
 
 			VERBOSE_PRINT("RET TO " << link_register);
 
 			if(flags_register & ccc)
 			{
+				branches_taken++;
 				instruction_pointer = link_register;
 
 				VERBOSE_PRINT("\n");
@@ -572,6 +613,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::ADD: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("ADD\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " + " << second << "  (" << reg0 + second << ")\n");
 			
@@ -585,6 +628,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::SUB: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("SUB\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " - " << second << "  (" << reg0 - second << ")\n");
 
@@ -596,6 +641,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::NOT: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("NOT\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <=  ~ " << second << "  (" << ~second << ")\n");
 			reg0 = ~second; 
@@ -605,6 +652,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::AND: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("AND\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " & " << second << "  (" << (reg0 & second) << ")\n");
 			reg0 &= second; 
@@ -614,6 +663,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::ORR: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("ORR\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " | " << second << "  (" << (reg0 | second) << ")\n");
 			reg0 |= second; 
@@ -623,6 +674,8 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::XOR: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("XOR\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " ^ " << second << "  (" << (reg0 ^ second) << ")\n");
 			reg0 ^= second; 
@@ -632,16 +685,20 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::SLL: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("SLL\n");
-			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " << " << second << "  (" << (reg0 << second) << ")\n");
-			reg0 <<= second; 
+			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " << " << second << "  (" << static_cast<uint16_t>(reg0 << second) << ")\n");
+			reg0 <<= (second & 0b1111); 
 			break;
 		}
 		case Opcode::SLR: 
 		{
+			arithmetic++;
+
 			DEBUG_PRINT("SLR\n");
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << " >> " << second << "  (" << (reg0 >> second) << ")\n");
-			reg0 >>= second; 
+			reg0 >>= (second & 0b1111); 
 			break;
 		}
 		}
@@ -650,16 +707,41 @@ end:
 	
 	DEBUG_PRINT("\n");
 
+	if(dump_reg)
+		for(int i = 0; i < 8; i++)
+			std::cout << "reg " << i << ' ' << reg[i] << '\n';
 
-	for(int i = 0; i < 8; i++)
-		std::cout << "reg " << i << ' ' << reg[i] << '\n';
+	//memdump
+	if(dump_mem)
+	{
+		std::ofstream dump("dump.txt");
+		for(int i = 0; i < 0x10000; /*end of loop*/)
+		{
+			if(modified[i])
+				dump << std::hex << std::uppercase << PAD_ZERO(2, +mem[i]); 
+			else
+				dump << "__";
+		
+			i++;
+			if(0 == i % 4)
+				dump << '\n';
+		}
+		dump.close();
+	}
+	if(perf)
+	{
+		std::cout << "Instruction Count: " << instruction_count << '\n';
+		std::cout << "Memory References: " << memory_references << '\n';
+		std::cout << "Stack Operations : " << stack_operations  << '\n'; 
+		std::cout << "Branches         : " << branches          << '\n'; 
+		std::cout << "Branches Taken   : " << branches_taken    << '\n'; 
+		std::cout << "Arithmetic       : " << arithmetic        << '\n'; 
+		std::cout << '\n';
+		std::cout << "Time on simple implementation: " << instruction_count + memory_references << " cycles\n";
+	}
 
 
-	const uint16_t MSB = mem[80 + 0];
-	const uint16_t LSB = mem[80 + 1];
 
-	std::cout << "Exit Mem:    " << ((MSB << 8) | LSB) << '\n';
-	std::cout << "Cycle count: " << cycle_count << '\n';
 
 	return 0;
 }
