@@ -227,7 +227,7 @@ void output_print_help()
 		"\t-d         debug\n"
 		"\t-v         verbose output\n"
 		"\t-l         long input\n"
-		"\t           input is long when it two instructions are in each line\n"
+		"\t           input is long when each line has two instructions\n"
 		"\t-m         memory dump\n"
 		"\t-r         register dump\n"
 		"\t-p         output performance info\n"

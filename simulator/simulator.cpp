@@ -288,8 +288,8 @@ int main(int argc, char* argv[])
 		}
 
 
-		const uint16_t instr_val = (static_cast<uint16_t>(mem[2 * instruction_pointer]) << 8)
-		                         |  static_cast<uint16_t>(mem[2 * instruction_pointer + 1]);
+		const uint16_t instr_val = (static_cast<uint16_t>(mem[(2 * instruction_pointer + 0)&0xFFFF]) << 8)
+		                         |  static_cast<uint16_t>(mem[(2 * instruction_pointer + 1)&0xFFFF]);
 		const auto& instr = decode(instr_val);
 
 		uint16_t& reg0 = reg[instr.op0.r0];
@@ -733,7 +733,8 @@ end:
 		std::cout << "Branches Taken   : " << branches_taken    << '\n'; 
 		std::cout << "Arithmetic       : " << arithmetic        << '\n'; 
 		std::cout << '\n';
-		std::cout << "Time on simple implementation: " << instruction_count + memory_references << " cycles\n";
+		std::cout << "Approx. time on simple implementation  : " << instruction_count + memory_references                  << " cycles\n";
+		std::cout << "Approx. time on pipeline implementation: " << instruction_count + memory_references + 2 * branches_taken << " cycles\n";
 	}
 
 
