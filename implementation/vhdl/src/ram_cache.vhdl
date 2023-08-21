@@ -53,6 +53,7 @@ ENTITY ram IS
 		o0d : OUT std_ulogic_vector(31 DOWNTO 0) := x"00000000";
 
 		we  : IN  std_ulogic := '0';
+		hlt : IN  std_ulogic := '0'; --NAI
 		rdy : OUT std_ulogic := '0';
 		clk : IN  std_ulogic);
 END ENTITY ram;
@@ -172,6 +173,7 @@ BEGIN
 	ms_half  <= NOT a0(1);
 	mem_data <= data(addr);
 
+	--since input is 16b it needs to be merged with part of what is already stored 
 	mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
 	     ELSE i0s & mem_data(15 DOWNTO  0);
 
@@ -233,9 +235,8 @@ ARCHITECTURE behav OF cache IS
 	SIGNAL matched_opt0 : std_ulogic;
 	SIGNAL matched_opt1 : std_ulogic;
 
-	--whether or not first tag is LRU
+	--whether or not first entry is LRU
 	SIGNAL first_lru    : std_ulogic_vector(127 DOWNTO 0);
-
 	
 	SIGNAL addr         : std_ulogic_vector(6 DOWNTO 0);
 
@@ -276,6 +277,7 @@ BEGIN
 
 	change_lru <= '0' WHEN matched_opt0 = '1' 
    	         ELSE '1' WHEN matched_opt1 = '1' 
+			 --change LRU to NOT evicted one
    	         ELSE '0' WHEN first_lru(addr_int)  = '1'
    	         ELSE '1';
    

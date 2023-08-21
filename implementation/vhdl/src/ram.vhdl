@@ -14,7 +14,11 @@
 		unaligned memory access is rounded down to first aligned 
 		meaning LSb is discarded when using a0 
 		
-		so in practice behaves like 32Ki of 16bit words
+		so in practice behaves like 32Ki of 16bit 
+
+		however internal implementation is 16Ki of 32bit 
+		because that how it is the most convenient for superscalar implementation
+		and poses no additional cost for other impl. 
 
 		default value of data is program
 */
@@ -33,7 +37,7 @@ ENTITY ram IS
 
 		we  : IN  std_ulogic := '0';
 		rdy : OUT std_ulogic := '0';
-		hlt : IN  std_ulogic := '0';
+		hlt : IN  std_ulogic := '0'; --NAI
 		clk : IN  std_ulogic);
 END ENTITY ram;
 
@@ -164,7 +168,7 @@ ARCHITECTURE behav OF ram IS
 	SIGNAL mem_in      : std_ulogic_vector(31 DOWNTO 0);
 BEGIN
 	--LSb is ignored
-	--next bit is one decides whether data is in first or second half of memory
+	--next bit decides whether data is in first or second half of 32bit word 
 	addr <= to_integer(unsigned(a0(15 DOWNTO 2)));
 
 	--most significant half 
@@ -173,6 +177,7 @@ BEGIN
 	ms_half  <= NOT a0(1);
 	mem_data <= data(addr);
 
+	--since input is 16b it needs to be merged with part of what is already stored 
 	mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
 	     ELSE i0s & mem_data(15 DOWNTO  0);
 
@@ -188,7 +193,7 @@ BEGIN
 	--models delay
 	--rdy <= '1' AFTER 10 NS, '0' AFTER 10.5   NS WHEN rising_edge(clk)
 	--  ELSE UNAFFECTED;
-	--stub 
+	--models lack of delay
 	rdy <= '1';
 
 END ARCHITECTURE behav; 

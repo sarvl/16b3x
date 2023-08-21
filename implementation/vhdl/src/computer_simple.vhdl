@@ -5,6 +5,13 @@
 	this computer is {not pipelined; sub scalar; in order} 
 	implementation of isa specified in intruction_set.txt
 
+
+	acronym NAI means:
+		Not Applicable to this Implementation
+
+		used when some component had to be extendend for different impl. 
+		 but not enough to create new file
+
 */
 
 LIBRARY ieee;
@@ -139,6 +146,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL 	r_ip : t_register := (x"0000", x"0000", '0');
 	SIGNAL 	r_sp : t_register := (x"0000", x"0000", '0');
 	SIGNAL 	r_lr : t_register := (x"0000", x"0000", '0');
+	--UI is constantly we so that it is cleared every cycle
 	SIGNAL 	r_ui : t_register := (x"0000", x"0000", '1');
 	SIGNAL 	r_fl : t_register := (x"0000", x"0000", '0');
 
@@ -157,7 +165,7 @@ BEGIN
 		
 		--whenever hlt = 0 there is no need to continue the simulation
 		IF controls.hlt = '1' AND flcmp /= "000" THEN
-			WAIT FOR clk_period; --give RAM time to react
+			WAIT FOR clk_period / 2; --give RAM time to react, currently only for memdump
 			finish;
 		END IF;
 
@@ -165,6 +173,8 @@ BEGIN
 
 		--so that it looks nicer on the gtkwave
 		clk <= '0';
+		--only used when memory latency is tested
+		--otherwise always mem_rdy = 1 
 		IF mem_rdy /= '1' THEN
 			WAIT UNTIL mem_rdy = '1';
 		END IF;
@@ -188,7 +198,7 @@ BEGIN
 	ram0: ram PORT MAP(a0  => ram_adr,
 	                   i0s => ram_in,
 	                   o0s => ram_out,
-	                   o0d => OPEN,
+	                   o0d => OPEN, --NAI
 	                   we  => controls.wrm,
 	                   rdy => mem_rdy,
 	                   hlt => controls.hlt,
@@ -198,11 +208,11 @@ BEGIN
 	                          o0 => mul_out);
 
 	
-	cntrl: control PORT MAP(instr    => instr,
-	                        controls => controls,
-	                        alu_op   => alu_op, 
-	                        can_skip_wait => '0',
-	                        clk      => clk);
+	cntrl: control PORT MAP(instr         => instr,
+	                        controls      => controls,
+	                        alu_op        => alu_op, 
+	                        can_skip_wait => '0', --NAI
+	                        clk           => clk);
 
 	reg_ip: reg_16bit PORT MAP(i0  => r_ip.i0,
 	                           o0  => r_ip.o0,
@@ -231,7 +241,7 @@ BEGIN
 	                            o0 => spp2,
 	                            oc => OPEN);
 	spsub: adder_16bit PORT MAP(i0 => r_sp.o0,
-	                            i1 => x"FFFE",
+	                            i1 => x"FFFE", -- xFFFE = -2
 	                            ic => '0',
 	                            o0 => sps2,
 	                            oc => OPEN);
@@ -246,23 +256,27 @@ BEGIN
 	instr <= ram_out WHEN controls.cycadv = '1'
 	    ELSE UNAFFECTED;
 	
-	--retrieviegn control stuff from instruction that does not require control
-	imm08 <= instr( 7 DOWNTO 0);
+	--retrievieng control stuff from instruction that does not require control
+	--with the exception of imm8 which is extracted directly for op1
 	r0    <= instr(10 DOWNTO 8);
 	r1    <= instr( 7 DOWNTO 5);
 	
 	--retrievieng data from reg file
+	--or from immiediate
 	op0 <= r0o;
 	op1 <= r1o WHEN controls.iim /= '1'
-	  ELSE r_ui.o0(7 DOWNTO 0) & imm08;
+	  ELSE r_ui.o0(7 DOWNTO 0) & instr( 7 DOWNTO 0);
 
-	--memory stuff
+	--ram address is ip unless instruction writes to memory
+	--in this implementation all instructions using memory have cycadv = 0
 	ram_adr <= r_ip.o0(14 DOWNTO 0) & "0" WHEN controls.cycadv = '1'
 	      ELSE dat_adr;
 	
+	--psh and wrm 
 	ram_in  <= op0 WHEN controls.wrm = '1'
 	      ELSE UNAFFECTED;
 	
+	--see behavior of stack 
 	dat_adr <= sps2    WHEN controls.psh = '1'
 	      ELSE r_sp.o0 WHEN controls.pop = '1'
 	      ELSE op1     WHEN controls.wrm = '1' OR controls.srm = '1'
@@ -281,8 +295,9 @@ BEGIN
 	    ELSE x"0001" WHEN controls.sre = '1' AND r1 = "111" 
 	    ELSE UNAFFECTED;
 
-	--input to external register
-
+	--input to external registers
+	--wherever there is `wre` that means specifically wrx instruction
+	--otherwise it is from other condition 
 	r_sp.i0 <= spp2 WHEN controls.pop = '1'
 	      ELSE sps2 WHEN controls.psh = '1'
 	      ELSE op1  WHEN controls.wre = '1' AND r0 = "001"

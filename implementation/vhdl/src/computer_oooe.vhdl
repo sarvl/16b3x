@@ -2,7 +2,7 @@
 	DUs in file
 		computer
 
-	this computer is {not pipelined; sub scalar; in order} 
+	this computer is {not pipelined; superscalar; out of order} 
 	implementation of isa specified in intruction_set.txt
 
 */

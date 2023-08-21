@@ -14,9 +14,14 @@
 		unaligned memory access is rounded down to first aligned 
 		meaning LSb is discarded when using a0 
 		
-		so in practice behaves like 32Ki of 16bit words
+		so in practice behaves like 32Ki of 16bit 
 
-		default value of data is program
+		however internal implementation is 16Ki of 32bit 
+		because that how it is the most convenient for superscalar implementation
+		and poses no additional cost for other impl. 
+
+	this RAM is specifically designed for quick tests
+	instead of hard coding data reads it from the file
 */
 
 
@@ -54,27 +59,27 @@ ARCHITECTURE behav OF ram IS
 
 	-- Convert string to std_logic_vector, assuming characters in '0' to '9',
 	-- 'A' to 'F', or 'a' to 'f'.
-	function str_to_slv(str : string) return std_logic_vector is
-	  alias str_norm : string(1 to str'length) is str;
-	  variable char_v : character;
-	  variable val_of_char_v : natural;
-	  variable res_v : std_logic_vector(4 * str'length - 1 downto 0);
-	begin
-	  for str_norm_idx in str_norm'range loop
+	FUNCTION str_to_slv(str : string) RETURN std_logic_vector IS
+	  ALIAS str_norm : string(1 TO str'length) IS str;
+	  VARIABLE char_v : character;
+	  VARIABLE val_of_char_v : natural;
+	  VARIABLE res_v : std_logic_vector(4 * str'length - 1 DOWNTO 0);
+	BEGIN
+	  FOR str_norm_idx IN str_norm'range LOOP
 	    char_v := str_norm(str_norm_idx);
-	    case char_v is
-	      when '0' to '9' => val_of_char_v := character'pos(char_v) - character'pos('0');
-	      when 'A' to 'F' => val_of_char_v := character'pos(char_v) - character'pos('A') + 10;
-	      when 'a' to 'f' => val_of_char_v := character'pos(char_v) - character'pos('a') + 10;
-	      when others => report "str_to_slv: Invalid characters for convert" severity ERROR;
-	    end case;
-	    res_v(res_v'left - 4 * str_norm_idx + 4 downto res_v'left - 4 * str_norm_idx + 1) :=
+	    CASE char_v IS
+	      WHEN '0' TO '9' => val_of_char_v := character'pos(char_v) - character'pos('0');
+	      WHEN 'A' TO 'F' => val_of_char_v := character'pos(char_v) - character'pos('A') + 10;
+	      WHEN 'a' TO 'f' => val_of_char_v := character'pos(char_v) - character'pos('a') + 10;
+	      WHEN OTHERS => REPORT "str_to_slv: Invalid characters for convert" SEVERITY ERROR;
+	    END CASE;
+	    res_v(res_v'left - 4 * str_norm_idx + 4 DOWNTO res_v'left - 4 * str_norm_idx + 1) :=
 	      std_logic_vector(to_unsigned(val_of_char_v, 4));
-	  end loop;
-	  return res_v;
-	end function;
+	  END LOOP;
+	  RETURN res_v;
+	END FUNCTION;
 
-	FUNCTION slv_to_str(slv : std_ulogic_vector(31 DOWNTO 0)) return string IS
+	FUNCTION slv_to_str(slv : std_ulogic_vector(31 DOWNTO 0)) RETURN string IS
 		VARIABLE index : natural;
 		VARIABLE str   : string(8 DOWNTO 1);
 		VARIABLE sub   : std_ulogic_vector(3 DOWNTO 0);
@@ -157,31 +162,32 @@ BEGIN
 		file_close(dump);
 	END PROCESS memory_fin;
 
-		--LSb is ignored
-		--next bit is one decides whether data is in first or second half of memory
-		addr <= to_integer(unsigned(a0(15 DOWNTO 2)));
+	--LSb is ignored
+	--next bit is one decides whether data is in first or second half of memory
+	addr <= to_integer(unsigned(a0(15 DOWNTO 2)));
 
-		--most significant half 
-		--in xAAAABBBB
-		--its half denoted by AAAA
-		ms_half  <= NOT a0(1);
-		mem_data <= data(addr) WHEN NOT hlt;
+	--most significant half 
+	--in xAAAABBBB
+	--its half denoted by AAAA
+	ms_half  <= NOT a0(1);
+	mem_data <= data(addr) WHEN NOT hlt;
 
-		mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
-		     ELSE i0s & mem_data(15 DOWNTO  0);
+	--since input is 16b it needs to be merged with part of what is already stored 
+	mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
+	     ELSE i0s & mem_data(15 DOWNTO  0);
 
-		data(addr) <= mem_in WHEN we = '1' AND rising_edge(clk) AND can_write'delayed(1 NS) = '1'
-		         ELSE UNAFFECTED;
+	data(addr) <= mem_in WHEN we = '1' AND rising_edge(clk) AND can_write'delayed(1 NS) = '1'
+	         ELSE UNAFFECTED;
 
-		o0s <= mem_data(31 DOWNTO 16) WHEN ms_half = '1'
-		  ELSE mem_data(15 DOWNTO  0); 
-		o0d <= mem_data;
+	o0s <= mem_data(31 DOWNTO 16) WHEN ms_half = '1'
+	  ELSE mem_data(15 DOWNTO  0); 
+	o0d <= mem_data;
 
-		--models delay
-		--rdy <= '1' AFTER 10 NS, '0' AFTER 10.5   NS WHEN rising_edge(clk)
-		--  ELSE UNAFFECTED;
-		--stub 
-		rdy <= '1';
+	--models delay
+	--rdy <= '1' AFTER 10 NS, '0' AFTER 10.5   NS WHEN rising_edge(clk)
+	--  ELSE UNAFFECTED;
+	--stub 
+	rdy <= '1';
 
 
 END ARCHITECTURE behav; 

@@ -5,6 +5,18 @@
 	this computer is {pipelined; sub scalar; in order} 
 	implementation of isa specified in intruction_set.txt
 
+	for definition of t_stage see stage.vhdl 
+
+	acronym NAI means:
+		Not Applicable to this Implementation
+
+		used when some component had to be extendend for different impl. 
+		 but not enough to create new file
+
+	pipeline stages are designed in such a way that there is no need for data hazard stalls
+	only control hazards when mispredicted cause bubble
+	prediction always guesses not taken 
+
 */
 
 LIBRARY ieee;
@@ -140,6 +152,7 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL 	r_ip : t_register := (x"0000", x"0000", '0');
 	SIGNAL 	r_sp : t_register := (x"0000", x"0000", '0');
 	SIGNAL 	r_lr : t_register := (x"0000", x"0000", '0');
+	--UI is constantly we so that it is cleared every cycle
 	SIGNAL 	r_ui : t_register := (x"0000", x"0000", '1');
 	SIGNAL 	r_fl : t_register := (x"0000", x"0000", '0');
 
@@ -168,6 +181,7 @@ BEGIN
 		
 		--whenever hlt = 0 there is no need to continue the simulation
 		IF stage3_wb.controls.hlt = '1' AND flcmp_delayed /= "000" THEN
+			WAIT FOR clk_period / 2; --give RAM time to react, currently only for memdump
 			finish;
 		END IF;
 
@@ -175,6 +189,8 @@ BEGIN
 
 		--so that it looks nicer on the gtkwave
 		clk <= '0';
+		--only used when memory latency is tested
+		--otherwise always mem_rdy = 1 
 		IF mem_rdy /= '1' THEN
 			WAIT UNTIL mem_rdy = '1';
 		END IF;
@@ -197,7 +213,7 @@ BEGIN
 	ram0: ram PORT MAP(a0  => ram_adr,
 	                   i0s => ram_in,
 	                   o0s => ram_out,
-	                   o0d => OPEN,
+	                   o0d => OPEN, --NAI 
 	                   we  => stage2_ex.controls.wrm,
 					   rdy => mem_rdy,
 	                   hlt => stage3_wb.controls.hlt,
@@ -208,11 +224,11 @@ BEGIN
 	                          o0 => mul_out);
 
 	
-	cntrl: control PORT MAP(instr    => instr,
-	                        controls => stage1_id.controls,
-	                        alu_op   => stage1_id.alu_op,  
-	                        can_skip_wait => '0',
-	                        clk      => clk);
+	cntrl: control PORT MAP(instr         => instr,
+	                        controls      => stage1_id.controls,
+	                        alu_op        => stage1_id.alu_op,  
+	                        can_skip_wait => '0', --NAI 
+	                        clk           => clk);
 
 	reg_ip: reg_16bit PORT MAP(i0  => r_ip.i0,
 	                           o0  => r_ip.o0,
@@ -241,7 +257,7 @@ BEGIN
 	                            o0 => spp2,
 	                            oc => OPEN);
 	spsub: adder_16bit PORT MAP(i0 => r_sp.o0,
-	                            i1 => x"FFFE",
+	                            i1 => x"FFFE", -- xFFFE = -2
 	                            ic => '0',
 	                            o0 => sps2,
 	                            oc => OPEN);
@@ -262,21 +278,26 @@ BEGIN
 	                     o0  => stage3_wb,
 	                     clk => clk);
 
+	--stall when control hazard
 	stall <= '1' WHEN stage2_ex.controls.jmp = '1' AND flcmp /= "000"
 	    ELSE '1' WHEN stage2_ex.controls.cal = '1' AND flcmp /= "000"
 	    ELSE '1' WHEN stage2_ex.controls.ret = '1' AND flcmp /= "000"
-	    ELSE '1' WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "000"
+	    ELSE '1' WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "000" --ip register
 	    ELSE '0';
-	--retrievieng instruction, only when new instruction should be taken
+	--retrievieng instruction, only when new instruction should be taken, else NOP, effectively bubble
 	instr <= x"0000" WHEN stall = '1' 
 	    ELSE ram_out WHEN stage2_ex.controls.cycadv = '1' AND rising_edge(clk)
 	    ELSE UNAFFECTED;
 	
-	--retrieving control stuff from instruction that does not require control
+	--retrieving control stuff from instruction that does not require control component
+	--when instruction does not have r1, that signal is ignored
+	--imm8 can also be extracted but due to the fact that it is used in a single place 
+	-- it is instead exctracted in assignment to op1
 	stage1_id.r0 <= instr(10 DOWNTO 8);
 	stage1_id.r1 <= instr( 7 DOWNTO 5);
 	
-	--retrievieng data from reg file
+	--forward data when dependency 
+	--if not retrievie data from reg file or imm
 	stage1_id.op0 <=           rdi WHEN stage2_ex.r0 = stage1_id.r0 AND stage2_ex.controls.wrr = '1'
 	            ELSE stage3_wb.rdi WHEN stage3_wb.r0 = stage1_id.r0 AND stage3_wb.controls.wrr = '1'
 	            ELSE r0o;
@@ -285,19 +306,23 @@ BEGIN
 	            ELSE stage3_wb.rdi WHEN stage3_wb.r0 = stage1_id.r1 AND stage3_wb.controls.wrr = '1'
 	            ELSE r1o; 
 
-	--memory stuff
+	--ram address is ip unless instruction writes to memory
+	--in this implementation all instructions using memory have cycadv = 0
 	ram_adr <= r_ip.o0(14 DOWNTO 0) & "0" WHEN stage2_ex.controls.cycadv = '1'
 	      ELSE dat_adr;
 	
+	--psh and wrm 
 	ram_in  <= stage2_ex.op0 WHEN stage2_ex.controls.wrm = '1'
 	      ELSE UNAFFECTED;
 	
+	--see behavior of stack 
 	dat_adr <= sps2          WHEN stage2_ex.controls.psh = '1'
 	      ELSE r_sp.o0       WHEN stage2_ex.controls.pop = '1'
 	      ELSE stage2_ex.op1 WHEN stage2_ex.controls.wrm = '1' OR stage2_ex.controls.srm = '1'
 	      ELSE x"0000";
 
 	--input to reg file
+	--only ip needs to be delayed
 	rdi <= stage2_ex.op1 WHEN stage2_ex.controls.sro = '1'
 	  ELSE alu_out       WHEN stage2_ex.controls.srr = '1'
 	  ELSE ram_out       WHEN stage2_ex.controls.srm = '1' 
@@ -311,8 +336,9 @@ BEGIN
 	  ELSE UNAFFECTED;
 
 
-	--input to external register
-
+	--input to external registers
+	--wherever there is `wre` that means specifically wrx instruction
+	--otherwise it is from other condition 
 	r_sp.i0 <= spp2           WHEN stage2_ex.controls.pop = '1'
 	      ELSE sps2           WHEN stage2_ex.controls.psh = '1'
 	      ELSE stage2_ex.op1  WHEN stage2_ex.controls.wre = '1' AND stage2_ex.r0 = "001"

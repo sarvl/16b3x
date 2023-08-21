@@ -7,8 +7,8 @@
 		defines type to be used for control signals
 
 	control
-		i0  input instruction
-		clk used to sync input signals of instructions taking more than one clock cycle
+		decodes instructions and sends signals 
+		couldve been named better
 */
 
 LIBRARY ieee;
@@ -55,7 +55,10 @@ USE work.p_control.ALL;
 ENTITY control IS 
 	PORT(
 		instr         : IN  std_ulogic_vector(15 DOWNTO 0);
+		--clk used to sync input signals of instructions taking more than one clock cycle
 		clk           : IN  std_ulogic := '0';
+		--applicable when there is no need to stall for memory
+		--currently only OOOE impl. uses this feature
 		can_skip_wait : IN  std_ulogic := '0'; 
 	
 		alu_op        : OUT std_ulogic_vector( 2 DOWNTO 0);

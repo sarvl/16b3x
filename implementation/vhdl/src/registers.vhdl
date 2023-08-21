@@ -8,7 +8,7 @@
 		stage
 
 	Register File (reg_file) contains 8 registers addressed by ri, r0, r1
-		rd    specifiec to which register to write value in i0 
+		rd    specifies to which register to write value in i0 
 		r0,r1 specify which register to output to o0,o1, respectively
 
 		we,   when '1', enable write
@@ -32,6 +32,7 @@
 		LSb defaulted to '1' 
 		only 3LSb can be written/read
 		other bits default to 0 
+		needed to properly support the flags register as required by the isa 
 	
 	stage
 		used by pipeline implementation 

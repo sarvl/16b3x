@@ -11,6 +11,8 @@
 
 	ALU provides functionality for instructions requiring computation
 
+	subtraction assumes that negative numbers are represented in two's complement 
+
 	table of operations per op:
 		000 - o0 <=  i0 + i1
 		001 - o0 <=  i0 - i1
@@ -143,7 +145,10 @@ ARCHITECTURE behav OF multiplier IS
 	SIGNAL v8, v9, vA, vB, vC, vD         : std_ulogic_vector(15 DOWNTO 0);
 
 BEGIN
-	--perform shifts and filter them 
+	--perform shifts and filter them depending on the input bit 
+	--that is, if xth bit of i1 is 1 then shift by x to the left is anded with xFFFF 
+	--else it is anded with x0000
+	--in other words, implements binary long multiplication
 	s0 <= (i0(15 DOWNTO  0)                        ) AND (15 DOWNTO 0 => i1( 0));
 	s1 <= (i0(14 DOWNTO  0) & ( 0 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 1));
 	s2 <= (i0(13 DOWNTO  0) & ( 1 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1( 2));
@@ -162,25 +167,25 @@ BEGIN
 	sF <= (i0( 0 DOWNTO  0) & (14 DOWNTO  0 => '0')) AND (15 DOWNTO 0 => i1(15));
 
 	--combine results
-	--                       i0, i1, ic,  o0, oc
-	a0: adder_16bit PORT MAP(s0, s1, '0', v0, OPEN);
-	a1: adder_16bit PORT MAP(s2, s3, '0', v1, OPEN);
-	a2: adder_16bit PORT MAP(s4, s5, '0', v2, OPEN);
-	a3: adder_16bit PORT MAP(s6, s7, '0', v3, OPEN);
-	a4: adder_16bit PORT MAP(s8, s9, '0', v4, OPEN);
-	a5: adder_16bit PORT MAP(sa, sb, '0', v5, OPEN);
-	a6: adder_16bit PORT MAP(sc, sd, '0', v6, OPEN);
-	a7: adder_16bit PORT MAP(se, sf, '0', v7, OPEN);
+	--                        i0, i1, ic,  o0, oc
+	a00: adder_16bit PORT MAP(s0, s1, '0', v0, OPEN);
+	a01: adder_16bit PORT MAP(s2, s3, '0', v1, OPEN);
+	a02: adder_16bit PORT MAP(s4, s5, '0', v2, OPEN);
+	a03: adder_16bit PORT MAP(s6, s7, '0', v3, OPEN);
+	a04: adder_16bit PORT MAP(s8, s9, '0', v4, OPEN);
+	a05: adder_16bit PORT MAP(sa, sb, '0', v5, OPEN);
+	a06: adder_16bit PORT MAP(sc, sd, '0', v6, OPEN);
+	a07: adder_16bit PORT MAP(se, sf, '0', v7, OPEN);
 
-	a8: adder_16bit PORT MAP(v0, v1, '0', v8, OPEN);
-	a9: adder_16bit PORT MAP(v2, v3, '0', v9, OPEN);
-	aa: adder_16bit PORT MAP(v4, v5, '0', va, OPEN);
-	ab: adder_16bit PORT MAP(v6, v7, '0', vb, OPEN);
+	a10: adder_16bit PORT MAP(v0, v1, '0', v8, OPEN);
+	a11: adder_16bit PORT MAP(v2, v3, '0', v9, OPEN);
+	a12: adder_16bit PORT MAP(v4, v5, '0', va, OPEN);
+	a13: adder_16bit PORT MAP(v6, v7, '0', vb, OPEN);
 
-	ac: adder_16bit PORT MAP(v8, v9, '0', vc, OPEN);
-	ad: adder_16bit PORT MAP(va, vb, '0', vd, OPEN);
+	a20: adder_16bit PORT MAP(v8, v9, '0', vc, OPEN);
+	a21: adder_16bit PORT MAP(va, vb, '0', vd, OPEN);
 
-	ae: adder_16bit PORT MAP(vc, vd, '0', o0, OPEN);
+	a30: adder_16bit PORT MAP(vc, vd, '0', o0, OPEN);
 
 
 END ARCHITECTURE behav;
@@ -213,6 +218,8 @@ ARCHITECTURE behav OF adder_16bit IS
 	SIGNAL ct : std_ulogic_vector(16 DOWNTO 0);
 
 BEGIN
+	--implements ripple carry adder
+
 	ct(0) <= ic;
 
 	u0: full_adder PORT MAP(i0(00), i1(00), ct(00), o0(00), ct(01));
@@ -261,8 +268,6 @@ END ARCHITECTURE behav;
 
 
 --shifter left
---implemented as barrel shifter
---operates mod 2^4 on second input
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
@@ -277,6 +282,8 @@ END ENTITY shifter_left_16bit;
 ARCHITECTURE behav OF shifter_left_16bit IS
 	SIGNAL t0, t1, t2 : std_ulogic_vector(15 DOWNTO 0);
 BEGIN
+--implemented as barrel shifter
+--operates mod 2^4 on second input
 	t0 <= i0(14 DOWNTO 0) &        "0" WHEN am(0) = '1' ELSE i0;	
 	t1 <= t0(13 DOWNTO 0) &       "00" WHEN am(1) = '1' ELSE t0;	
 	t2 <= t1(11 DOWNTO 0) &     "0000" WHEN am(2) = '1' ELSE t1;	
@@ -285,8 +292,6 @@ END ARCHITECTURE behav;
 
 
 --shifter right
---implemented as barrel shifter
---operates mod 2^4 on second input
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
@@ -301,6 +306,8 @@ END ENTITY shifter_right_16bit;
 ARCHITECTURE behav OF shifter_right_16bit IS
 	SIGNAL t0, t1, t2 : std_ulogic_vector(15 DOWNTO 0);
 BEGIN
+--implemented as barrel shifter
+--operates mod 2^4 on second input
 	t0 <=         "0" & i0(15 DOWNTO 1) WHEN am(0) = '1' ELSE i0;	
 	t1 <=        "00" & t0(15 DOWNTO 2) WHEN am(1) = '1' ELSE t0;	
 	t2 <=      "0000" & t1(15 DOWNTO 4) WHEN am(2) = '1' ELSE t1;	
