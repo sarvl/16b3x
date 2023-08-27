@@ -3,14 +3,14 @@ CR := '\033[0;31m' #color red
 CY := '\033[0;33m' #color yellow 
 
 ALU  := alu
-REGS := registers
-#REGS := registers_oooe
+#REGS := registers
+REGS := registers_oooe
 RAM  := ram
 #RAM  := ram_cache
 CTRL := control
-CPU  := computer_simple
+#CPU  := computer_simple
 #CPU  := computer_pipeline
-#CPU  := computer_oooe
+CPU  := computer_oooe
 
 WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Wspecs -Wport-bounds -Wruntime-error -Wunused -Wnowrite -Wothers -Wuseless
 #WARN := 
@@ -18,7 +18,7 @@ WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Ws
 FILES       := out/${ALU}.o out/${RAM}.o out/${CTRL}.o out/${REGS}.o  out/${CPU}.o 
 FILES_TESTS := out/${ALU}.o out/ram_tests.o out/${CTRL}.o out/${REGS}.o  out/${CPU}.o 
 
-UPPER_LIMIT       :=  4000ns
+UPPER_LIMIT       := 1000ns
 UPPER_LIMIT_TESTS := 10000ns
 
 default:

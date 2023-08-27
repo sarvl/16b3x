@@ -1,5 +1,6 @@
 #basic test of unconditional branching 
 #failure indicates not working branching
+#failure here while working g01t01.asm almost surely means not working misaligned jumps
 
 	tst  	R0, R0
 	jmp 	LEG start

@@ -1,7 +1,7 @@
 g00 ALU
-9
+10
 g01 JMP
-9
+11
 g02 MEM
 1
 g03 STK

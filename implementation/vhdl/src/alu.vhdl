@@ -2,6 +2,7 @@
 	DUs in file in order:
 		ALU
 		multiplier
+		03bit adder
 		16bit adder
 		full adder
 		shifter left
@@ -190,6 +191,46 @@ BEGIN
 
 END ARCHITECTURE behav;
 
+--03bit adder
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY adder_03bit IS 
+	PORT (
+		i0: IN  std_ulogic_vector( 2 DOWNTO 0) := "000";
+		i1: IN  std_ulogic_vector( 2 DOWNTO 0) := "000";
+		ic: IN  std_ulogic := '0';
+		
+		o0: OUT std_ulogic_vector( 2 DOWNTO 0) := "000";
+		oc: OUT std_ulogic);
+END ENTITY adder_03bit; 
+
+ARCHITECTURE behav OF adder_03bit IS
+	COMPONENT full_adder IS 
+		PORT(
+			i0 : IN  std_ulogic;
+			i1 : IN  std_ulogic;
+			ic : IN  std_ulogic;
+			o0 : OUT std_ulogic;
+			oc : OUT std_ulogic);
+	END COMPONENT full_adder;
+
+	--carry to 
+	SIGNAL ct : std_ulogic_vector( 3 DOWNTO 0) := x"0";
+
+BEGIN
+	--implements ripple carry adder
+
+	ct(0) <= ic;
+
+	u0: full_adder PORT MAP(i0(00), i1(00), ct(00), o0(00), ct(01));
+	u1: full_adder PORT MAP(i0(01), i1(01), ct(01), o0(01), ct(02));
+	u2: full_adder PORT MAP(i0(02), i1(02), ct(02), o0(02), ct(03));
+
+	oc <= ct( 3);
+
+END ARCHITECTURE behav;
+
 --16bit adder
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -251,11 +292,11 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY full_adder IS 
 	PORT(
-		i0 : IN  std_ulogic;
-		i1 : IN  std_ulogic;
-		ic : IN  std_ulogic;
-		o0 : OUT std_ulogic;
-		oc : OUT std_ulogic);
+		i0 : IN  std_ulogic := '0';
+		i1 : IN  std_ulogic := '0';
+		ic : IN  std_ulogic := '0';
+		o0 : OUT std_ulogic := '0';
+		oc : OUT std_ulogic := '0');
 END ENTITY;
 
 
@@ -315,4 +356,38 @@ BEGIN
 END ARCHITECTURE behav;
 
 
+--2bc
+/*
+	2 bit counter saturating in both directions
 
+a b c   x y  
+0 0 0   0 0
+0 0 1   0 1
+0 1 0   0 0
+0 1 1   1 0
+1 0 0   0 1
+1 0 1   1 1
+1 1 0   1 0
+1 1 1   1 1
+
+  B   C  ∨ (A ∧ ( B ∨ C))
+(¬B ∧ C) ∨ (A ∧ (¬B ∨ C))
+*/
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY bc_2bit IS 
+	PORT(
+		i0 : IN  std_ulogic_vector(1 DOWNTO 0);
+		ic : IN  std_ulogic; 
+		o0 : OUT std_ulogic_vector(1 DOWNTO 0));
+END ENTITY bc_2bit;
+
+ARCHITECTURE behav OF bc_2bit IS 
+	ALIAS A : std_ulogic IS i0(1);
+	ALIAS B : std_ulogic IS i0(0);
+	ALIAS C : std_ulogic IS ic;
+BEGIN
+	o0(1) <= (    B AND C) OR (A AND     (B OR C));
+	o0(0) <= (NOT B AND C) OR (A AND (NOT B OR C));
+END ARCHITECTURE behav;

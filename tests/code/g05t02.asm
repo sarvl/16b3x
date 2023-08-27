@@ -1,3 +1,5 @@
+#3x3 matrix multiplication
+
 	jmp 	LEG, start
 
 ; takes addr in R0 
@@ -23,6 +25,8 @@ createmat3x3_loop:
 ;writes dot product to R2
 ;unrolled to improve performance
 matmult3x3_rowcol:
+; regular:
+
 	rdm 	R7, R0
 	rdm 	R5, R1
 	mul 	R7, R5
@@ -44,6 +48,31 @@ matmult3x3_rowcol:
 	wrm 	R7, R2
 
 	ret
+
+;reordered
+;	rdm 	R7, R0
+;
+;	rdm 	R5, R1
+;	add 	R0, 2
+;	mul 	R7, R5
+;	add 	R1, 6
+;	
+;	rdm 	R4, R0
+;	rdm 	R5, R1
+;	add 	R0, 2
+;	mul 	R4, R5
+;
+;	add 	R1, 6
+;	add 	R7, R4
+;
+;	rdm 	R4, R0
+;	rdm 	R5, R1
+;	mul 	R4, R5
+;	add 	R7, R4
+;
+;	wrm 	R7, R2
+;
+;	ret
 
 
 ;takes mat0adr in R0
@@ -68,18 +97,18 @@ matmult3x3_loop_outer:
 
 ;unrolled loop
 	rdm 	R1, 200
-	;R0 alreade what is should be
-	cal 	LEG, matmult3x3_rowcol
+	;R0 already what is should be
+	cal 	matmult3x3_rowcol
 	add 	R2, 2
 	
 	rdm 	R0, 254
 	rdm 	R1, 202
-	cal 	LEG, matmult3x3_rowcol
+	cal 	matmult3x3_rowcol
 	add 	R2, 2
 	
 	rdm 	R0, 254
 	rdm 	R1, 204
-	cal 	LEG, matmult3x3_rowcol
+	cal 	matmult3x3_rowcol
 	add 	R2, 2
 
 
