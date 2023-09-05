@@ -7,17 +7,26 @@
 #include <string>
 #include <unordered_map>
 
+namespace Program_Flags{
+	enum T_Program_Flags : uint32_t{
+		none       = 0x0000,
+		print_help = 0x0001,
+		debug      = 0x0002,
+		verbose    = 0x0004,
+		long_input = 0x0008,
+		dump_mem   = 0x0010,
+		dump_reg   = 0x0020,
+		symbols    = 0x0040,
+		perf       = 0x0080,
+		instr      = 0x0100,
+		warn       = 0x0200
+	};
+};
+
 void input_handle_args(
 	int   argc       ,
 	char* argv[]     ,
-	bool& print_help ,
-	bool& debug      ,
-	bool& verbose    ,
-	bool& long_input ,
-	bool& dump_mem   ,
-	bool& dump_reg   ,
-	bool& symbols    ,
-	bool& perf       ,
+	uint32_t& flags  ,
 	std::string& code,
 	std::string& syms 
 	);
@@ -47,23 +56,16 @@ constexpr uint32_t hex_val(const char hex)
 void input_handle_args(
 	int   argc       ,
 	char* argv[]     ,
-	bool& print_help ,
-	bool& debug      ,
-	bool& verbose    ,
-	bool& long_input ,
-	bool& dump_mem   ,
-	bool& dump_reg   ,
-	bool& symbols    ,
-	bool& perf       ,
+	uint32_t& flags  ,
 	std::string& code,
-	std::string& syms
+	std::string& syms 
 	)
 {
 	if(argc < 2)
 		return;
 	if(0 == strcmp(argv[1], "-h"))
 	{
-		print_help = true;
+		flags |= Program_Flags::print_help;
 		return;
 	}
 
@@ -71,51 +73,51 @@ void input_handle_args(
 
 	for(int i = 2; i < argc; i++)
 	{
-		if(0 == strcmp(argv[i], "-h"))
-		{
-			print_help = true;
-			return;
-		}
+		if(argv[i][0] != '-'
+		|| strlen(argv[i]) < 2)
+			continue;
 
-		if(0 == strcmp(argv[i], "-d"))
+		switch(argv[i][1])
 		{
-			debug = true;
+		case 'h':
+			flags |= Program_Flags::print_help;
+			return;
+		case 'd':
+			flags |= Program_Flags::debug;
 			continue;
-		}
-		if(0 == strcmp(argv[i], "-v"))
-		{
-			verbose = true;
+		case 'v':
+			flags |= Program_Flags::verbose;
 			continue;
-		}
-		if(0 == strcmp(argv[i], "-l"))
-		{
-			long_input = true;
+		case 'l':
+			flags |= Program_Flags::long_input;
 			continue;
-		}
-		if(0 == strcmp(argv[i], "-m"))
-		{
-			dump_mem = true;
+		case 'm':
+			flags |= Program_Flags::dump_mem;
 			continue;
-		}
-		if(0 == strcmp(argv[i], "-r"))
-		{
-			dump_reg = true;
+		case 'r':
+			flags |= Program_Flags::dump_reg;
 			continue;
-		}
-		if(0 == strcmp(argv[i], "-p"))
-		{
-			perf = true;
+		case 'p':
+			flags |= Program_Flags::perf;
 			continue;
-		}
-		if(0 == strcmp(argv[i], "-s"))
-		{
-			symbols = true;
+		case 'i':
+			flags |= Program_Flags::instr;
+			continue;
+		case 'w':
+			flags |= Program_Flags::warn;
+			continue;
+		case 's':
+			flags |= Program_Flags::symbols;
+
 			if(argc <= i)
 				return;
+
 			syms = argv[i + 1];
 			return;
+		default:
+			std::cout << "not recognized option " << argv[i] << "\n";
+			continue;
 		}
-
 	}
 
 	return;
@@ -224,13 +226,15 @@ void output_print_help()
 		"\n"
 		"OPTIONS:\n"
 		"\t-h         prints this help\n"
-		"\t-d         debug\n"
-		"\t-v         verbose output\n"
+		"\t-d         debug, step through program\n"
+		"\t-v         verbose output of what each executed isntruction does\n"
 		"\t-l         long input\n"
 		"\t           input is long when each line has two instructions\n"
-		"\t-m         memory dump\n"
-		"\t-r         register dump\n"
+		"\t-m         memory dump to dump.txt\n"
+		"\t-r         output register dump\n"
+		"\t-i         output how many times each instruction executed\n"
 		"\t-p         output performance info\n"
+		"\t-w         output potential warnings\n"
 		"\t-s         symbol file, MUST be used as last option and MUST be followed by symbols file\n"
 		"using these options improperly may result in weird error\n";
 

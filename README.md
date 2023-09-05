@@ -137,7 +137,11 @@ for options and usage use
 ./sim -h
 ```
 
-The most interesting option is the `-p` which outputs performance info, example ouput on matrix multiply:
+as for now, the project structure to measure performance is questionable  
+measuring performance of different branch predictors takes significant amount of space in handling of JMP, CAL, RET  
+this will change if better solution is discovered to at least hide the repeatable code
+
+The most interesting option is the `-p` which outputs performance info, example output on matrix multiply:
 ![image](https://github.com/sarvl/16bit_cpu/assets/95301979/ff8d6292-b0f5-4bc8-9d2b-cb142680bac9)
 This will be further improved during the following weeks to include much more elaborate perf info as well as info about OOO implementation  
 Each implementation will have tweakable parameters to more accurately model perf of different parameters of implementation 
