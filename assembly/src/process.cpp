@@ -164,11 +164,16 @@ void process_initial(
 					}
 					for(Token const& token : macro.output_tok)
 					{
-						if(INS == token.type)
+						if(INS == token.type
+						|| DTA == token.type)
 							instr_count++;
 
 						if(MCA == token.type)
+						{
 							output_tok.emplace_back(args[token.val]);
+							if(INS == args[token.val].type)
+								instr_count++;
+						}
 						else
 							output_tok.emplace_back(token);
 						output_tok.back().line = line;
@@ -182,8 +187,36 @@ void process_initial(
 			tid = end;
 		}
 			break;
+		case ATS:
+			if( LBU     != input_tok[tid + 1].type
+			|| "ALIGN"s != names[input_tok[tid + 1].val])
+			{
+				error("Unknown attribute", input_tok[tid].line, input_tok[tid].file);
+				tid++;
+				break;
+			}
+			if(NUM != input_tok[tid + 2].type)
+			{
+				error("ALIGN expects number as argument", input_tok[tid].line, input_tok[tid].file);
+				tid += 2;
+				break;
+			}
+			if(ATE != input_tok[tid + 3].type)
+			{
+				error("Attribute not terminated", input_tok[tid].line, input_tok[tid].file);
+				tid += 3;
+				break;
+			}
+			{
+			int nops_to_add = input_tok[tid + 2].val - (instr_count % input_tok[tid + 2].val);
+			instr_count += nops_to_add;
+			while(nops_to_add --> 0)
+				output_tok.emplace_back(INS, 0, input_tok[tid].line, input_tok[tid].file); 
 			
-
+			tid += 4;
+			}
+			break;
+		case DTA:
 		case INS:
 			instr_count++;
 			goto add_token;

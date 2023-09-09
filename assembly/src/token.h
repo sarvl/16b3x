@@ -31,6 +31,8 @@ enum class T_Token{
 	ATS = 60, //attribute start
 	ATE = 61, //attribute end
 
+	DTA = 70, //data allocation
+
 	END = -1  //end of file, token to prevent potential too long reads
 };
 
@@ -106,6 +108,9 @@ WHAT VAL MEANS FOR EACH TOKEN TYPE
 	ATS
 		no meaning
 	ATE
+		no meaning
+
+	DTA 
 		no meaning
 
 	END

@@ -38,19 +38,20 @@ std::vector<std::string> filenames;
 int main(int argc, char* argv[])
 {
 	for(int i = 1; i < argc; i++)
+	{
 		filenames.emplace_back(argv[i]);
-
+	}
 
 	std::vector<Token> tokens[2];
 	std::vector<std::string> names;
 	std::vector<Label> labels;
 
-	std::ofstream out("out.bin");
+	std::ofstream out;
 	int instruction_count = 0;
-
-	parse_file(0, tokens[0], names);
-	parse_file(1, tokens[0], names);
 	
+	for(int i = 0; i < argc - 1; i++)
+		parse_file(i, tokens[0], names);
+
 //	for(const Token& token : tokens[0])
 //	{
 //		if(T_Token::NON == token.type)
@@ -75,6 +76,13 @@ int main(int argc, char* argv[])
 	                instruction_count /*out*/, 
 	                tokens[0]         /*in, modified*/
 	                );
+
+	out.open("symbols.txt");
+	for(Label const& label : labels)
+		out << label.name << ' ' << label.instruction << '\n';
+
+	out.close();
+	out.open("out.bin");
 //	for(const Token& token : tokens[1])
 //	{
 //		if(T_Token::NON == token.type)
@@ -92,6 +100,34 @@ int main(int argc, char* argv[])
 //	}
 //	std::cout << '\n';
 	
+	//replace labels with values
+	for(Token & token : tokens[1])
+	{
+		if(T_Token::LBU == token.type)
+		{
+			uint32_t val = 0;
+			std::string const& searched = names[token.val];
+			bool label_found = false;
+			for(Label const& label : labels)
+				if(label.name == searched)
+				{
+					val = label.instruction;
+					label_found = true;
+					break;
+				}
+			if(!label_found)
+			{
+				error(searched + " does not exist",
+				      token.line,
+				      token.file);
+				continue;
+			}
+
+			token.type = T_Token::NUM;
+			token.val  = val;
+		}
+	}
+
 
 	//swap IO token vectors
 	tokens[0].clear();
@@ -206,6 +242,30 @@ int main(int argc, char* argv[])
 //			
 //		}
 //
+		
+		if(T_Token::DTA == tokens[0][tid].type)
+		{
+			cur_instr++; 
+			if(T_Token::NUM != tokens[0][tid + 1].type)
+			{
+				error("expected number as argument for dw",
+				      tokens[0][tid].line, tokens[0][tid].file);
+				tid++;
+				continue;
+			}
+			uint32_t const val = tokens[0][tid + 1].val;
+			
+			output[cur_instr * 5 + 0] = val_hex((val >> 12) & 0xF);
+			output[cur_instr * 5 + 1] = val_hex((val >>  8) & 0xF);
+			output[cur_instr * 5 + 2] = val_hex((val >>  4) & 0xF);
+			output[cur_instr * 5 + 3] = val_hex((val >>  0) & 0xF);
+			output[cur_instr * 5 + 4] = '\n'; 
+				
+			tid += 2;
+			continue;
+		}
+
+
 		ERROR_NEQ1(tokens[0][tid].type, T_Token::INS,
 		           "unexpected token "s + to_string(tokens[0][tid].type));
 
@@ -255,32 +315,11 @@ int main(int argc, char* argv[])
 			{
 				arg0 = tokens[0][tid + 1].val;
 			
-				ERROR_NEQ3(tokens[0][tid + 2].type, RIN, LBU, NUM,
+				ERROR_NEQ2(tokens[0][tid + 2].type, RIN, NUM,
 			    	       "expected internal register, label or constant as second argument");
 			
-				if(LBU == tokens[0][tid + 2].type)
-				{
-					std::string const& searched = names[tokens[0][tid + 2].val];
-					bool label_found = false;
-					for(Label const& label : labels)
-						if(label.name == searched)
-						{
-							arg1 = label.instruction;
-							label_found = true;
-							break;
-						}
-					if(!label_found)
-					{
-						error(searched + " does not exist",
-						      tokens[0][tid + 2].line,
-						      tokens[0][tid + 2].file);
-					}
-				}
-				else
-				{
-					iformat = (NUM == tokens[0][tid + 2].type);
-					arg1 = tokens[0][tid + 2].val;
-				}
+				iformat = (NUM == tokens[0][tid + 2].type);
+				arg1 = tokens[0][tid + 2].val;
 
 				tid += 3;
 				goto insert_instruction;
@@ -288,32 +327,10 @@ int main(int argc, char* argv[])
 
 			arg0 = 0b111;
 				
-			ERROR_NEQ3(tokens[0][tid + 1].type, RIN, LBU, NUM,
+			ERROR_NEQ2(tokens[0][tid + 1].type, RIN, NUM,
 			   	       "expected condition codes, internal register,  label or constant as first argument");
-			if(LBU == tokens[0][tid + 1].type)
-			{
-				std::string const& searched = names[tokens[0][tid + 1].val];
-				bool label_found = false;
-				for(Label const& label : labels)
-					if(label.name == searched)
-					{
-						arg1 = label.instruction;
-						label_found = true;
-						break;
-					}
-				if(!label_found)
-				{
-					error(searched + " does not exist",
-					      tokens[0][tid + 1].line,
-					      tokens[0][tid + 1].file);
-				}
-			}
-			else
-			{
-				iformat = (NUM == tokens[0][tid + 1].type);
-				arg1 = tokens[0][tid + 1].val;
-			}
-			
+			iformat = (NUM == tokens[0][tid + 1].type);
+			arg1 = tokens[0][tid + 1].val;
 			
 			tid += 2;
 			goto insert_instruction;
@@ -328,7 +345,7 @@ int main(int argc, char* argv[])
  		case val(WRX):
 			ERROR_NEQ1(tokens[0][tid + 1].type, REX,
 			           "expected external register as first argument");
-			ERROR_NEQ3(tokens[0][tid + 2].type, RIN, LBU, NUM,
+			ERROR_NEQ2(tokens[0][tid + 2].type, RIN, NUM,
 			           "expected internal register, label or constant as second argument");
 			goto correct_output_2;
 
@@ -348,7 +365,7 @@ int main(int argc, char* argv[])
  		case val(WRM):
 			ERROR_NEQ1(tokens[0][tid + 1].type, RIN,
 			           "expected internal register as first argument");
-			ERROR_NEQ3(tokens[0][tid + 2].type, RIN, LBU, NUM,
+			ERROR_NEQ2(tokens[0][tid + 2].type, RIN, NUM,
 			           "expected internal register, label or constant as second argument");
 			goto correct_output_2;
 			
@@ -360,30 +377,9 @@ int main(int argc, char* argv[])
 			break;
 		correct_output_2:
 			arg0 = tokens[0][tid + 1].val;
-			if(LBU == tokens[0][tid + 2].type)
-			{
-				std::string const& searched = names[tokens[0][tid + 2].val];
-				bool label_found = false;
-				for(Label const& label : labels)
-					if(label.name == searched)
-					{
-						arg1 = label.instruction;
-						label_found = true;
-						break;
-					}
-				if(!label_found)
-				{
-					error(searched + " does not exist",
-					      tokens[0][tid + 2].line,
-					      tokens[0][tid + 2].file);
-				}
-			}
-			else
-			{
-				iformat = (NUM == tokens[0][tid + 2].type);
-				arg1 = tokens[0][tid + 2].val;
-			}
-			
+			iformat = (NUM == tokens[0][tid + 2].type);
+			arg1 = tokens[0][tid + 2].val;
+
 			tid += 3;
 			goto insert_instruction;
 			break;

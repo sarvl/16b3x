@@ -53,6 +53,8 @@ std::string to_string(T_Token const token)
 		return "ATS";
 	case ATE:
 		return "ATE";
+	case DTA:
+		return "DTA";
 	case END:
 		return "END";
 	}

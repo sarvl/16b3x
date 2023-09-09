@@ -44,7 +44,7 @@ void parse_line(
 {
 	using enum T_Token;
 
-	int ind = 0;
+	unsigned int ind = 0;
 	while(ind < line.size())
 	{
 	switch(line[ind])
@@ -56,7 +56,8 @@ void parse_line(
 		for(end = beg; end < line.size(); end++)
 			if(' '  == line[end]
 			|| '\t' == line[end]
-			|| '('  == line[end])
+			|| '('  == line[end]
+			|| ','  == line[end])
 				break;
 		
 		if(end - beg == 3
@@ -129,11 +130,32 @@ void parse_line(
 	case '0'...'9':
 	{
 		int num = 0;
-
-		while('0' <= line[ind] && line[ind] <= '9')
+		if(line.size() - ind >= 2
+		&& '0' == line[ind + 0]
+		&& 'x' == line[ind + 1])
 		{
-			num = 10 * num + line[ind] - '0';
-			ind++;
+			ind += 2;
+
+			while(true)
+			{
+				if('0' <= line[ind] && line[ind] <= '9')
+					num = 16 * num + line[ind] - '0';
+				else if('a' <= line[ind] && line[ind] <= 'f')
+					num = 16 * num + line[ind] - 'a' + 10;
+				else if('A' <= line[ind] && line[ind] <= 'F')
+					num = 16 * num + line[ind] - 'A' + 10;
+				else
+					break;
+				ind++;
+			}
+		}
+		else
+		{
+			while('0' <= line[ind] && line[ind] <= '9')
+			{
+				num = 10 * num + line[ind] - '0';
+				ind++;
+			}
 		}
 
 		tokens.emplace_back(NUM, num, line_num, file_num);
@@ -238,6 +260,9 @@ void parse_line(
 //				{tokens.emplace_back(REX, 6, line_num, file_num); ind = end; continue;}
 			else CHECK_CHARS2('C','F') 
 				{tokens.emplace_back(REX, 7, line_num, file_num); ind = end; continue;}
+
+			else CHECK_CHARS2('d','w') 
+				{tokens.emplace_back(DTA, 0, line_num, file_num); ind = end; continue;}
 
 			else goto add_label;
 
@@ -346,7 +371,7 @@ void parse_simple_word(
 {
 	using enum T_Token;
 
-	int ind = 0;
+	unsigned int ind = 0;
 	while(ind < line.size())
 	{
 	switch(line[ind])
@@ -354,11 +379,31 @@ void parse_simple_word(
 	case '0'...'9':
 	{
 		int num = 0;
-
-		while('0' <= line[ind] && line[ind] <= '9')
+		if('0' == line[ind + 0]
+		&& 'x' == line[ind + 1])
 		{
-			num = 10 * num + line[ind] - '0';
-			ind++;
+			ind += 2;
+
+			while(true)
+			{
+				if('0' <= line[ind] && line[ind] <= '9')
+					num = 16 * num + line[ind] - '0';
+				else if('a' <= line[ind] && line[ind] <= 'f')
+					num = 16 * num + line[ind] - 'a' + 10;
+				else if('A' <= line[ind] && line[ind] <= 'F')
+					num = 16 * num + line[ind] - 'A' + 10;
+				else
+					break;
+				ind++;
+			}
+		}
+		else
+		{
+			while('0' <= line[ind] && line[ind] <= '9')
+			{
+				num = 10 * num + line[ind] - '0';
+				ind++;
+			}
 		}
 
 		token = Token(NUM, num, line_num, file_num);

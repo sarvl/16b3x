@@ -3,8 +3,8 @@ CR := '\033[0;31m' #color red
 CY := '\033[0;33m' #color yellow 
 
 FILES := out/simulator.o out/input_handle.o 
-SAN := -g -fsanitize=undefined -fsanitize=address
-#SAN := 
+#SAN := -g -fsanitize=undefined -fsanitize=address
+SAN := 
 
 default:
 	@echo -e no option specified
@@ -13,7 +13,7 @@ clean:
 	@rm -frv *.o 
 
 refresh:
-	@touch src/*.cpp src/*.h
+	@touch src/*.cpp 
 
 clear:
 	@clear

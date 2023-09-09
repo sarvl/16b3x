@@ -437,14 +437,14 @@ int main(int argc, char* argv[])
 			memory_references++;
 
 			DEBUG_PRINT("RDM\n");
-			const uint16_t MSB = mem[second + 0];
-			const uint16_t LSB = mem[second + 1];
+			const uint16_t MSB = mem[(second + 0) & 0xFFFF];
+			const uint16_t LSB = mem[(second + 1) & 0xFFFF];
 
 			reg0 = MSB << 8
 			     | LSB << 0;
 			
-			modified[second + 1] = true;
-			modified[second + 0] = true;
+			modified[(second + 1) & 0xFFFF] = true;
+			modified[(second + 0) & 0xFFFF] = true;
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << reg0 << "\n"); 
 
 			break;
@@ -458,11 +458,11 @@ int main(int argc, char* argv[])
 			const uint8_t MSB = static_cast<uint8_t>(reg0 >> 8);
 			const uint8_t LSB = static_cast<uint8_t>(reg0 >> 0);
 
-			mem[second + 0] = MSB;
-			mem[second + 1] = LSB;
+			mem[(second + 0) & 0xFFFF] = MSB;
+			mem[(second + 1) & 0xFFFF] = LSB;
 			
-			modified[second + 1] = true;
-			modified[second + 0] = true;
+			modified[(second + 0) & 0xFFFF] = true;
+			modified[(second + 1) & 0xFFFF] = true;
 			
 			VERBOSE_PRINT("M[" << second + 0 << "] <= " << +MSB << "\n");
 			VERBOSE_PRINT("M[" << second + 1 << "] <= " << +LSB << "\n");
