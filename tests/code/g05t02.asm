@@ -26,45 +26,20 @@ createmat3x3_loop:
 ;unrolled to improve performance
 matmult3x3_rowcol:
 ; regular:
-
-	rdm 	R7, R0
-	rdm 	R5, R1
-	mul 	R7, R5
-	add 	R0, 2
-	add 	R1, 6
-	
-	rdm 	R4, R0
-	rdm 	R5, R1
-	mul 	R4, R5
-	add 	R7, R4
-	add 	R0, 2
-	add 	R1, 6
-	
-	rdm 	R4, R0
-	rdm 	R5, R1
-	mul 	R4, R5
-	add 	R7, R4
-
-	wrm 	R7, R2
-
-	ret
-
-;reordered
-;	rdm 	R7, R0
 ;
+;	rdm 	R7, R0
 ;	rdm 	R5, R1
-;	add 	R0, 2
 ;	mul 	R7, R5
+;	add 	R0, 2
 ;	add 	R1, 6
 ;	
 ;	rdm 	R4, R0
 ;	rdm 	R5, R1
-;	add 	R0, 2
 ;	mul 	R4, R5
-;
-;	add 	R1, 6
 ;	add 	R7, R4
-;
+;	add 	R0, 2
+;	add 	R1, 6
+;	
 ;	rdm 	R4, R0
 ;	rdm 	R5, R1
 ;	mul 	R4, R5
@@ -73,6 +48,31 @@ matmult3x3_rowcol:
 ;	wrm 	R7, R2
 ;
 ;	ret
+;
+;reordered
+	rdm 	R7, R0
+
+	rdm 	R5, R1
+	add 	R0, 2
+	mul 	R7, R5
+	add 	R1, 6
+	
+	rdm 	R4, R0
+	rdm 	R5, R1
+	add 	R0, 2
+	mul 	R4, R5
+
+	add 	R1, 6
+	add 	R7, R4
+
+	rdm 	R4, R0
+	rdm 	R5, R1
+	mul 	R4, R5
+	add 	R7, R4
+
+	wrm 	R7, R2
+
+	ret
 
 
 ;takes mat0adr in R0

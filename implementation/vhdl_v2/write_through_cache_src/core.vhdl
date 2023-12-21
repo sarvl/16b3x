@@ -111,7 +111,7 @@ ARCHITECTURE behav OF core IS
 
 	--always is the same anyway
 	ALIAS  op0     : t_uword IS r0_data;
-	SIGNAL op1     : t_uword := x"0000";
+	SIGNAL op1     : t_uword;
 
 	SIGNAL alu_out : t_uword;
 	SIGNAL mul_out : t_uword;
@@ -135,6 +135,7 @@ ARCHITECTURE behav OF core IS
 
 BEGIN
 	
+	--assume control required control signals are present
 	c_alu : ALU PORT MAP(i0 => op0,
 	                     i1 => op1,
 	                     o0 => alu_out,

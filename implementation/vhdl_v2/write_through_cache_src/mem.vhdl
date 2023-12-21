@@ -41,15 +41,11 @@ BEGIN
 	         ELSE UNAFFECTED;
 	iodata    <= mem(addr) WHEN rd = '1'
 	        ELSE x"ZZZZ";
-	
-	
-	lbl1: IF delay = 0 FS GENERATE
-		rdy <= '1';
-	END GENERATE;
-	lbl2: IF delay /= 0 FS GENERATE
-		rdy <= '1'             WHEN disable_delay = '1'
-		  ELSE '0', '1' AFTER delay WHEN rdy = '1' AND (rd OR WR) = '1' AND rising_edge(clk)
-		  ELSE UNAFFECTED;
-	END GENERATE;
-		  
+
+	--really verify that
+	rdy <= '1'             WHEN disable_delay = '1'
+	-- + 1 PS for delay = 0
+	  ELSE '0', '1' AFTER delay + 1 PS WHEN rdy = '1' AND (rd OR WR) = '1' AND rising_edge(clk)
+	  ELSE UNAFFECTED;
+	  
 END ARCHITECTURE behav;

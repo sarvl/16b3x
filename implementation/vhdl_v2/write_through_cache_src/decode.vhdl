@@ -1,5 +1,47 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+
+PACKAGE p_decode IS
+	TYPE t_signals IS RECORD
+		aluop  : std_ulogic_vector(2 DOWNTO 0);
+
+		r0     : std_ulogic_vector(2 DOWNTO 0);
+		r1     : std_ulogic_vector(2 DOWNTO 0);
+		imm8   : std_ulogic_vector(7 DOWNTO 0);
+
+		--duplicates of r0
+		x0w    : std_ulogic_vector(2 DOWNTO 0);
+		fl     : std_ulogic_vector(2 DOWNTO 0);
+
+		
+		x0r    : std_ulogic_vector(2 DOWNTO 0);
+
+		src    : std_ulogic_vector(2 DOWNTO 0);
+
+		rwr    : std_ulogic;
+		xwr    : std_ulogic;
+		mwr    : std_ulogic;
+
+		mrd    : std_ulogic;
+		fwr    : std_ulogic;
+
+		iim    : std_ulogic;
+
+		psh    : std_ulogic;
+		pop    : std_ulogic;
+
+		jmp    : std_ulogic;
+		cal    : std_ulogic;
+		ret    : std_ulogic;
+
+		hlt    : std_ulogic;
+		cycadv : std_ulogic;
+	END RECORD t_signals;
+END PACKAGE p_decode;
+
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 USE work.p_decode.ALL;
 USE work.p_types.ALL;
@@ -126,9 +168,9 @@ BEGIN
 	    ELSE "010"; --alu 
 
 	--introduces slight delay to avoid wrong feedback loops
-	curcyc <= 0  WHEN can_skip_wait
-	     ELSE 1  WHEN sgnls(0) = '0' AND rising_edge(clk)
-	     ELSE 0  WHEN rising_edge(clk)
+	curcyc <= 0 AFTER 1 PS WHEN can_skip_wait
+	     ELSE 1 AFTER 1 PS WHEN sgnls(0) = '0' AND rising_edge(clk)
+	     ELSE 0 AFTER 1 PS WHEN rising_edge(clk)
 	     ELSE UNAFFECTED;
 
 

@@ -1,4 +1,4 @@
-#basic test of all alu functions
+#basic test of all alu functions, specifically avoiding hazards for short pipelines
 #failure probably indicates not working alu 
 
 	mov 	R0, 0

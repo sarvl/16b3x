@@ -1,12 +1,12 @@
 g00 ALU
 10
 g01 JMP
-11
+12
 g02 MEM
-1
+4
 g03 STK
 2
 g04 EXR
-6
+10
 g05 OTH
-4
+5

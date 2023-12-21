@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+#include <cstring> //strlen
+
 using namespace std::literals;
 
 #define PAD_ZERO(x, y) std::setfill('0') << std::setw(x) << (y) 
@@ -16,13 +18,51 @@ std::string slurp(std::ifstream& in) {
 
 int main(int argc, char* argv[])
 {
-	bool test_simulator = false;
-	test_simulator = argc > 1 && argv[1][0] == 's';
+	bool test_simulator = argc > 1 && argv[1][0] == 's';
+
+	int group = 0;
+	int last_group = -1;
+	if(argc > 1
+	&& argv[1][0] >= '0'
+	&& argv[1][0] <= '9')
+	{
+		int const len = strlen(argv[1]);
+		for(int i = 0; i < len; i++)
+		{
+			if('0' <= argv[1][i]
+			&& argv[1][i] <= '9')
+			{
+				group *= 10;
+				group += argv[1][i] - '0';
+			}
+			else
+				break;
+		}
+
+		if(argc > 2
+		&& argv[2][0] >= '0'
+		&& argv[2][0] <= '9')
+		{
+			last_group = 0;
+			int const len = strlen(argv[1]);
+			for(int i = 0; i < len; i++)
+			{
+				if('0' <= argv[1][i]
+				&& argv[1][i] <= '9')
+				{
+					last_group *= 10;
+					last_group += argv[1][i] - '0';
+				}
+				else
+					break;
+			}
+		}
+	}
 
 	std::string commands[] = {
-		"cp ./tests/bin/g00t00.bin ./implementation/vhdl/input_prog.bin",
-		"cd ./implementation/vhdl/ ; ghdl -r computer --stop-time=4000ns 1>/dev/null",
-		"mv ./implementation/vhdl/dump.txt ./",
+		"cp ./tests/bin/g00t00.bin ./implementation/vhdl_v2/input_prog.bin",
+		"cd ./implementation/vhdl_v2/ ; ghdl -r --workdir=out --std=08 chip 1>/dev/null",
+		"mv ./implementation/vhdl_v2/dump.txt ./",
 		"rm -f ./dump.txt",
 		"mv ./dump.txt ./failed_g00t00.out"
 		};
@@ -42,12 +82,30 @@ int main(int argc, char* argv[])
 	std::ifstream correct;
 	std::ifstream tested;
 	std::ifstream groups("./tests/groups.txt");
-	int group = 0;
+
+
+	correct_file[14] = group % 10 + '0';
+	commands[0][17]  = group % 10 + '0';
+	
+	correct_file[13] = group / 10 + '0';
+	commands[0][16]  = group / 10 + '0';
+
+	int tmp = group;
+	while(tmp --> 0)
+	{
+		//fetch 2 lines to adjust group name 
+		std::getline(groups, group_name);
+		std::getline(groups, group_name);
+	}
+		
 	while(std::getline(groups, group_name))
 	{
+
 		std::cout << "\033[1;38;5;55m" << group_name << "\033[0m\n";
 		std::getline(groups, num);
-		//quick stoi	
+		//quick stoi
+		//unlikely to be more than 99 tests in a single group 
+		//input should be correct anyway
 		int max;
 		if(2 == num.size())
 			max = (num[0] - '0') * 10 + num[1] - '0';
@@ -83,8 +141,8 @@ int main(int argc, char* argv[])
 			correct.close();
 			
 			i++;
-			correct_file[17] = i + '0';
-			commands[0][20] = i + '0';
+			correct_file[17]++;
+			commands[0][20]++;
 	
 			if(0 == i % 10)
 			{
@@ -102,6 +160,10 @@ int main(int argc, char* argv[])
 		correct_file[17] = '0';
 
 		group++;
+		if(last_group > -1
+		&& group > last_group)
+			break;
+
 		correct_file[14]++;
 		commands[0][17]++;
 
