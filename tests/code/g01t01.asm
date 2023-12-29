@@ -1,13 +1,13 @@
 #exactly the same as g01t00 except no TST at the beggining
 #failure here without failure in g01t00 almost surely indicates wrong initialization of FLAGS register
 
-	jmp 	LEG start
+	jmp 	start
 	mov 	R0, 123
 mid:
-	jmp 	LEG end
+	jmp 	end
 	mov 	R1, 45
 start:
-	jmp 	LEG mid
+	jmp 	mid
 	mov 	R2, 67
 end:
 	wrm 	R0, 100
@@ -18,4 +18,4 @@ end:
 	wrm 	R5, 110
 	wrm 	R6, 112
 	wrm 	R7, 114
-	hlt 	LEG
+	hlt 	

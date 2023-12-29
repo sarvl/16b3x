@@ -1,17 +1,18 @@
 #code to test whether psh/pop work
 #failure incidates generally wrong push/pop implementation
 
-	mov 	R0, 100
+	mov 	R0, 10
 
 loopa:
 	psh 	R0
 	sub 	R0, 1
 	jmp 	GE loopa
 
+	mov 	R0, 10
 loopb:
 	pop 	R1
-	cmp 	R1, 100
-	jmp 	LG, loopb
+	sub 	R0, 1
+	jmp 	GE loopb
 
 	wrm 	R0, 100
 	wrm 	R1, 102

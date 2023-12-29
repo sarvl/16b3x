@@ -44,14 +44,14 @@ int main(int argc, char* argv[])
 		&& argv[2][0] <= '9')
 		{
 			last_group = 0;
-			int const len = strlen(argv[1]);
+			int const len = strlen(argv[2]);
 			for(int i = 0; i < len; i++)
 			{
-				if('0' <= argv[1][i]
-				&& argv[1][i] <= '9')
+				if('0' <= argv[2][i]
+				&& argv[2][i] <= '9')
 				{
 					last_group *= 10;
-					last_group += argv[1][i] - '0';
+					last_group += argv[2][i] - '0';
 				}
 				else
 					break;

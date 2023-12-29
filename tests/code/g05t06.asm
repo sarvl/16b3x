@@ -1,41 +1,31 @@
-#this code simulates the processor that it is running on 
-#in particular, this simulator has fibonacci program loaded, stack test commented, ext reg test commented
-#
-#it is possible for program to work correctly and break inside this simulator
-#this can happen for 3 reasons, all are related to memory
-#1: program accesses own instructions
-#2: program uses almost all memory available to cpu
-#3: program accesses stack without using psh/pop or sp 
-#reason 1 is fixable but introduces more complexity
-#reason 2 is impossible to fix as simulator itself requires some memory for instructions and registers
-#reason 3 might be possible to fix but requires changing how the memory is organized and much more complex logic for accessing it
-#most programs will not suffer from these problems, the most probable one to cause problems is reason #3
-#
-#
-#yes, this simulator can simulate itself but due to reason #2 its unlikely to work OOB 
-#the entire memory is "allocated"
-#
-#
-#wrx/rdx might be broken as they were not tested as well as others instructions
-#
-# g05t05 and g05t06 are the same code with different program loaded
+#same as g05t04 but different program loaded
 
 	jmp 	start
 
 #see g01t03.asm
 program:
-#fib:
-	dw  	0x2800
-	dw  	0x2901
-	dw  	0x2F07
-	dw  	0x8F00
-	dw  	0xA60A
-	dw  	0x0205
-	dw  	0x0025
-	dw  	0x0158
-	dw  	0xCF01
-	dw  	0xA305
-	dw  	0x3850
+#ext reg test:
+	dw  	0x2805
+	dw  	0x0105
+	dw  	0xF002
+	dw  	0x6C01
+	dw  	0x2A00
+	dw  	0xFA07
+	dw  	0xC001
+	dw  	0x0010
+	dw  	0xCA01
+	dw  	0xA306
+	dw  	0x6C01
+	dw  	0x048C
+	dw  	0x6A14
+	dw  	0xB700
+	dw  	0x2D09
+	dw  	0x8504
+	dw  	0x3D64
+	dw  	0x3664
+	dw  	0x05BD
+	dw  	0x6815
+	dw  	0xAF0E
 	dw  	0x3864
 	dw  	0x3966
 	dw  	0x3A68

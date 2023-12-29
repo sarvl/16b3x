@@ -1,8 +1,9 @@
-#tests whether indirect jump works 
+#tests whether conditional indirect jump works 
 
 	mov 	R5, mid
 	mov 	R6, end
 	mov 	R7, start
+	mov 	R4, 3
 	tst  	R0, R0
 	jmp 	R7	
 	mov 	R0, 123
@@ -10,7 +11,8 @@ mid:
 	jmp 	R6
 	mov 	R1, 45
 start:
-	jmp 	R5
+	cmp 	R4, 5
+	jmp 	L, R5
 	mov 	R2, 67
 end:
 	wrm 	R0, 100
