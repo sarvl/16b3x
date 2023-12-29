@@ -322,6 +322,7 @@ ARCHITECTURE behav OF core IS
 	SIGNAL prev_eu1_mem : std_ulogic := '0';
 	SIGNAL prev_branch  : std_ulogic := '0';
 	SIGNAL prev_flush   : std_ulogic := '0';
+	SIGNAL prev_flush_ui: std_ulogic := '0';
 	
 BEGIN
 	
@@ -575,13 +576,13 @@ BEGIN
 	fetch1 <= to_std_ulogic(rob(rob_FE_i(1)).present = '0' AND (s0_branch = '0' OR (branch_predict_taken = '0' AND s1_branch = '0')));
 
 
-	s0_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals0.imm8 WHEN prev_flush AND NOT branch_dest_misalign
+	s0_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals0.imm8 WHEN prev_flush_ui AND NOT branch_dest_misalign
 	       ELSE shadow_ui_value(7 DOWNTO 0) & signals0.imm8 WHEN shadow_ui_present
 	       ELSE x"00"                       & signals0.imm8;
 
-	s1_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals1.imm8 WHEN prev_flush AND     branch_dest_misalign
-	       ELSE signals0.imm8 & signals1.imm8 WHEN signals0.xwr = '1'   AND signals0.x0w = "100" AND signals0.iim = '1' 
-	       ELSE x"00"         & signals1.imm8;
+	s1_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals1.imm8 WHEN prev_flush_ui AND     branch_dest_misalign
+	       ELSE signals0.imm8               & signals1.imm8 WHEN signals0.xwr = '1' AND signals0.x0w = "100" AND signals0.iim = '1' 
+	       ELSE x"00"                       & signals1.imm8;
 
 	shadow_ui_present <= '1' WHEN  signals1.xwr = '1' AND signals1.x0w = "100" AND signals1.iim = '1'
 	                          AND (s0_branch    = '0'  OR branch_predict_taken = '0') 
@@ -600,6 +601,9 @@ BEGIN
 	      OR write_to_instr
 	--potentially bad instructions executing because writing reg to UI means that next values could not be computed 
 	      OR to_std_ulogic(eu0.signals.xwr = '1' AND eu0.signals.x0w = "100" AND eu0.signals.iim = '0');
+
+	prev_flush_ui <= to_std_ulogic(eu0.signals.xwr = '1' AND eu0.signals.x0w = "100" AND eu0.signals.iim = '0') WHEN rising_edge(clk)
+	            ELSE UNAFFECTED;
 
 	flush_additional_wait <= to_std_ulogic(eu0.signals.xwr = '1' AND eu0.signals.x0w = "100" AND eu0.signals.iim = '0');
 
