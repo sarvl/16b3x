@@ -1,0 +1,683 @@
+[*]
+[*] GTKWave Analyzer v3.3.117 (w)1999-2023 BSI
+[*] Thu Dec 28 22:45:23 2023
+[*]
+[dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl_v2/wave.ghw"
+[dumpfile_mtime] "Thu Dec 28 22:40:34 2023"
+[dumpfile_size] 2123555
+[savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl_v2/oooe.gtkw"
+[timestart] 0
+[size] 1366 768
+[pos] -1 -1
+*-23.411512 23040000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.chip.
+[treeopen] top.chip.c_core0.
+[treeopen] top.chip.c_core0.eu0.signals.
+[treeopen] top.chip.c_core0.eu1.signals.
+[sst_width] 273
+[signals_width] 231
+[sst_expanded] 1
+[sst_vpaned_height] 475
+@28
+top.chip.clk_core0
+top.chip.clk_mem0
+@200
+-
+-chip
+@28
+top.chip.c0_hlt
+@200
+-
+-bus
+@c00022
+#{top.chip.bus_mem[15:0]} top.chip.bus_mem[15] top.chip.bus_mem[14] top.chip.bus_mem[13] top.chip.bus_mem[12] top.chip.bus_mem[11] top.chip.bus_mem[10] top.chip.bus_mem[9] top.chip.bus_mem[8] top.chip.bus_mem[7] top.chip.bus_mem[6] top.chip.bus_mem[5] top.chip.bus_mem[4] top.chip.bus_mem[3] top.chip.bus_mem[2] top.chip.bus_mem[1] top.chip.bus_mem[0]
+@28
+top.chip.bus_mem[15]
+top.chip.bus_mem[14]
+top.chip.bus_mem[13]
+top.chip.bus_mem[12]
+top.chip.bus_mem[11]
+top.chip.bus_mem[10]
+top.chip.bus_mem[9]
+top.chip.bus_mem[8]
+top.chip.bus_mem[7]
+top.chip.bus_mem[6]
+top.chip.bus_mem[5]
+top.chip.bus_mem[4]
+top.chip.bus_mem[3]
+top.chip.bus_mem[2]
+top.chip.bus_mem[1]
+top.chip.bus_mem[0]
+@1401200
+-group_end
+@c00022
+#{top.chip.bus_adr[15:0]} top.chip.bus_adr[15] top.chip.bus_adr[14] top.chip.bus_adr[13] top.chip.bus_adr[12] top.chip.bus_adr[11] top.chip.bus_adr[10] top.chip.bus_adr[9] top.chip.bus_adr[8] top.chip.bus_adr[7] top.chip.bus_adr[6] top.chip.bus_adr[5] top.chip.bus_adr[4] top.chip.bus_adr[3] top.chip.bus_adr[2] top.chip.bus_adr[1] top.chip.bus_adr[0]
+@28
+top.chip.bus_adr[15]
+top.chip.bus_adr[14]
+top.chip.bus_adr[13]
+top.chip.bus_adr[12]
+top.chip.bus_adr[11]
+top.chip.bus_adr[10]
+top.chip.bus_adr[9]
+top.chip.bus_adr[8]
+top.chip.bus_adr[7]
+top.chip.bus_adr[6]
+top.chip.bus_adr[5]
+top.chip.bus_adr[4]
+top.chip.bus_adr[3]
+top.chip.bus_adr[2]
+top.chip.bus_adr[1]
+top.chip.bus_adr[0]
+@1401200
+-group_end
+@800028
+#{top.chip.bus_rdy} top.chip.bus_rdy
+@1001200
+-group_end
+@200
+-
+-
+-branch_prdct
+@28
+top.chip.c_core0.branch
+top.chip.c_core0.misprediction
+top.chip.c_core0.flcmp
+top.chip.c_core0.branch_predict_taken
+@22
+#{top.chip.c_core0.branch_dest[15:0]} top.chip.c_core0.branch_dest[15] top.chip.c_core0.branch_dest[14] top.chip.c_core0.branch_dest[13] top.chip.c_core0.branch_dest[12] top.chip.c_core0.branch_dest[11] top.chip.c_core0.branch_dest[10] top.chip.c_core0.branch_dest[9] top.chip.c_core0.branch_dest[8] top.chip.c_core0.branch_dest[7] top.chip.c_core0.branch_dest[6] top.chip.c_core0.branch_dest[5] top.chip.c_core0.branch_dest[4] top.chip.c_core0.branch_dest[3] top.chip.c_core0.branch_dest[2] top.chip.c_core0.branch_dest[1] top.chip.c_core0.branch_dest[0]
+@28
+top.chip.c_core0.branch_dest_misalign
+top.chip.c_core0.s0_branch
+top.chip.c_core0.s1_branch
+@200
+-
+-core0
+@29
+top.chip.c_core0.can_fetch
+@28
+top.chip.c_core0.flush
+top.chip.c_core0.write_to_instr
+top.chip.c_core0.instr_ready
+@22
+#{top.chip.c_core0.instr0[15:0]} top.chip.c_core0.instr0[15] top.chip.c_core0.instr0[14] top.chip.c_core0.instr0[13] top.chip.c_core0.instr0[12] top.chip.c_core0.instr0[11] top.chip.c_core0.instr0[10] top.chip.c_core0.instr0[9] top.chip.c_core0.instr0[8] top.chip.c_core0.instr0[7] top.chip.c_core0.instr0[6] top.chip.c_core0.instr0[5] top.chip.c_core0.instr0[4] top.chip.c_core0.instr0[3] top.chip.c_core0.instr0[2] top.chip.c_core0.instr0[1] top.chip.c_core0.instr0[0]
+#{top.chip.c_core0.instr1[15:0]} top.chip.c_core0.instr1[15] top.chip.c_core0.instr1[14] top.chip.c_core0.instr1[13] top.chip.c_core0.instr1[12] top.chip.c_core0.instr1[11] top.chip.c_core0.instr1[10] top.chip.c_core0.instr1[9] top.chip.c_core0.instr1[8] top.chip.c_core0.instr1[7] top.chip.c_core0.instr1[6] top.chip.c_core0.instr1[5] top.chip.c_core0.instr1[4] top.chip.c_core0.instr1[3] top.chip.c_core0.instr1[2] top.chip.c_core0.instr1[1] top.chip.c_core0.instr1[0]
+@200
+-
+-exec_units
+-eu0
+@28
+top.chip.c_core0.eu0.present
+#{top.chip.c_core0.eu0.rob_entry[2:0]} top.chip.c_core0.eu0.rob_entry[2] top.chip.c_core0.eu0.rob_entry[1] top.chip.c_core0.eu0.rob_entry[0]
+@22
+#{top.chip.c_core0.eu0.r0[3:0]} top.chip.c_core0.eu0.r0[3] top.chip.c_core0.eu0.r0[2] top.chip.c_core0.eu0.r0[1] top.chip.c_core0.eu0.r0[0]
+#{top.chip.c_core0.eu0.arg0[15:0]} top.chip.c_core0.eu0.arg0[15] top.chip.c_core0.eu0.arg0[14] top.chip.c_core0.eu0.arg0[13] top.chip.c_core0.eu0.arg0[12] top.chip.c_core0.eu0.arg0[11] top.chip.c_core0.eu0.arg0[10] top.chip.c_core0.eu0.arg0[9] top.chip.c_core0.eu0.arg0[8] top.chip.c_core0.eu0.arg0[7] top.chip.c_core0.eu0.arg0[6] top.chip.c_core0.eu0.arg0[5] top.chip.c_core0.eu0.arg0[4] top.chip.c_core0.eu0.arg0[3] top.chip.c_core0.eu0.arg0[2] top.chip.c_core0.eu0.arg0[1] top.chip.c_core0.eu0.arg0[0]
+#{top.chip.c_core0.eu0.r1[3:0]} top.chip.c_core0.eu0.r1[3] top.chip.c_core0.eu0.r1[2] top.chip.c_core0.eu0.r1[1] top.chip.c_core0.eu0.r1[0]
+#{top.chip.c_core0.eu0.arg1[15:0]} top.chip.c_core0.eu0.arg1[15] top.chip.c_core0.eu0.arg1[14] top.chip.c_core0.eu0.arg1[13] top.chip.c_core0.eu0.arg1[12] top.chip.c_core0.eu0.arg1[11] top.chip.c_core0.eu0.arg1[10] top.chip.c_core0.eu0.arg1[9] top.chip.c_core0.eu0.arg1[8] top.chip.c_core0.eu0.arg1[7] top.chip.c_core0.eu0.arg1[6] top.chip.c_core0.eu0.arg1[5] top.chip.c_core0.eu0.arg1[4] top.chip.c_core0.eu0.arg1[3] top.chip.c_core0.eu0.arg1[2] top.chip.c_core0.eu0.arg1[1] top.chip.c_core0.eu0.arg1[0]
+#{top.chip.c_core0.eu0.rd[3:0]} top.chip.c_core0.eu0.rd[3] top.chip.c_core0.eu0.rd[2] top.chip.c_core0.eu0.rd[1] top.chip.c_core0.eu0.rd[0]
+#{top.chip.c_core0.eu0.res[15:0]} top.chip.c_core0.eu0.res[15] top.chip.c_core0.eu0.res[14] top.chip.c_core0.eu0.res[13] top.chip.c_core0.eu0.res[12] top.chip.c_core0.eu0.res[11] top.chip.c_core0.eu0.res[10] top.chip.c_core0.eu0.res[9] top.chip.c_core0.eu0.res[8] top.chip.c_core0.eu0.res[7] top.chip.c_core0.eu0.res[6] top.chip.c_core0.eu0.res[5] top.chip.c_core0.eu0.res[4] top.chip.c_core0.eu0.res[3] top.chip.c_core0.eu0.res[2] top.chip.c_core0.eu0.res[1] top.chip.c_core0.eu0.res[0]
+#{top.chip.c_core0.eu0.imm16[15:0]} top.chip.c_core0.eu0.imm16[15] top.chip.c_core0.eu0.imm16[14] top.chip.c_core0.eu0.imm16[13] top.chip.c_core0.eu0.imm16[12] top.chip.c_core0.eu0.imm16[11] top.chip.c_core0.eu0.imm16[10] top.chip.c_core0.eu0.imm16[9] top.chip.c_core0.eu0.imm16[8] top.chip.c_core0.eu0.imm16[7] top.chip.c_core0.eu0.imm16[6] top.chip.c_core0.eu0.imm16[5] top.chip.c_core0.eu0.imm16[4] top.chip.c_core0.eu0.imm16[3] top.chip.c_core0.eu0.imm16[2] top.chip.c_core0.eu0.imm16[1] top.chip.c_core0.eu0.imm16[0]
+@200
+-eu1
+@28
+top.chip.c_core0.eu1_mem
+top.chip.c_core0.eu1.present
+#{top.chip.c_core0.eu1.rob_entry[2:0]} top.chip.c_core0.eu1.rob_entry[2] top.chip.c_core0.eu1.rob_entry[1] top.chip.c_core0.eu1.rob_entry[0]
+@22
+#{top.chip.c_core0.eu1.r0[3:0]} top.chip.c_core0.eu1.r0[3] top.chip.c_core0.eu1.r0[2] top.chip.c_core0.eu1.r0[1] top.chip.c_core0.eu1.r0[0]
+#{top.chip.c_core0.eu1.arg0[15:0]} top.chip.c_core0.eu1.arg0[15] top.chip.c_core0.eu1.arg0[14] top.chip.c_core0.eu1.arg0[13] top.chip.c_core0.eu1.arg0[12] top.chip.c_core0.eu1.arg0[11] top.chip.c_core0.eu1.arg0[10] top.chip.c_core0.eu1.arg0[9] top.chip.c_core0.eu1.arg0[8] top.chip.c_core0.eu1.arg0[7] top.chip.c_core0.eu1.arg0[6] top.chip.c_core0.eu1.arg0[5] top.chip.c_core0.eu1.arg0[4] top.chip.c_core0.eu1.arg0[3] top.chip.c_core0.eu1.arg0[2] top.chip.c_core0.eu1.arg0[1] top.chip.c_core0.eu1.arg0[0]
+#{top.chip.c_core0.eu1.r1[3:0]} top.chip.c_core0.eu1.r1[3] top.chip.c_core0.eu1.r1[2] top.chip.c_core0.eu1.r1[1] top.chip.c_core0.eu1.r1[0]
+#{top.chip.c_core0.eu1.arg1[15:0]} top.chip.c_core0.eu1.arg1[15] top.chip.c_core0.eu1.arg1[14] top.chip.c_core0.eu1.arg1[13] top.chip.c_core0.eu1.arg1[12] top.chip.c_core0.eu1.arg1[11] top.chip.c_core0.eu1.arg1[10] top.chip.c_core0.eu1.arg1[9] top.chip.c_core0.eu1.arg1[8] top.chip.c_core0.eu1.arg1[7] top.chip.c_core0.eu1.arg1[6] top.chip.c_core0.eu1.arg1[5] top.chip.c_core0.eu1.arg1[4] top.chip.c_core0.eu1.arg1[3] top.chip.c_core0.eu1.arg1[2] top.chip.c_core0.eu1.arg1[1] top.chip.c_core0.eu1.arg1[0]
+#{top.chip.c_core0.eu1.rd[3:0]} top.chip.c_core0.eu1.rd[3] top.chip.c_core0.eu1.rd[2] top.chip.c_core0.eu1.rd[1] top.chip.c_core0.eu1.rd[0]
+#{top.chip.c_core0.eu1.res[15:0]} top.chip.c_core0.eu1.res[15] top.chip.c_core0.eu1.res[14] top.chip.c_core0.eu1.res[13] top.chip.c_core0.eu1.res[12] top.chip.c_core0.eu1.res[11] top.chip.c_core0.eu1.res[10] top.chip.c_core0.eu1.res[9] top.chip.c_core0.eu1.res[8] top.chip.c_core0.eu1.res[7] top.chip.c_core0.eu1.res[6] top.chip.c_core0.eu1.res[5] top.chip.c_core0.eu1.res[4] top.chip.c_core0.eu1.res[3] top.chip.c_core0.eu1.res[2] top.chip.c_core0.eu1.res[1] top.chip.c_core0.eu1.res[0]
+#{top.chip.c_core0.eu1.imm16[15:0]} top.chip.c_core0.eu1.imm16[15] top.chip.c_core0.eu1.imm16[14] top.chip.c_core0.eu1.imm16[13] top.chip.c_core0.eu1.imm16[12] top.chip.c_core0.eu1.imm16[11] top.chip.c_core0.eu1.imm16[10] top.chip.c_core0.eu1.imm16[9] top.chip.c_core0.eu1.imm16[8] top.chip.c_core0.eu1.imm16[7] top.chip.c_core0.eu1.imm16[6] top.chip.c_core0.eu1.imm16[5] top.chip.c_core0.eu1.imm16[4] top.chip.c_core0.eu1.imm16[3] top.chip.c_core0.eu1.imm16[2] top.chip.c_core0.eu1.imm16[1] top.chip.c_core0.eu1.imm16[0]
+@200
+-
+-rob
+@28
+top.chip.c_core0.fetch0
+top.chip.c_core0.fetch1
+top.chip.c_core0.retire0
+top.chip.c_core0.retire1
+@200
+-entry0
+@28
+top.chip.c_core0.rob[0].present
+@22
+#{top.chip.c_core0.rob[0].instr[15:0]} top.chip.c_core0.rob[0].instr[15] top.chip.c_core0.rob[0].instr[14] top.chip.c_core0.rob[0].instr[13] top.chip.c_core0.rob[0].instr[12] top.chip.c_core0.rob[0].instr[11] top.chip.c_core0.rob[0].instr[10] top.chip.c_core0.rob[0].instr[9] top.chip.c_core0.rob[0].instr[8] top.chip.c_core0.rob[0].instr[7] top.chip.c_core0.rob[0].instr[6] top.chip.c_core0.rob[0].instr[5] top.chip.c_core0.rob[0].instr[4] top.chip.c_core0.rob[0].instr[3] top.chip.c_core0.rob[0].instr[2] top.chip.c_core0.rob[0].instr[1] top.chip.c_core0.rob[0].instr[0]
+@28
+top.chip.c_core0.rob[0].prfs0_p
+@22
+#{top.chip.c_core0.rob[0].prfs0_id[3:0]} top.chip.c_core0.rob[0].prfs0_id[3] top.chip.c_core0.rob[0].prfs0_id[2] top.chip.c_core0.rob[0].prfs0_id[1] top.chip.c_core0.rob[0].prfs0_id[0]
+@28
+top.chip.c_core0.rob[0].prfs1_p
+@22
+#{top.chip.c_core0.rob[0].prfs1_id[3:0]} top.chip.c_core0.rob[0].prfs1_id[3] top.chip.c_core0.rob[0].prfs1_id[2] top.chip.c_core0.rob[0].prfs1_id[1] top.chip.c_core0.rob[0].prfs1_id[0]
+@28
+top.chip.c_core0.rob[0].prfd0_p
+@22
+#{top.chip.c_core0.rob[0].prfd0_id[3:0]} top.chip.c_core0.rob[0].prfd0_id[3] top.chip.c_core0.rob[0].prfd0_id[2] top.chip.c_core0.rob[0].prfd0_id[1] top.chip.c_core0.rob[0].prfd0_id[0]
+#{top.chip.c_core0.rob[0].prfprev_id[3:0]} top.chip.c_core0.rob[0].prfprev_id[3] top.chip.c_core0.rob[0].prfprev_id[2] top.chip.c_core0.rob[0].prfprev_id[1] top.chip.c_core0.rob[0].prfprev_id[0]
+#{top.chip.c_core0.rob[0].imm16[15:0]} top.chip.c_core0.rob[0].imm16[15] top.chip.c_core0.rob[0].imm16[14] top.chip.c_core0.rob[0].imm16[13] top.chip.c_core0.rob[0].imm16[12] top.chip.c_core0.rob[0].imm16[11] top.chip.c_core0.rob[0].imm16[10] top.chip.c_core0.rob[0].imm16[9] top.chip.c_core0.rob[0].imm16[8] top.chip.c_core0.rob[0].imm16[7] top.chip.c_core0.rob[0].imm16[6] top.chip.c_core0.rob[0].imm16[5] top.chip.c_core0.rob[0].imm16[4] top.chip.c_core0.rob[0].imm16[3] top.chip.c_core0.rob[0].imm16[2] top.chip.c_core0.rob[0].imm16[1] top.chip.c_core0.rob[0].imm16[0]
+@28
+#{top.chip.c_core0.rob[0].flags[2:0]} top.chip.c_core0.rob[0].flags[2] top.chip.c_core0.rob[0].flags[1] top.chip.c_core0.rob[0].flags[0]
+top.chip.c_core0.rob[0].branch
+top.chip.c_core0.rob[0].branch_dest
+@22
+#{top.chip.c_core0.rob[0].branch_alt_dest[15:0]} top.chip.c_core0.rob[0].branch_alt_dest[15] top.chip.c_core0.rob[0].branch_alt_dest[14] top.chip.c_core0.rob[0].branch_alt_dest[13] top.chip.c_core0.rob[0].branch_alt_dest[12] top.chip.c_core0.rob[0].branch_alt_dest[11] top.chip.c_core0.rob[0].branch_alt_dest[10] top.chip.c_core0.rob[0].branch_alt_dest[9] top.chip.c_core0.rob[0].branch_alt_dest[8] top.chip.c_core0.rob[0].branch_alt_dest[7] top.chip.c_core0.rob[0].branch_alt_dest[6] top.chip.c_core0.rob[0].branch_alt_dest[5] top.chip.c_core0.rob[0].branch_alt_dest[4] top.chip.c_core0.rob[0].branch_alt_dest[3] top.chip.c_core0.rob[0].branch_alt_dest[2] top.chip.c_core0.rob[0].branch_alt_dest[1] top.chip.c_core0.rob[0].branch_alt_dest[0]
+@200
+-entry1
+@28
+top.chip.c_core0.rob[1].present
+@22
+#{top.chip.c_core0.rob[1].instr[15:0]} top.chip.c_core0.rob[1].instr[15] top.chip.c_core0.rob[1].instr[14] top.chip.c_core0.rob[1].instr[13] top.chip.c_core0.rob[1].instr[12] top.chip.c_core0.rob[1].instr[11] top.chip.c_core0.rob[1].instr[10] top.chip.c_core0.rob[1].instr[9] top.chip.c_core0.rob[1].instr[8] top.chip.c_core0.rob[1].instr[7] top.chip.c_core0.rob[1].instr[6] top.chip.c_core0.rob[1].instr[5] top.chip.c_core0.rob[1].instr[4] top.chip.c_core0.rob[1].instr[3] top.chip.c_core0.rob[1].instr[2] top.chip.c_core0.rob[1].instr[1] top.chip.c_core0.rob[1].instr[0]
+@28
+top.chip.c_core0.rob[1].prfs0_p
+@22
+#{top.chip.c_core0.rob[1].prfs0_id[3:0]} top.chip.c_core0.rob[1].prfs0_id[3] top.chip.c_core0.rob[1].prfs0_id[2] top.chip.c_core0.rob[1].prfs0_id[1] top.chip.c_core0.rob[1].prfs0_id[0]
+@28
+top.chip.c_core0.rob[1].prfs1_p
+@22
+#{top.chip.c_core0.rob[1].prfs1_id[3:0]} top.chip.c_core0.rob[1].prfs1_id[3] top.chip.c_core0.rob[1].prfs1_id[2] top.chip.c_core0.rob[1].prfs1_id[1] top.chip.c_core0.rob[1].prfs1_id[0]
+@28
+top.chip.c_core0.rob[1].prfd0_p
+@22
+#{top.chip.c_core0.rob[1].prfd0_id[3:0]} top.chip.c_core0.rob[1].prfd0_id[3] top.chip.c_core0.rob[1].prfd0_id[2] top.chip.c_core0.rob[1].prfd0_id[1] top.chip.c_core0.rob[1].prfd0_id[0]
+#{top.chip.c_core0.rob[1].prfprev_id[3:0]} top.chip.c_core0.rob[1].prfprev_id[3] top.chip.c_core0.rob[1].prfprev_id[2] top.chip.c_core0.rob[1].prfprev_id[1] top.chip.c_core0.rob[1].prfprev_id[0]
+#{top.chip.c_core0.rob[1].imm16[15:0]} top.chip.c_core0.rob[1].imm16[15] top.chip.c_core0.rob[1].imm16[14] top.chip.c_core0.rob[1].imm16[13] top.chip.c_core0.rob[1].imm16[12] top.chip.c_core0.rob[1].imm16[11] top.chip.c_core0.rob[1].imm16[10] top.chip.c_core0.rob[1].imm16[9] top.chip.c_core0.rob[1].imm16[8] top.chip.c_core0.rob[1].imm16[7] top.chip.c_core0.rob[1].imm16[6] top.chip.c_core0.rob[1].imm16[5] top.chip.c_core0.rob[1].imm16[4] top.chip.c_core0.rob[1].imm16[3] top.chip.c_core0.rob[1].imm16[2] top.chip.c_core0.rob[1].imm16[1] top.chip.c_core0.rob[1].imm16[0]
+@28
+#{top.chip.c_core0.rob[1].flags[2:0]} top.chip.c_core0.rob[1].flags[2] top.chip.c_core0.rob[1].flags[1] top.chip.c_core0.rob[1].flags[0]
+top.chip.c_core0.rob[1].branch
+top.chip.c_core0.rob[1].branch_dest
+@22
+#{top.chip.c_core0.rob[1].branch_alt_dest[15:0]} top.chip.c_core0.rob[1].branch_alt_dest[15] top.chip.c_core0.rob[1].branch_alt_dest[14] top.chip.c_core0.rob[1].branch_alt_dest[13] top.chip.c_core0.rob[1].branch_alt_dest[12] top.chip.c_core0.rob[1].branch_alt_dest[11] top.chip.c_core0.rob[1].branch_alt_dest[10] top.chip.c_core0.rob[1].branch_alt_dest[9] top.chip.c_core0.rob[1].branch_alt_dest[8] top.chip.c_core0.rob[1].branch_alt_dest[7] top.chip.c_core0.rob[1].branch_alt_dest[6] top.chip.c_core0.rob[1].branch_alt_dest[5] top.chip.c_core0.rob[1].branch_alt_dest[4] top.chip.c_core0.rob[1].branch_alt_dest[3] top.chip.c_core0.rob[1].branch_alt_dest[2] top.chip.c_core0.rob[1].branch_alt_dest[1] top.chip.c_core0.rob[1].branch_alt_dest[0]
+@200
+-entry2
+@28
+top.chip.c_core0.rob[2].present
+@22
+#{top.chip.c_core0.rob[2].instr[15:0]} top.chip.c_core0.rob[2].instr[15] top.chip.c_core0.rob[2].instr[14] top.chip.c_core0.rob[2].instr[13] top.chip.c_core0.rob[2].instr[12] top.chip.c_core0.rob[2].instr[11] top.chip.c_core0.rob[2].instr[10] top.chip.c_core0.rob[2].instr[9] top.chip.c_core0.rob[2].instr[8] top.chip.c_core0.rob[2].instr[7] top.chip.c_core0.rob[2].instr[6] top.chip.c_core0.rob[2].instr[5] top.chip.c_core0.rob[2].instr[4] top.chip.c_core0.rob[2].instr[3] top.chip.c_core0.rob[2].instr[2] top.chip.c_core0.rob[2].instr[1] top.chip.c_core0.rob[2].instr[0]
+@28
+top.chip.c_core0.rob[2].prfs0_p
+@22
+#{top.chip.c_core0.rob[2].prfs0_id[3:0]} top.chip.c_core0.rob[2].prfs0_id[3] top.chip.c_core0.rob[2].prfs0_id[2] top.chip.c_core0.rob[2].prfs0_id[1] top.chip.c_core0.rob[2].prfs0_id[0]
+@28
+top.chip.c_core0.rob[2].prfs1_p
+@22
+#{top.chip.c_core0.rob[2].prfs1_id[3:0]} top.chip.c_core0.rob[2].prfs1_id[3] top.chip.c_core0.rob[2].prfs1_id[2] top.chip.c_core0.rob[2].prfs1_id[1] top.chip.c_core0.rob[2].prfs1_id[0]
+@28
+top.chip.c_core0.rob[2].prfd0_p
+@22
+#{top.chip.c_core0.rob[2].prfd0_id[3:0]} top.chip.c_core0.rob[2].prfd0_id[3] top.chip.c_core0.rob[2].prfd0_id[2] top.chip.c_core0.rob[2].prfd0_id[1] top.chip.c_core0.rob[2].prfd0_id[0]
+#{top.chip.c_core0.rob[2].prfprev_id[3:0]} top.chip.c_core0.rob[2].prfprev_id[3] top.chip.c_core0.rob[2].prfprev_id[2] top.chip.c_core0.rob[2].prfprev_id[1] top.chip.c_core0.rob[2].prfprev_id[0]
+#{top.chip.c_core0.rob[2].imm16[15:0]} top.chip.c_core0.rob[2].imm16[15] top.chip.c_core0.rob[2].imm16[14] top.chip.c_core0.rob[2].imm16[13] top.chip.c_core0.rob[2].imm16[12] top.chip.c_core0.rob[2].imm16[11] top.chip.c_core0.rob[2].imm16[10] top.chip.c_core0.rob[2].imm16[9] top.chip.c_core0.rob[2].imm16[8] top.chip.c_core0.rob[2].imm16[7] top.chip.c_core0.rob[2].imm16[6] top.chip.c_core0.rob[2].imm16[5] top.chip.c_core0.rob[2].imm16[4] top.chip.c_core0.rob[2].imm16[3] top.chip.c_core0.rob[2].imm16[2] top.chip.c_core0.rob[2].imm16[1] top.chip.c_core0.rob[2].imm16[0]
+@28
+#{top.chip.c_core0.rob[2].flags[2:0]} top.chip.c_core0.rob[2].flags[2] top.chip.c_core0.rob[2].flags[1] top.chip.c_core0.rob[2].flags[0]
+top.chip.c_core0.rob[2].branch
+top.chip.c_core0.rob[2].branch_dest
+@22
+#{top.chip.c_core0.rob[2].branch_alt_dest[15:0]} top.chip.c_core0.rob[2].branch_alt_dest[15] top.chip.c_core0.rob[2].branch_alt_dest[14] top.chip.c_core0.rob[2].branch_alt_dest[13] top.chip.c_core0.rob[2].branch_alt_dest[12] top.chip.c_core0.rob[2].branch_alt_dest[11] top.chip.c_core0.rob[2].branch_alt_dest[10] top.chip.c_core0.rob[2].branch_alt_dest[9] top.chip.c_core0.rob[2].branch_alt_dest[8] top.chip.c_core0.rob[2].branch_alt_dest[7] top.chip.c_core0.rob[2].branch_alt_dest[6] top.chip.c_core0.rob[2].branch_alt_dest[5] top.chip.c_core0.rob[2].branch_alt_dest[4] top.chip.c_core0.rob[2].branch_alt_dest[3] top.chip.c_core0.rob[2].branch_alt_dest[2] top.chip.c_core0.rob[2].branch_alt_dest[1] top.chip.c_core0.rob[2].branch_alt_dest[0]
+@200
+-entry3
+@28
+top.chip.c_core0.rob[3].present
+@22
+#{top.chip.c_core0.rob[3].instr[15:0]} top.chip.c_core0.rob[3].instr[15] top.chip.c_core0.rob[3].instr[14] top.chip.c_core0.rob[3].instr[13] top.chip.c_core0.rob[3].instr[12] top.chip.c_core0.rob[3].instr[11] top.chip.c_core0.rob[3].instr[10] top.chip.c_core0.rob[3].instr[9] top.chip.c_core0.rob[3].instr[8] top.chip.c_core0.rob[3].instr[7] top.chip.c_core0.rob[3].instr[6] top.chip.c_core0.rob[3].instr[5] top.chip.c_core0.rob[3].instr[4] top.chip.c_core0.rob[3].instr[3] top.chip.c_core0.rob[3].instr[2] top.chip.c_core0.rob[3].instr[1] top.chip.c_core0.rob[3].instr[0]
+@28
+top.chip.c_core0.rob[3].prfs0_p
+@22
+#{top.chip.c_core0.rob[3].prfs0_id[3:0]} top.chip.c_core0.rob[3].prfs0_id[3] top.chip.c_core0.rob[3].prfs0_id[2] top.chip.c_core0.rob[3].prfs0_id[1] top.chip.c_core0.rob[3].prfs0_id[0]
+@28
+top.chip.c_core0.rob[3].prfs1_p
+@22
+#{top.chip.c_core0.rob[3].prfs1_id[3:0]} top.chip.c_core0.rob[3].prfs1_id[3] top.chip.c_core0.rob[3].prfs1_id[2] top.chip.c_core0.rob[3].prfs1_id[1] top.chip.c_core0.rob[3].prfs1_id[0]
+@28
+top.chip.c_core0.rob[3].prfd0_p
+@22
+#{top.chip.c_core0.rob[3].prfd0_id[3:0]} top.chip.c_core0.rob[3].prfd0_id[3] top.chip.c_core0.rob[3].prfd0_id[2] top.chip.c_core0.rob[3].prfd0_id[1] top.chip.c_core0.rob[3].prfd0_id[0]
+#{top.chip.c_core0.rob[3].prfprev_id[3:0]} top.chip.c_core0.rob[3].prfprev_id[3] top.chip.c_core0.rob[3].prfprev_id[2] top.chip.c_core0.rob[3].prfprev_id[1] top.chip.c_core0.rob[3].prfprev_id[0]
+#{top.chip.c_core0.rob[3].imm16[15:0]} top.chip.c_core0.rob[3].imm16[15] top.chip.c_core0.rob[3].imm16[14] top.chip.c_core0.rob[3].imm16[13] top.chip.c_core0.rob[3].imm16[12] top.chip.c_core0.rob[3].imm16[11] top.chip.c_core0.rob[3].imm16[10] top.chip.c_core0.rob[3].imm16[9] top.chip.c_core0.rob[3].imm16[8] top.chip.c_core0.rob[3].imm16[7] top.chip.c_core0.rob[3].imm16[6] top.chip.c_core0.rob[3].imm16[5] top.chip.c_core0.rob[3].imm16[4] top.chip.c_core0.rob[3].imm16[3] top.chip.c_core0.rob[3].imm16[2] top.chip.c_core0.rob[3].imm16[1] top.chip.c_core0.rob[3].imm16[0]
+@28
+#{top.chip.c_core0.rob[3].flags[2:0]} top.chip.c_core0.rob[3].flags[2] top.chip.c_core0.rob[3].flags[1] top.chip.c_core0.rob[3].flags[0]
+top.chip.c_core0.rob[3].branch
+top.chip.c_core0.rob[3].branch_dest
+@22
+#{top.chip.c_core0.rob[3].branch_alt_dest[15:0]} top.chip.c_core0.rob[3].branch_alt_dest[15] top.chip.c_core0.rob[3].branch_alt_dest[14] top.chip.c_core0.rob[3].branch_alt_dest[13] top.chip.c_core0.rob[3].branch_alt_dest[12] top.chip.c_core0.rob[3].branch_alt_dest[11] top.chip.c_core0.rob[3].branch_alt_dest[10] top.chip.c_core0.rob[3].branch_alt_dest[9] top.chip.c_core0.rob[3].branch_alt_dest[8] top.chip.c_core0.rob[3].branch_alt_dest[7] top.chip.c_core0.rob[3].branch_alt_dest[6] top.chip.c_core0.rob[3].branch_alt_dest[5] top.chip.c_core0.rob[3].branch_alt_dest[4] top.chip.c_core0.rob[3].branch_alt_dest[3] top.chip.c_core0.rob[3].branch_alt_dest[2] top.chip.c_core0.rob[3].branch_alt_dest[1] top.chip.c_core0.rob[3].branch_alt_dest[0]
+@200
+-entry4
+@28
+top.chip.c_core0.rob[4].present
+@22
+#{top.chip.c_core0.rob[4].instr[15:0]} top.chip.c_core0.rob[4].instr[15] top.chip.c_core0.rob[4].instr[14] top.chip.c_core0.rob[4].instr[13] top.chip.c_core0.rob[4].instr[12] top.chip.c_core0.rob[4].instr[11] top.chip.c_core0.rob[4].instr[10] top.chip.c_core0.rob[4].instr[9] top.chip.c_core0.rob[4].instr[8] top.chip.c_core0.rob[4].instr[7] top.chip.c_core0.rob[4].instr[6] top.chip.c_core0.rob[4].instr[5] top.chip.c_core0.rob[4].instr[4] top.chip.c_core0.rob[4].instr[3] top.chip.c_core0.rob[4].instr[2] top.chip.c_core0.rob[4].instr[1] top.chip.c_core0.rob[4].instr[0]
+@28
+top.chip.c_core0.rob[4].prfs0_p
+@22
+#{top.chip.c_core0.rob[4].prfs0_id[3:0]} top.chip.c_core0.rob[4].prfs0_id[3] top.chip.c_core0.rob[4].prfs0_id[2] top.chip.c_core0.rob[4].prfs0_id[1] top.chip.c_core0.rob[4].prfs0_id[0]
+@28
+top.chip.c_core0.rob[4].prfs1_p
+@22
+#{top.chip.c_core0.rob[4].prfs1_id[3:0]} top.chip.c_core0.rob[4].prfs1_id[3] top.chip.c_core0.rob[4].prfs1_id[2] top.chip.c_core0.rob[4].prfs1_id[1] top.chip.c_core0.rob[4].prfs1_id[0]
+@28
+top.chip.c_core0.rob[4].prfd0_p
+@22
+#{top.chip.c_core0.rob[4].prfd0_id[3:0]} top.chip.c_core0.rob[4].prfd0_id[3] top.chip.c_core0.rob[4].prfd0_id[2] top.chip.c_core0.rob[4].prfd0_id[1] top.chip.c_core0.rob[4].prfd0_id[0]
+#{top.chip.c_core0.rob[4].prfprev_id[3:0]} top.chip.c_core0.rob[4].prfprev_id[3] top.chip.c_core0.rob[4].prfprev_id[2] top.chip.c_core0.rob[4].prfprev_id[1] top.chip.c_core0.rob[4].prfprev_id[0]
+#{top.chip.c_core0.rob[4].imm16[15:0]} top.chip.c_core0.rob[4].imm16[15] top.chip.c_core0.rob[4].imm16[14] top.chip.c_core0.rob[4].imm16[13] top.chip.c_core0.rob[4].imm16[12] top.chip.c_core0.rob[4].imm16[11] top.chip.c_core0.rob[4].imm16[10] top.chip.c_core0.rob[4].imm16[9] top.chip.c_core0.rob[4].imm16[8] top.chip.c_core0.rob[4].imm16[7] top.chip.c_core0.rob[4].imm16[6] top.chip.c_core0.rob[4].imm16[5] top.chip.c_core0.rob[4].imm16[4] top.chip.c_core0.rob[4].imm16[3] top.chip.c_core0.rob[4].imm16[2] top.chip.c_core0.rob[4].imm16[1] top.chip.c_core0.rob[4].imm16[0]
+@28
+#{top.chip.c_core0.rob[4].flags[2:0]} top.chip.c_core0.rob[4].flags[2] top.chip.c_core0.rob[4].flags[1] top.chip.c_core0.rob[4].flags[0]
+top.chip.c_core0.rob[4].branch
+top.chip.c_core0.rob[4].branch_dest
+@22
+#{top.chip.c_core0.rob[4].branch_alt_dest[15:0]} top.chip.c_core0.rob[4].branch_alt_dest[15] top.chip.c_core0.rob[4].branch_alt_dest[14] top.chip.c_core0.rob[4].branch_alt_dest[13] top.chip.c_core0.rob[4].branch_alt_dest[12] top.chip.c_core0.rob[4].branch_alt_dest[11] top.chip.c_core0.rob[4].branch_alt_dest[10] top.chip.c_core0.rob[4].branch_alt_dest[9] top.chip.c_core0.rob[4].branch_alt_dest[8] top.chip.c_core0.rob[4].branch_alt_dest[7] top.chip.c_core0.rob[4].branch_alt_dest[6] top.chip.c_core0.rob[4].branch_alt_dest[5] top.chip.c_core0.rob[4].branch_alt_dest[4] top.chip.c_core0.rob[4].branch_alt_dest[3] top.chip.c_core0.rob[4].branch_alt_dest[2] top.chip.c_core0.rob[4].branch_alt_dest[1] top.chip.c_core0.rob[4].branch_alt_dest[0]
+@200
+-entry5
+@28
+top.chip.c_core0.rob[5].present
+@22
+#{top.chip.c_core0.rob[5].instr[15:0]} top.chip.c_core0.rob[5].instr[15] top.chip.c_core0.rob[5].instr[14] top.chip.c_core0.rob[5].instr[13] top.chip.c_core0.rob[5].instr[12] top.chip.c_core0.rob[5].instr[11] top.chip.c_core0.rob[5].instr[10] top.chip.c_core0.rob[5].instr[9] top.chip.c_core0.rob[5].instr[8] top.chip.c_core0.rob[5].instr[7] top.chip.c_core0.rob[5].instr[6] top.chip.c_core0.rob[5].instr[5] top.chip.c_core0.rob[5].instr[4] top.chip.c_core0.rob[5].instr[3] top.chip.c_core0.rob[5].instr[2] top.chip.c_core0.rob[5].instr[1] top.chip.c_core0.rob[5].instr[0]
+@28
+top.chip.c_core0.rob[5].prfs0_p
+@22
+#{top.chip.c_core0.rob[5].prfs0_id[3:0]} top.chip.c_core0.rob[5].prfs0_id[3] top.chip.c_core0.rob[5].prfs0_id[2] top.chip.c_core0.rob[5].prfs0_id[1] top.chip.c_core0.rob[5].prfs0_id[0]
+@28
+top.chip.c_core0.rob[5].prfs1_p
+@22
+#{top.chip.c_core0.rob[5].prfs1_id[3:0]} top.chip.c_core0.rob[5].prfs1_id[3] top.chip.c_core0.rob[5].prfs1_id[2] top.chip.c_core0.rob[5].prfs1_id[1] top.chip.c_core0.rob[5].prfs1_id[0]
+@28
+top.chip.c_core0.rob[5].prfd0_p
+@22
+#{top.chip.c_core0.rob[5].prfd0_id[3:0]} top.chip.c_core0.rob[5].prfd0_id[3] top.chip.c_core0.rob[5].prfd0_id[2] top.chip.c_core0.rob[5].prfd0_id[1] top.chip.c_core0.rob[5].prfd0_id[0]
+#{top.chip.c_core0.rob[5].prfprev_id[3:0]} top.chip.c_core0.rob[5].prfprev_id[3] top.chip.c_core0.rob[5].prfprev_id[2] top.chip.c_core0.rob[5].prfprev_id[1] top.chip.c_core0.rob[5].prfprev_id[0]
+#{top.chip.c_core0.rob[5].imm16[15:0]} top.chip.c_core0.rob[5].imm16[15] top.chip.c_core0.rob[5].imm16[14] top.chip.c_core0.rob[5].imm16[13] top.chip.c_core0.rob[5].imm16[12] top.chip.c_core0.rob[5].imm16[11] top.chip.c_core0.rob[5].imm16[10] top.chip.c_core0.rob[5].imm16[9] top.chip.c_core0.rob[5].imm16[8] top.chip.c_core0.rob[5].imm16[7] top.chip.c_core0.rob[5].imm16[6] top.chip.c_core0.rob[5].imm16[5] top.chip.c_core0.rob[5].imm16[4] top.chip.c_core0.rob[5].imm16[3] top.chip.c_core0.rob[5].imm16[2] top.chip.c_core0.rob[5].imm16[1] top.chip.c_core0.rob[5].imm16[0]
+@28
+#{top.chip.c_core0.rob[5].flags[2:0]} top.chip.c_core0.rob[5].flags[2] top.chip.c_core0.rob[5].flags[1] top.chip.c_core0.rob[5].flags[0]
+top.chip.c_core0.rob[5].branch
+top.chip.c_core0.rob[5].branch_dest
+@22
+#{top.chip.c_core0.rob[5].branch_alt_dest[15:0]} top.chip.c_core0.rob[5].branch_alt_dest[15] top.chip.c_core0.rob[5].branch_alt_dest[14] top.chip.c_core0.rob[5].branch_alt_dest[13] top.chip.c_core0.rob[5].branch_alt_dest[12] top.chip.c_core0.rob[5].branch_alt_dest[11] top.chip.c_core0.rob[5].branch_alt_dest[10] top.chip.c_core0.rob[5].branch_alt_dest[9] top.chip.c_core0.rob[5].branch_alt_dest[8] top.chip.c_core0.rob[5].branch_alt_dest[7] top.chip.c_core0.rob[5].branch_alt_dest[6] top.chip.c_core0.rob[5].branch_alt_dest[5] top.chip.c_core0.rob[5].branch_alt_dest[4] top.chip.c_core0.rob[5].branch_alt_dest[3] top.chip.c_core0.rob[5].branch_alt_dest[2] top.chip.c_core0.rob[5].branch_alt_dest[1] top.chip.c_core0.rob[5].branch_alt_dest[0]
+@200
+-entry6
+@28
+top.chip.c_core0.rob[6].present
+@22
+#{top.chip.c_core0.rob[6].instr[15:0]} top.chip.c_core0.rob[6].instr[15] top.chip.c_core0.rob[6].instr[14] top.chip.c_core0.rob[6].instr[13] top.chip.c_core0.rob[6].instr[12] top.chip.c_core0.rob[6].instr[11] top.chip.c_core0.rob[6].instr[10] top.chip.c_core0.rob[6].instr[9] top.chip.c_core0.rob[6].instr[8] top.chip.c_core0.rob[6].instr[7] top.chip.c_core0.rob[6].instr[6] top.chip.c_core0.rob[6].instr[5] top.chip.c_core0.rob[6].instr[4] top.chip.c_core0.rob[6].instr[3] top.chip.c_core0.rob[6].instr[2] top.chip.c_core0.rob[6].instr[1] top.chip.c_core0.rob[6].instr[0]
+@28
+top.chip.c_core0.rob[6].prfs0_p
+@22
+#{top.chip.c_core0.rob[6].prfs0_id[3:0]} top.chip.c_core0.rob[6].prfs0_id[3] top.chip.c_core0.rob[6].prfs0_id[2] top.chip.c_core0.rob[6].prfs0_id[1] top.chip.c_core0.rob[6].prfs0_id[0]
+@28
+top.chip.c_core0.rob[6].prfs1_p
+@22
+#{top.chip.c_core0.rob[6].prfs1_id[3:0]} top.chip.c_core0.rob[6].prfs1_id[3] top.chip.c_core0.rob[6].prfs1_id[2] top.chip.c_core0.rob[6].prfs1_id[1] top.chip.c_core0.rob[6].prfs1_id[0]
+@28
+top.chip.c_core0.rob[6].prfd0_p
+@22
+#{top.chip.c_core0.rob[6].prfd0_id[3:0]} top.chip.c_core0.rob[6].prfd0_id[3] top.chip.c_core0.rob[6].prfd0_id[2] top.chip.c_core0.rob[6].prfd0_id[1] top.chip.c_core0.rob[6].prfd0_id[0]
+#{top.chip.c_core0.rob[6].prfprev_id[3:0]} top.chip.c_core0.rob[6].prfprev_id[3] top.chip.c_core0.rob[6].prfprev_id[2] top.chip.c_core0.rob[6].prfprev_id[1] top.chip.c_core0.rob[6].prfprev_id[0]
+#{top.chip.c_core0.rob[6].imm16[15:0]} top.chip.c_core0.rob[6].imm16[15] top.chip.c_core0.rob[6].imm16[14] top.chip.c_core0.rob[6].imm16[13] top.chip.c_core0.rob[6].imm16[12] top.chip.c_core0.rob[6].imm16[11] top.chip.c_core0.rob[6].imm16[10] top.chip.c_core0.rob[6].imm16[9] top.chip.c_core0.rob[6].imm16[8] top.chip.c_core0.rob[6].imm16[7] top.chip.c_core0.rob[6].imm16[6] top.chip.c_core0.rob[6].imm16[5] top.chip.c_core0.rob[6].imm16[4] top.chip.c_core0.rob[6].imm16[3] top.chip.c_core0.rob[6].imm16[2] top.chip.c_core0.rob[6].imm16[1] top.chip.c_core0.rob[6].imm16[0]
+@28
+#{top.chip.c_core0.rob[6].flags[2:0]} top.chip.c_core0.rob[6].flags[2] top.chip.c_core0.rob[6].flags[1] top.chip.c_core0.rob[6].flags[0]
+top.chip.c_core0.rob[6].branch
+top.chip.c_core0.rob[6].branch_dest
+@22
+#{top.chip.c_core0.rob[6].branch_alt_dest[15:0]} top.chip.c_core0.rob[6].branch_alt_dest[15] top.chip.c_core0.rob[6].branch_alt_dest[14] top.chip.c_core0.rob[6].branch_alt_dest[13] top.chip.c_core0.rob[6].branch_alt_dest[12] top.chip.c_core0.rob[6].branch_alt_dest[11] top.chip.c_core0.rob[6].branch_alt_dest[10] top.chip.c_core0.rob[6].branch_alt_dest[9] top.chip.c_core0.rob[6].branch_alt_dest[8] top.chip.c_core0.rob[6].branch_alt_dest[7] top.chip.c_core0.rob[6].branch_alt_dest[6] top.chip.c_core0.rob[6].branch_alt_dest[5] top.chip.c_core0.rob[6].branch_alt_dest[4] top.chip.c_core0.rob[6].branch_alt_dest[3] top.chip.c_core0.rob[6].branch_alt_dest[2] top.chip.c_core0.rob[6].branch_alt_dest[1] top.chip.c_core0.rob[6].branch_alt_dest[0]
+@200
+-entry7
+@28
+top.chip.c_core0.rob[7].present
+@22
+#{top.chip.c_core0.rob[7].instr[15:0]} top.chip.c_core0.rob[7].instr[15] top.chip.c_core0.rob[7].instr[14] top.chip.c_core0.rob[7].instr[13] top.chip.c_core0.rob[7].instr[12] top.chip.c_core0.rob[7].instr[11] top.chip.c_core0.rob[7].instr[10] top.chip.c_core0.rob[7].instr[9] top.chip.c_core0.rob[7].instr[8] top.chip.c_core0.rob[7].instr[7] top.chip.c_core0.rob[7].instr[6] top.chip.c_core0.rob[7].instr[5] top.chip.c_core0.rob[7].instr[4] top.chip.c_core0.rob[7].instr[3] top.chip.c_core0.rob[7].instr[2] top.chip.c_core0.rob[7].instr[1] top.chip.c_core0.rob[7].instr[0]
+@28
+top.chip.c_core0.rob[7].prfs0_p
+@22
+#{top.chip.c_core0.rob[7].prfs0_id[3:0]} top.chip.c_core0.rob[7].prfs0_id[3] top.chip.c_core0.rob[7].prfs0_id[2] top.chip.c_core0.rob[7].prfs0_id[1] top.chip.c_core0.rob[7].prfs0_id[0]
+@28
+top.chip.c_core0.rob[7].prfs1_p
+@22
+#{top.chip.c_core0.rob[7].prfs1_id[3:0]} top.chip.c_core0.rob[7].prfs1_id[3] top.chip.c_core0.rob[7].prfs1_id[2] top.chip.c_core0.rob[7].prfs1_id[1] top.chip.c_core0.rob[7].prfs1_id[0]
+@28
+top.chip.c_core0.rob[7].prfd0_p
+@22
+#{top.chip.c_core0.rob[7].prfd0_id[3:0]} top.chip.c_core0.rob[7].prfd0_id[3] top.chip.c_core0.rob[7].prfd0_id[2] top.chip.c_core0.rob[7].prfd0_id[1] top.chip.c_core0.rob[7].prfd0_id[0]
+#{top.chip.c_core0.rob[7].prfprev_id[3:0]} top.chip.c_core0.rob[7].prfprev_id[3] top.chip.c_core0.rob[7].prfprev_id[2] top.chip.c_core0.rob[7].prfprev_id[1] top.chip.c_core0.rob[7].prfprev_id[0]
+#{top.chip.c_core0.rob[7].imm16[15:0]} top.chip.c_core0.rob[7].imm16[15] top.chip.c_core0.rob[7].imm16[14] top.chip.c_core0.rob[7].imm16[13] top.chip.c_core0.rob[7].imm16[12] top.chip.c_core0.rob[7].imm16[11] top.chip.c_core0.rob[7].imm16[10] top.chip.c_core0.rob[7].imm16[9] top.chip.c_core0.rob[7].imm16[8] top.chip.c_core0.rob[7].imm16[7] top.chip.c_core0.rob[7].imm16[6] top.chip.c_core0.rob[7].imm16[5] top.chip.c_core0.rob[7].imm16[4] top.chip.c_core0.rob[7].imm16[3] top.chip.c_core0.rob[7].imm16[2] top.chip.c_core0.rob[7].imm16[1] top.chip.c_core0.rob[7].imm16[0]
+@28
+#{top.chip.c_core0.rob[7].flags[2:0]} top.chip.c_core0.rob[7].flags[2] top.chip.c_core0.rob[7].flags[1] top.chip.c_core0.rob[7].flags[0]
+top.chip.c_core0.rob[7].branch
+top.chip.c_core0.rob[7].branch_dest
+@22
+#{top.chip.c_core0.rob[7].branch_alt_dest[15:0]} top.chip.c_core0.rob[7].branch_alt_dest[15] top.chip.c_core0.rob[7].branch_alt_dest[14] top.chip.c_core0.rob[7].branch_alt_dest[13] top.chip.c_core0.rob[7].branch_alt_dest[12] top.chip.c_core0.rob[7].branch_alt_dest[11] top.chip.c_core0.rob[7].branch_alt_dest[10] top.chip.c_core0.rob[7].branch_alt_dest[9] top.chip.c_core0.rob[7].branch_alt_dest[8] top.chip.c_core0.rob[7].branch_alt_dest[7] top.chip.c_core0.rob[7].branch_alt_dest[6] top.chip.c_core0.rob[7].branch_alt_dest[5] top.chip.c_core0.rob[7].branch_alt_dest[4] top.chip.c_core0.rob[7].branch_alt_dest[3] top.chip.c_core0.rob[7].branch_alt_dest[2] top.chip.c_core0.rob[7].branch_alt_dest[1] top.chip.c_core0.rob[7].branch_alt_dest[0]
+@200
+-
+-rat
+@28
++{present[0]} top.chip.c_core0.rat[0].present
+@22
+#{top.chip.c_core0.rat[0].transl[3:0]} top.chip.c_core0.rat[0].transl[3] top.chip.c_core0.rat[0].transl[2] top.chip.c_core0.rat[0].transl[1] top.chip.c_core0.rat[0].transl[0]
+@28
++{present[1]} top.chip.c_core0.rat[1].present
+@22
+#{top.chip.c_core0.rat[1].transl[3:0]} top.chip.c_core0.rat[1].transl[3] top.chip.c_core0.rat[1].transl[2] top.chip.c_core0.rat[1].transl[1] top.chip.c_core0.rat[1].transl[0]
+@28
++{present[2]} top.chip.c_core0.rat[2].present
+@22
+#{top.chip.c_core0.rat[2].transl[3:0]} top.chip.c_core0.rat[2].transl[3] top.chip.c_core0.rat[2].transl[2] top.chip.c_core0.rat[2].transl[1] top.chip.c_core0.rat[2].transl[0]
+@28
++{present[3]} top.chip.c_core0.rat[3].present
+@22
+#{top.chip.c_core0.rat[3].transl[3:0]} top.chip.c_core0.rat[3].transl[3] top.chip.c_core0.rat[3].transl[2] top.chip.c_core0.rat[3].transl[1] top.chip.c_core0.rat[3].transl[0]
+@28
++{present[4]} top.chip.c_core0.rat[4].present
+@22
+#{top.chip.c_core0.rat[4].transl[3:0]} top.chip.c_core0.rat[4].transl[3] top.chip.c_core0.rat[4].transl[2] top.chip.c_core0.rat[4].transl[1] top.chip.c_core0.rat[4].transl[0]
+@28
++{present[5]} top.chip.c_core0.rat[5].present
+@22
+#{top.chip.c_core0.rat[5].transl[3:0]} top.chip.c_core0.rat[5].transl[3] top.chip.c_core0.rat[5].transl[2] top.chip.c_core0.rat[5].transl[1] top.chip.c_core0.rat[5].transl[0]
+@28
++{present[6]} top.chip.c_core0.rat[6].present
+@22
+#{top.chip.c_core0.rat[6].transl[3:0]} top.chip.c_core0.rat[6].transl[3] top.chip.c_core0.rat[6].transl[2] top.chip.c_core0.rat[6].transl[1] top.chip.c_core0.rat[6].transl[0]
+@28
++{present[7]} top.chip.c_core0.rat[7].present
+@22
+#{top.chip.c_core0.rat[7].transl[3:0]} top.chip.c_core0.rat[7].transl[3] top.chip.c_core0.rat[7].transl[2] top.chip.c_core0.rat[7].transl[1] top.chip.c_core0.rat[7].transl[0]
+@200
+-commited
+@22
+#{top.chip.c_core0.rat[0].commit[3:0]} top.chip.c_core0.rat[0].commit[3] top.chip.c_core0.rat[0].commit[2] top.chip.c_core0.rat[0].commit[1] top.chip.c_core0.rat[0].commit[0]
+#{top.chip.c_core0.rat[1].commit[3:0]} top.chip.c_core0.rat[1].commit[3] top.chip.c_core0.rat[1].commit[2] top.chip.c_core0.rat[1].commit[1] top.chip.c_core0.rat[1].commit[0]
+#{top.chip.c_core0.rat[2].commit[3:0]} top.chip.c_core0.rat[2].commit[3] top.chip.c_core0.rat[2].commit[2] top.chip.c_core0.rat[2].commit[1] top.chip.c_core0.rat[2].commit[0]
+#{top.chip.c_core0.rat[3].commit[3:0]} top.chip.c_core0.rat[3].commit[3] top.chip.c_core0.rat[3].commit[2] top.chip.c_core0.rat[3].commit[1] top.chip.c_core0.rat[3].commit[0]
+#{top.chip.c_core0.rat[4].commit[3:0]} top.chip.c_core0.rat[4].commit[3] top.chip.c_core0.rat[4].commit[2] top.chip.c_core0.rat[4].commit[1] top.chip.c_core0.rat[4].commit[0]
+#{top.chip.c_core0.rat[5].commit[3:0]} top.chip.c_core0.rat[5].commit[3] top.chip.c_core0.rat[5].commit[2] top.chip.c_core0.rat[5].commit[1] top.chip.c_core0.rat[5].commit[0]
+#{top.chip.c_core0.rat[6].commit[3:0]} top.chip.c_core0.rat[6].commit[3] top.chip.c_core0.rat[6].commit[2] top.chip.c_core0.rat[6].commit[1] top.chip.c_core0.rat[6].commit[0]
+#{top.chip.c_core0.rat[7].commit[3:0]} top.chip.c_core0.rat[7].commit[3] top.chip.c_core0.rat[7].commit[2] top.chip.c_core0.rat[7].commit[1] top.chip.c_core0.rat[7].commit[0]
+@200
+-arch_values
+@22
+#{top.chip.c_core0.debug_regs[0][15:0]} top.chip.c_core0.debug_regs[0][15] top.chip.c_core0.debug_regs[0][14] top.chip.c_core0.debug_regs[0][13] top.chip.c_core0.debug_regs[0][12] top.chip.c_core0.debug_regs[0][11] top.chip.c_core0.debug_regs[0][10] top.chip.c_core0.debug_regs[0][9] top.chip.c_core0.debug_regs[0][8] top.chip.c_core0.debug_regs[0][7] top.chip.c_core0.debug_regs[0][6] top.chip.c_core0.debug_regs[0][5] top.chip.c_core0.debug_regs[0][4] top.chip.c_core0.debug_regs[0][3] top.chip.c_core0.debug_regs[0][2] top.chip.c_core0.debug_regs[0][1] top.chip.c_core0.debug_regs[0][0]
+#{top.chip.c_core0.debug_regs[1][15:0]} top.chip.c_core0.debug_regs[1][15] top.chip.c_core0.debug_regs[1][14] top.chip.c_core0.debug_regs[1][13] top.chip.c_core0.debug_regs[1][12] top.chip.c_core0.debug_regs[1][11] top.chip.c_core0.debug_regs[1][10] top.chip.c_core0.debug_regs[1][9] top.chip.c_core0.debug_regs[1][8] top.chip.c_core0.debug_regs[1][7] top.chip.c_core0.debug_regs[1][6] top.chip.c_core0.debug_regs[1][5] top.chip.c_core0.debug_regs[1][4] top.chip.c_core0.debug_regs[1][3] top.chip.c_core0.debug_regs[1][2] top.chip.c_core0.debug_regs[1][1] top.chip.c_core0.debug_regs[1][0]
+#{top.chip.c_core0.debug_regs[2][15:0]} top.chip.c_core0.debug_regs[2][15] top.chip.c_core0.debug_regs[2][14] top.chip.c_core0.debug_regs[2][13] top.chip.c_core0.debug_regs[2][12] top.chip.c_core0.debug_regs[2][11] top.chip.c_core0.debug_regs[2][10] top.chip.c_core0.debug_regs[2][9] top.chip.c_core0.debug_regs[2][8] top.chip.c_core0.debug_regs[2][7] top.chip.c_core0.debug_regs[2][6] top.chip.c_core0.debug_regs[2][5] top.chip.c_core0.debug_regs[2][4] top.chip.c_core0.debug_regs[2][3] top.chip.c_core0.debug_regs[2][2] top.chip.c_core0.debug_regs[2][1] top.chip.c_core0.debug_regs[2][0]
+#{top.chip.c_core0.debug_regs[3][15:0]} top.chip.c_core0.debug_regs[3][15] top.chip.c_core0.debug_regs[3][14] top.chip.c_core0.debug_regs[3][13] top.chip.c_core0.debug_regs[3][12] top.chip.c_core0.debug_regs[3][11] top.chip.c_core0.debug_regs[3][10] top.chip.c_core0.debug_regs[3][9] top.chip.c_core0.debug_regs[3][8] top.chip.c_core0.debug_regs[3][7] top.chip.c_core0.debug_regs[3][6] top.chip.c_core0.debug_regs[3][5] top.chip.c_core0.debug_regs[3][4] top.chip.c_core0.debug_regs[3][3] top.chip.c_core0.debug_regs[3][2] top.chip.c_core0.debug_regs[3][1] top.chip.c_core0.debug_regs[3][0]
+#{top.chip.c_core0.debug_regs[4][15:0]} top.chip.c_core0.debug_regs[4][15] top.chip.c_core0.debug_regs[4][14] top.chip.c_core0.debug_regs[4][13] top.chip.c_core0.debug_regs[4][12] top.chip.c_core0.debug_regs[4][11] top.chip.c_core0.debug_regs[4][10] top.chip.c_core0.debug_regs[4][9] top.chip.c_core0.debug_regs[4][8] top.chip.c_core0.debug_regs[4][7] top.chip.c_core0.debug_regs[4][6] top.chip.c_core0.debug_regs[4][5] top.chip.c_core0.debug_regs[4][4] top.chip.c_core0.debug_regs[4][3] top.chip.c_core0.debug_regs[4][2] top.chip.c_core0.debug_regs[4][1] top.chip.c_core0.debug_regs[4][0]
+#{top.chip.c_core0.debug_regs[5][15:0]} top.chip.c_core0.debug_regs[5][15] top.chip.c_core0.debug_regs[5][14] top.chip.c_core0.debug_regs[5][13] top.chip.c_core0.debug_regs[5][12] top.chip.c_core0.debug_regs[5][11] top.chip.c_core0.debug_regs[5][10] top.chip.c_core0.debug_regs[5][9] top.chip.c_core0.debug_regs[5][8] top.chip.c_core0.debug_regs[5][7] top.chip.c_core0.debug_regs[5][6] top.chip.c_core0.debug_regs[5][5] top.chip.c_core0.debug_regs[5][4] top.chip.c_core0.debug_regs[5][3] top.chip.c_core0.debug_regs[5][2] top.chip.c_core0.debug_regs[5][1] top.chip.c_core0.debug_regs[5][0]
+@c00022
+#{top.chip.c_core0.debug_regs[6][15:0]} top.chip.c_core0.debug_regs[6][15] top.chip.c_core0.debug_regs[6][14] top.chip.c_core0.debug_regs[6][13] top.chip.c_core0.debug_regs[6][12] top.chip.c_core0.debug_regs[6][11] top.chip.c_core0.debug_regs[6][10] top.chip.c_core0.debug_regs[6][9] top.chip.c_core0.debug_regs[6][8] top.chip.c_core0.debug_regs[6][7] top.chip.c_core0.debug_regs[6][6] top.chip.c_core0.debug_regs[6][5] top.chip.c_core0.debug_regs[6][4] top.chip.c_core0.debug_regs[6][3] top.chip.c_core0.debug_regs[6][2] top.chip.c_core0.debug_regs[6][1] top.chip.c_core0.debug_regs[6][0]
+@28
+top.chip.c_core0.debug_regs[6][15]
+top.chip.c_core0.debug_regs[6][14]
+top.chip.c_core0.debug_regs[6][13]
+top.chip.c_core0.debug_regs[6][12]
+top.chip.c_core0.debug_regs[6][11]
+top.chip.c_core0.debug_regs[6][10]
+top.chip.c_core0.debug_regs[6][9]
+top.chip.c_core0.debug_regs[6][8]
+top.chip.c_core0.debug_regs[6][7]
+top.chip.c_core0.debug_regs[6][6]
+top.chip.c_core0.debug_regs[6][5]
+top.chip.c_core0.debug_regs[6][4]
+top.chip.c_core0.debug_regs[6][3]
+top.chip.c_core0.debug_regs[6][2]
+top.chip.c_core0.debug_regs[6][1]
+top.chip.c_core0.debug_regs[6][0]
+@1401200
+-group_end
+@c00022
+#{top.chip.c_core0.debug_regs[7][15:0]} top.chip.c_core0.debug_regs[7][15] top.chip.c_core0.debug_regs[7][14] top.chip.c_core0.debug_regs[7][13] top.chip.c_core0.debug_regs[7][12] top.chip.c_core0.debug_regs[7][11] top.chip.c_core0.debug_regs[7][10] top.chip.c_core0.debug_regs[7][9] top.chip.c_core0.debug_regs[7][8] top.chip.c_core0.debug_regs[7][7] top.chip.c_core0.debug_regs[7][6] top.chip.c_core0.debug_regs[7][5] top.chip.c_core0.debug_regs[7][4] top.chip.c_core0.debug_regs[7][3] top.chip.c_core0.debug_regs[7][2] top.chip.c_core0.debug_regs[7][1] top.chip.c_core0.debug_regs[7][0]
+@28
+top.chip.c_core0.debug_regs[7][15]
+top.chip.c_core0.debug_regs[7][14]
+top.chip.c_core0.debug_regs[7][13]
+top.chip.c_core0.debug_regs[7][12]
+top.chip.c_core0.debug_regs[7][11]
+top.chip.c_core0.debug_regs[7][10]
+top.chip.c_core0.debug_regs[7][9]
+top.chip.c_core0.debug_regs[7][8]
+top.chip.c_core0.debug_regs[7][7]
+top.chip.c_core0.debug_regs[7][6]
+top.chip.c_core0.debug_regs[7][5]
+top.chip.c_core0.debug_regs[7][4]
+top.chip.c_core0.debug_regs[7][3]
+top.chip.c_core0.debug_regs[7][2]
+top.chip.c_core0.debug_regs[7][1]
+top.chip.c_core0.debug_regs[7][0]
+@1401200
+-group_end
+@200
+-
+-rfl
+@28
+#{top.chip.c_core0.rfl_se[0][2:0]} top.chip.c_core0.rfl_se[0][2] top.chip.c_core0.rfl_se[0][1] top.chip.c_core0.rfl_se[0][0]
+#{top.chip.c_core0.rfl_fe[0][2:0]} top.chip.c_core0.rfl_fe[0][2] top.chip.c_core0.rfl_fe[0][1] top.chip.c_core0.rfl_fe[0][0]
+@22
+#{top.chip.c_core0.rfl[0][3:0]} top.chip.c_core0.rfl[0][3] top.chip.c_core0.rfl[0][2] top.chip.c_core0.rfl[0][1] top.chip.c_core0.rfl[0][0]
+#{top.chip.c_core0.rfl[1][3:0]} top.chip.c_core0.rfl[1][3] top.chip.c_core0.rfl[1][2] top.chip.c_core0.rfl[1][1] top.chip.c_core0.rfl[1][0]
+#{top.chip.c_core0.rfl[2][3:0]} top.chip.c_core0.rfl[2][3] top.chip.c_core0.rfl[2][2] top.chip.c_core0.rfl[2][1] top.chip.c_core0.rfl[2][0]
+#{top.chip.c_core0.rfl[3][3:0]} top.chip.c_core0.rfl[3][3] top.chip.c_core0.rfl[3][2] top.chip.c_core0.rfl[3][1] top.chip.c_core0.rfl[3][0]
+#{top.chip.c_core0.rfl[4][3:0]} top.chip.c_core0.rfl[4][3] top.chip.c_core0.rfl[4][2] top.chip.c_core0.rfl[4][1] top.chip.c_core0.rfl[4][0]
+#{top.chip.c_core0.rfl[5][3:0]} top.chip.c_core0.rfl[5][3] top.chip.c_core0.rfl[5][2] top.chip.c_core0.rfl[5][1] top.chip.c_core0.rfl[5][0]
+#{top.chip.c_core0.rfl[6][3:0]} top.chip.c_core0.rfl[6][3] top.chip.c_core0.rfl[6][2] top.chip.c_core0.rfl[6][1] top.chip.c_core0.rfl[6][0]
+#{top.chip.c_core0.rfl[7][3:0]} top.chip.c_core0.rfl[7][3] top.chip.c_core0.rfl[7][2] top.chip.c_core0.rfl[7][1] top.chip.c_core0.rfl[7][0]
+@200
+-
+-prf
+@c00022
+#{top.chip.c_core0.prf_present[15:0]} top.chip.c_core0.prf_present[15] top.chip.c_core0.prf_present[14] top.chip.c_core0.prf_present[13] top.chip.c_core0.prf_present[12] top.chip.c_core0.prf_present[11] top.chip.c_core0.prf_present[10] top.chip.c_core0.prf_present[9] top.chip.c_core0.prf_present[8] top.chip.c_core0.prf_present[7] top.chip.c_core0.prf_present[6] top.chip.c_core0.prf_present[5] top.chip.c_core0.prf_present[4] top.chip.c_core0.prf_present[3] top.chip.c_core0.prf_present[2] top.chip.c_core0.prf_present[1] top.chip.c_core0.prf_present[0]
+@28
+top.chip.c_core0.prf_present[15]
+top.chip.c_core0.prf_present[14]
+top.chip.c_core0.prf_present[13]
+top.chip.c_core0.prf_present[12]
+top.chip.c_core0.prf_present[11]
+top.chip.c_core0.prf_present[10]
+top.chip.c_core0.prf_present[9]
+top.chip.c_core0.prf_present[8]
+top.chip.c_core0.prf_present[7]
+top.chip.c_core0.prf_present[6]
+top.chip.c_core0.prf_present[5]
+top.chip.c_core0.prf_present[4]
+top.chip.c_core0.prf_present[3]
+top.chip.c_core0.prf_present[2]
+top.chip.c_core0.prf_present[1]
+top.chip.c_core0.prf_present[0]
+@1401200
+-group_end
+@22
+#{top.chip.c_core0.c_regfile.data[0][15:0]} top.chip.c_core0.c_regfile.data[0][15] top.chip.c_core0.c_regfile.data[0][14] top.chip.c_core0.c_regfile.data[0][13] top.chip.c_core0.c_regfile.data[0][12] top.chip.c_core0.c_regfile.data[0][11] top.chip.c_core0.c_regfile.data[0][10] top.chip.c_core0.c_regfile.data[0][9] top.chip.c_core0.c_regfile.data[0][8] top.chip.c_core0.c_regfile.data[0][7] top.chip.c_core0.c_regfile.data[0][6] top.chip.c_core0.c_regfile.data[0][5] top.chip.c_core0.c_regfile.data[0][4] top.chip.c_core0.c_regfile.data[0][3] top.chip.c_core0.c_regfile.data[0][2] top.chip.c_core0.c_regfile.data[0][1] top.chip.c_core0.c_regfile.data[0][0]
+#{top.chip.c_core0.c_regfile.data[1][15:0]} top.chip.c_core0.c_regfile.data[1][15] top.chip.c_core0.c_regfile.data[1][14] top.chip.c_core0.c_regfile.data[1][13] top.chip.c_core0.c_regfile.data[1][12] top.chip.c_core0.c_regfile.data[1][11] top.chip.c_core0.c_regfile.data[1][10] top.chip.c_core0.c_regfile.data[1][9] top.chip.c_core0.c_regfile.data[1][8] top.chip.c_core0.c_regfile.data[1][7] top.chip.c_core0.c_regfile.data[1][6] top.chip.c_core0.c_regfile.data[1][5] top.chip.c_core0.c_regfile.data[1][4] top.chip.c_core0.c_regfile.data[1][3] top.chip.c_core0.c_regfile.data[1][2] top.chip.c_core0.c_regfile.data[1][1] top.chip.c_core0.c_regfile.data[1][0]
+#{top.chip.c_core0.c_regfile.data[2][15:0]} top.chip.c_core0.c_regfile.data[2][15] top.chip.c_core0.c_regfile.data[2][14] top.chip.c_core0.c_regfile.data[2][13] top.chip.c_core0.c_regfile.data[2][12] top.chip.c_core0.c_regfile.data[2][11] top.chip.c_core0.c_regfile.data[2][10] top.chip.c_core0.c_regfile.data[2][9] top.chip.c_core0.c_regfile.data[2][8] top.chip.c_core0.c_regfile.data[2][7] top.chip.c_core0.c_regfile.data[2][6] top.chip.c_core0.c_regfile.data[2][5] top.chip.c_core0.c_regfile.data[2][4] top.chip.c_core0.c_regfile.data[2][3] top.chip.c_core0.c_regfile.data[2][2] top.chip.c_core0.c_regfile.data[2][1] top.chip.c_core0.c_regfile.data[2][0]
+#{top.chip.c_core0.c_regfile.data[3][15:0]} top.chip.c_core0.c_regfile.data[3][15] top.chip.c_core0.c_regfile.data[3][14] top.chip.c_core0.c_regfile.data[3][13] top.chip.c_core0.c_regfile.data[3][12] top.chip.c_core0.c_regfile.data[3][11] top.chip.c_core0.c_regfile.data[3][10] top.chip.c_core0.c_regfile.data[3][9] top.chip.c_core0.c_regfile.data[3][8] top.chip.c_core0.c_regfile.data[3][7] top.chip.c_core0.c_regfile.data[3][6] top.chip.c_core0.c_regfile.data[3][5] top.chip.c_core0.c_regfile.data[3][4] top.chip.c_core0.c_regfile.data[3][3] top.chip.c_core0.c_regfile.data[3][2] top.chip.c_core0.c_regfile.data[3][1] top.chip.c_core0.c_regfile.data[3][0]
+#{top.chip.c_core0.c_regfile.data[4][15:0]} top.chip.c_core0.c_regfile.data[4][15] top.chip.c_core0.c_regfile.data[4][14] top.chip.c_core0.c_regfile.data[4][13] top.chip.c_core0.c_regfile.data[4][12] top.chip.c_core0.c_regfile.data[4][11] top.chip.c_core0.c_regfile.data[4][10] top.chip.c_core0.c_regfile.data[4][9] top.chip.c_core0.c_regfile.data[4][8] top.chip.c_core0.c_regfile.data[4][7] top.chip.c_core0.c_regfile.data[4][6] top.chip.c_core0.c_regfile.data[4][5] top.chip.c_core0.c_regfile.data[4][4] top.chip.c_core0.c_regfile.data[4][3] top.chip.c_core0.c_regfile.data[4][2] top.chip.c_core0.c_regfile.data[4][1] top.chip.c_core0.c_regfile.data[4][0]
+#{top.chip.c_core0.c_regfile.data[5][15:0]} top.chip.c_core0.c_regfile.data[5][15] top.chip.c_core0.c_regfile.data[5][14] top.chip.c_core0.c_regfile.data[5][13] top.chip.c_core0.c_regfile.data[5][12] top.chip.c_core0.c_regfile.data[5][11] top.chip.c_core0.c_regfile.data[5][10] top.chip.c_core0.c_regfile.data[5][9] top.chip.c_core0.c_regfile.data[5][8] top.chip.c_core0.c_regfile.data[5][7] top.chip.c_core0.c_regfile.data[5][6] top.chip.c_core0.c_regfile.data[5][5] top.chip.c_core0.c_regfile.data[5][4] top.chip.c_core0.c_regfile.data[5][3] top.chip.c_core0.c_regfile.data[5][2] top.chip.c_core0.c_regfile.data[5][1] top.chip.c_core0.c_regfile.data[5][0]
+#{top.chip.c_core0.c_regfile.data[6][15:0]} top.chip.c_core0.c_regfile.data[6][15] top.chip.c_core0.c_regfile.data[6][14] top.chip.c_core0.c_regfile.data[6][13] top.chip.c_core0.c_regfile.data[6][12] top.chip.c_core0.c_regfile.data[6][11] top.chip.c_core0.c_regfile.data[6][10] top.chip.c_core0.c_regfile.data[6][9] top.chip.c_core0.c_regfile.data[6][8] top.chip.c_core0.c_regfile.data[6][7] top.chip.c_core0.c_regfile.data[6][6] top.chip.c_core0.c_regfile.data[6][5] top.chip.c_core0.c_regfile.data[6][4] top.chip.c_core0.c_regfile.data[6][3] top.chip.c_core0.c_regfile.data[6][2] top.chip.c_core0.c_regfile.data[6][1] top.chip.c_core0.c_regfile.data[6][0]
+#{top.chip.c_core0.c_regfile.data[7][15:0]} top.chip.c_core0.c_regfile.data[7][15] top.chip.c_core0.c_regfile.data[7][14] top.chip.c_core0.c_regfile.data[7][13] top.chip.c_core0.c_regfile.data[7][12] top.chip.c_core0.c_regfile.data[7][11] top.chip.c_core0.c_regfile.data[7][10] top.chip.c_core0.c_regfile.data[7][9] top.chip.c_core0.c_regfile.data[7][8] top.chip.c_core0.c_regfile.data[7][7] top.chip.c_core0.c_regfile.data[7][6] top.chip.c_core0.c_regfile.data[7][5] top.chip.c_core0.c_regfile.data[7][4] top.chip.c_core0.c_regfile.data[7][3] top.chip.c_core0.c_regfile.data[7][2] top.chip.c_core0.c_regfile.data[7][1] top.chip.c_core0.c_regfile.data[7][0]
+#{top.chip.c_core0.c_regfile.data[8][15:0]} top.chip.c_core0.c_regfile.data[8][15] top.chip.c_core0.c_regfile.data[8][14] top.chip.c_core0.c_regfile.data[8][13] top.chip.c_core0.c_regfile.data[8][12] top.chip.c_core0.c_regfile.data[8][11] top.chip.c_core0.c_regfile.data[8][10] top.chip.c_core0.c_regfile.data[8][9] top.chip.c_core0.c_regfile.data[8][8] top.chip.c_core0.c_regfile.data[8][7] top.chip.c_core0.c_regfile.data[8][6] top.chip.c_core0.c_regfile.data[8][5] top.chip.c_core0.c_regfile.data[8][4] top.chip.c_core0.c_regfile.data[8][3] top.chip.c_core0.c_regfile.data[8][2] top.chip.c_core0.c_regfile.data[8][1] top.chip.c_core0.c_regfile.data[8][0]
+#{top.chip.c_core0.c_regfile.data[9][15:0]} top.chip.c_core0.c_regfile.data[9][15] top.chip.c_core0.c_regfile.data[9][14] top.chip.c_core0.c_regfile.data[9][13] top.chip.c_core0.c_regfile.data[9][12] top.chip.c_core0.c_regfile.data[9][11] top.chip.c_core0.c_regfile.data[9][10] top.chip.c_core0.c_regfile.data[9][9] top.chip.c_core0.c_regfile.data[9][8] top.chip.c_core0.c_regfile.data[9][7] top.chip.c_core0.c_regfile.data[9][6] top.chip.c_core0.c_regfile.data[9][5] top.chip.c_core0.c_regfile.data[9][4] top.chip.c_core0.c_regfile.data[9][3] top.chip.c_core0.c_regfile.data[9][2] top.chip.c_core0.c_regfile.data[9][1] top.chip.c_core0.c_regfile.data[9][0]
+#{top.chip.c_core0.c_regfile.data[10][15:0]} top.chip.c_core0.c_regfile.data[10][15] top.chip.c_core0.c_regfile.data[10][14] top.chip.c_core0.c_regfile.data[10][13] top.chip.c_core0.c_regfile.data[10][12] top.chip.c_core0.c_regfile.data[10][11] top.chip.c_core0.c_regfile.data[10][10] top.chip.c_core0.c_regfile.data[10][9] top.chip.c_core0.c_regfile.data[10][8] top.chip.c_core0.c_regfile.data[10][7] top.chip.c_core0.c_regfile.data[10][6] top.chip.c_core0.c_regfile.data[10][5] top.chip.c_core0.c_regfile.data[10][4] top.chip.c_core0.c_regfile.data[10][3] top.chip.c_core0.c_regfile.data[10][2] top.chip.c_core0.c_regfile.data[10][1] top.chip.c_core0.c_regfile.data[10][0]
+@c00022
+#{top.chip.c_core0.c_regfile.data[11][15:0]} top.chip.c_core0.c_regfile.data[11][15] top.chip.c_core0.c_regfile.data[11][14] top.chip.c_core0.c_regfile.data[11][13] top.chip.c_core0.c_regfile.data[11][12] top.chip.c_core0.c_regfile.data[11][11] top.chip.c_core0.c_regfile.data[11][10] top.chip.c_core0.c_regfile.data[11][9] top.chip.c_core0.c_regfile.data[11][8] top.chip.c_core0.c_regfile.data[11][7] top.chip.c_core0.c_regfile.data[11][6] top.chip.c_core0.c_regfile.data[11][5] top.chip.c_core0.c_regfile.data[11][4] top.chip.c_core0.c_regfile.data[11][3] top.chip.c_core0.c_regfile.data[11][2] top.chip.c_core0.c_regfile.data[11][1] top.chip.c_core0.c_regfile.data[11][0]
+@28
+top.chip.c_core0.c_regfile.data[11][15]
+top.chip.c_core0.c_regfile.data[11][14]
+top.chip.c_core0.c_regfile.data[11][13]
+top.chip.c_core0.c_regfile.data[11][12]
+top.chip.c_core0.c_regfile.data[11][11]
+top.chip.c_core0.c_regfile.data[11][10]
+top.chip.c_core0.c_regfile.data[11][9]
+top.chip.c_core0.c_regfile.data[11][8]
+top.chip.c_core0.c_regfile.data[11][7]
+top.chip.c_core0.c_regfile.data[11][6]
+top.chip.c_core0.c_regfile.data[11][5]
+top.chip.c_core0.c_regfile.data[11][4]
+top.chip.c_core0.c_regfile.data[11][3]
+top.chip.c_core0.c_regfile.data[11][2]
+top.chip.c_core0.c_regfile.data[11][1]
+top.chip.c_core0.c_regfile.data[11][0]
+@1401200
+-group_end
+@22
+#{top.chip.c_core0.c_regfile.data[12][15:0]} top.chip.c_core0.c_regfile.data[12][15] top.chip.c_core0.c_regfile.data[12][14] top.chip.c_core0.c_regfile.data[12][13] top.chip.c_core0.c_regfile.data[12][12] top.chip.c_core0.c_regfile.data[12][11] top.chip.c_core0.c_regfile.data[12][10] top.chip.c_core0.c_regfile.data[12][9] top.chip.c_core0.c_regfile.data[12][8] top.chip.c_core0.c_regfile.data[12][7] top.chip.c_core0.c_regfile.data[12][6] top.chip.c_core0.c_regfile.data[12][5] top.chip.c_core0.c_regfile.data[12][4] top.chip.c_core0.c_regfile.data[12][3] top.chip.c_core0.c_regfile.data[12][2] top.chip.c_core0.c_regfile.data[12][1] top.chip.c_core0.c_regfile.data[12][0]
+#{top.chip.c_core0.c_regfile.data[13][15:0]} top.chip.c_core0.c_regfile.data[13][15] top.chip.c_core0.c_regfile.data[13][14] top.chip.c_core0.c_regfile.data[13][13] top.chip.c_core0.c_regfile.data[13][12] top.chip.c_core0.c_regfile.data[13][11] top.chip.c_core0.c_regfile.data[13][10] top.chip.c_core0.c_regfile.data[13][9] top.chip.c_core0.c_regfile.data[13][8] top.chip.c_core0.c_regfile.data[13][7] top.chip.c_core0.c_regfile.data[13][6] top.chip.c_core0.c_regfile.data[13][5] top.chip.c_core0.c_regfile.data[13][4] top.chip.c_core0.c_regfile.data[13][3] top.chip.c_core0.c_regfile.data[13][2] top.chip.c_core0.c_regfile.data[13][1] top.chip.c_core0.c_regfile.data[13][0]
+@c00022
+#{top.chip.c_core0.c_regfile.data[14][15:0]} top.chip.c_core0.c_regfile.data[14][15] top.chip.c_core0.c_regfile.data[14][14] top.chip.c_core0.c_regfile.data[14][13] top.chip.c_core0.c_regfile.data[14][12] top.chip.c_core0.c_regfile.data[14][11] top.chip.c_core0.c_regfile.data[14][10] top.chip.c_core0.c_regfile.data[14][9] top.chip.c_core0.c_regfile.data[14][8] top.chip.c_core0.c_regfile.data[14][7] top.chip.c_core0.c_regfile.data[14][6] top.chip.c_core0.c_regfile.data[14][5] top.chip.c_core0.c_regfile.data[14][4] top.chip.c_core0.c_regfile.data[14][3] top.chip.c_core0.c_regfile.data[14][2] top.chip.c_core0.c_regfile.data[14][1] top.chip.c_core0.c_regfile.data[14][0]
+@28
+top.chip.c_core0.c_regfile.data[14][15]
+top.chip.c_core0.c_regfile.data[14][14]
+top.chip.c_core0.c_regfile.data[14][13]
+top.chip.c_core0.c_regfile.data[14][12]
+top.chip.c_core0.c_regfile.data[14][11]
+top.chip.c_core0.c_regfile.data[14][10]
+top.chip.c_core0.c_regfile.data[14][9]
+top.chip.c_core0.c_regfile.data[14][8]
+top.chip.c_core0.c_regfile.data[14][7]
+top.chip.c_core0.c_regfile.data[14][6]
+top.chip.c_core0.c_regfile.data[14][5]
+top.chip.c_core0.c_regfile.data[14][4]
+top.chip.c_core0.c_regfile.data[14][3]
+top.chip.c_core0.c_regfile.data[14][2]
+top.chip.c_core0.c_regfile.data[14][1]
+top.chip.c_core0.c_regfile.data[14][0]
+@1401200
+-group_end
+@c00022
+#{top.chip.c_core0.c_regfile.data[15][15:0]} top.chip.c_core0.c_regfile.data[15][15] top.chip.c_core0.c_regfile.data[15][14] top.chip.c_core0.c_regfile.data[15][13] top.chip.c_core0.c_regfile.data[15][12] top.chip.c_core0.c_regfile.data[15][11] top.chip.c_core0.c_regfile.data[15][10] top.chip.c_core0.c_regfile.data[15][9] top.chip.c_core0.c_regfile.data[15][8] top.chip.c_core0.c_regfile.data[15][7] top.chip.c_core0.c_regfile.data[15][6] top.chip.c_core0.c_regfile.data[15][5] top.chip.c_core0.c_regfile.data[15][4] top.chip.c_core0.c_regfile.data[15][3] top.chip.c_core0.c_regfile.data[15][2] top.chip.c_core0.c_regfile.data[15][1] top.chip.c_core0.c_regfile.data[15][0]
+@28
+top.chip.c_core0.c_regfile.data[15][15]
+top.chip.c_core0.c_regfile.data[15][14]
+top.chip.c_core0.c_regfile.data[15][13]
+top.chip.c_core0.c_regfile.data[15][12]
+top.chip.c_core0.c_regfile.data[15][11]
+top.chip.c_core0.c_regfile.data[15][10]
+top.chip.c_core0.c_regfile.data[15][9]
+top.chip.c_core0.c_regfile.data[15][8]
+top.chip.c_core0.c_regfile.data[15][7]
+top.chip.c_core0.c_regfile.data[15][6]
+top.chip.c_core0.c_regfile.data[15][5]
+top.chip.c_core0.c_regfile.data[15][4]
+top.chip.c_core0.c_regfile.data[15][3]
+top.chip.c_core0.c_regfile.data[15][2]
+top.chip.c_core0.c_regfile.data[15][1]
+top.chip.c_core0.c_regfile.data[15][0]
+@1401200
+-group_end
+@200
+-
+-external
+-ip
+@28
+top.chip.c_core0.r_ip.we
+@22
+#{top.chip.c_core0.r_ip.i0[15:0]} top.chip.c_core0.r_ip.i0[15] top.chip.c_core0.r_ip.i0[14] top.chip.c_core0.r_ip.i0[13] top.chip.c_core0.r_ip.i0[12] top.chip.c_core0.r_ip.i0[11] top.chip.c_core0.r_ip.i0[10] top.chip.c_core0.r_ip.i0[9] top.chip.c_core0.r_ip.i0[8] top.chip.c_core0.r_ip.i0[7] top.chip.c_core0.r_ip.i0[6] top.chip.c_core0.r_ip.i0[5] top.chip.c_core0.r_ip.i0[4] top.chip.c_core0.r_ip.i0[3] top.chip.c_core0.r_ip.i0[2] top.chip.c_core0.r_ip.i0[1] top.chip.c_core0.r_ip.i0[0]
+#{top.chip.c_core0.r_ip.o0[15:0]} top.chip.c_core0.r_ip.o0[15] top.chip.c_core0.r_ip.o0[14] top.chip.c_core0.r_ip.o0[13] top.chip.c_core0.r_ip.o0[12] top.chip.c_core0.r_ip.o0[11] top.chip.c_core0.r_ip.o0[10] top.chip.c_core0.r_ip.o0[9] top.chip.c_core0.r_ip.o0[8] top.chip.c_core0.r_ip.o0[7] top.chip.c_core0.r_ip.o0[6] top.chip.c_core0.r_ip.o0[5] top.chip.c_core0.r_ip.o0[4] top.chip.c_core0.r_ip.o0[3] top.chip.c_core0.r_ip.o0[2] top.chip.c_core0.r_ip.o0[1] top.chip.c_core0.r_ip.o0[0]
+@200
+-sp
+@28
+top.chip.c_core0.r_sp.we
+@22
+#{top.chip.c_core0.r_sp.i0[15:0]} top.chip.c_core0.r_sp.i0[15] top.chip.c_core0.r_sp.i0[14] top.chip.c_core0.r_sp.i0[13] top.chip.c_core0.r_sp.i0[12] top.chip.c_core0.r_sp.i0[11] top.chip.c_core0.r_sp.i0[10] top.chip.c_core0.r_sp.i0[9] top.chip.c_core0.r_sp.i0[8] top.chip.c_core0.r_sp.i0[7] top.chip.c_core0.r_sp.i0[6] top.chip.c_core0.r_sp.i0[5] top.chip.c_core0.r_sp.i0[4] top.chip.c_core0.r_sp.i0[3] top.chip.c_core0.r_sp.i0[2] top.chip.c_core0.r_sp.i0[1] top.chip.c_core0.r_sp.i0[0]
+#{top.chip.c_core0.r_sp.o0[15:0]} top.chip.c_core0.r_sp.o0[15] top.chip.c_core0.r_sp.o0[14] top.chip.c_core0.r_sp.o0[13] top.chip.c_core0.r_sp.o0[12] top.chip.c_core0.r_sp.o0[11] top.chip.c_core0.r_sp.o0[10] top.chip.c_core0.r_sp.o0[9] top.chip.c_core0.r_sp.o0[8] top.chip.c_core0.r_sp.o0[7] top.chip.c_core0.r_sp.o0[6] top.chip.c_core0.r_sp.o0[5] top.chip.c_core0.r_sp.o0[4] top.chip.c_core0.r_sp.o0[3] top.chip.c_core0.r_sp.o0[2] top.chip.c_core0.r_sp.o0[1] top.chip.c_core0.r_sp.o0[0]
+@200
+-lr
+@28
+top.chip.c_core0.r_lr.we
+@22
+#{top.chip.c_core0.r_lr.i0[15:0]} top.chip.c_core0.r_lr.i0[15] top.chip.c_core0.r_lr.i0[14] top.chip.c_core0.r_lr.i0[13] top.chip.c_core0.r_lr.i0[12] top.chip.c_core0.r_lr.i0[11] top.chip.c_core0.r_lr.i0[10] top.chip.c_core0.r_lr.i0[9] top.chip.c_core0.r_lr.i0[8] top.chip.c_core0.r_lr.i0[7] top.chip.c_core0.r_lr.i0[6] top.chip.c_core0.r_lr.i0[5] top.chip.c_core0.r_lr.i0[4] top.chip.c_core0.r_lr.i0[3] top.chip.c_core0.r_lr.i0[2] top.chip.c_core0.r_lr.i0[1] top.chip.c_core0.r_lr.i0[0]
+#{top.chip.c_core0.r_lr.o0[15:0]} top.chip.c_core0.r_lr.o0[15] top.chip.c_core0.r_lr.o0[14] top.chip.c_core0.r_lr.o0[13] top.chip.c_core0.r_lr.o0[12] top.chip.c_core0.r_lr.o0[11] top.chip.c_core0.r_lr.o0[10] top.chip.c_core0.r_lr.o0[9] top.chip.c_core0.r_lr.o0[8] top.chip.c_core0.r_lr.o0[7] top.chip.c_core0.r_lr.o0[6] top.chip.c_core0.r_lr.o0[5] top.chip.c_core0.r_lr.o0[4] top.chip.c_core0.r_lr.o0[3] top.chip.c_core0.r_lr.o0[2] top.chip.c_core0.r_lr.o0[1] top.chip.c_core0.r_lr.o0[0]
+@200
+-ui
+@28
+top.chip.c_core0.r_ui.we
+@22
+#{top.chip.c_core0.r_ui.i0[15:0]} top.chip.c_core0.r_ui.i0[15] top.chip.c_core0.r_ui.i0[14] top.chip.c_core0.r_ui.i0[13] top.chip.c_core0.r_ui.i0[12] top.chip.c_core0.r_ui.i0[11] top.chip.c_core0.r_ui.i0[10] top.chip.c_core0.r_ui.i0[9] top.chip.c_core0.r_ui.i0[8] top.chip.c_core0.r_ui.i0[7] top.chip.c_core0.r_ui.i0[6] top.chip.c_core0.r_ui.i0[5] top.chip.c_core0.r_ui.i0[4] top.chip.c_core0.r_ui.i0[3] top.chip.c_core0.r_ui.i0[2] top.chip.c_core0.r_ui.i0[1] top.chip.c_core0.r_ui.i0[0]
+#{top.chip.c_core0.r_ui.o0[15:0]} top.chip.c_core0.r_ui.o0[15] top.chip.c_core0.r_ui.o0[14] top.chip.c_core0.r_ui.o0[13] top.chip.c_core0.r_ui.o0[12] top.chip.c_core0.r_ui.o0[11] top.chip.c_core0.r_ui.o0[10] top.chip.c_core0.r_ui.o0[9] top.chip.c_core0.r_ui.o0[8] top.chip.c_core0.r_ui.o0[7] top.chip.c_core0.r_ui.o0[6] top.chip.c_core0.r_ui.o0[5] top.chip.c_core0.r_ui.o0[4] top.chip.c_core0.r_ui.o0[3] top.chip.c_core0.r_ui.o0[2] top.chip.c_core0.r_ui.o0[1] top.chip.c_core0.r_ui.o0[0]
+@28
+top.chip.c_core0.shadow_ui_present
+@22
+#{top.chip.c_core0.shadow_ui_value[15:0]} top.chip.c_core0.shadow_ui_value[15] top.chip.c_core0.shadow_ui_value[14] top.chip.c_core0.shadow_ui_value[13] top.chip.c_core0.shadow_ui_value[12] top.chip.c_core0.shadow_ui_value[11] top.chip.c_core0.shadow_ui_value[10] top.chip.c_core0.shadow_ui_value[9] top.chip.c_core0.shadow_ui_value[8] top.chip.c_core0.shadow_ui_value[7] top.chip.c_core0.shadow_ui_value[6] top.chip.c_core0.shadow_ui_value[5] top.chip.c_core0.shadow_ui_value[4] top.chip.c_core0.shadow_ui_value[3] top.chip.c_core0.shadow_ui_value[2] top.chip.c_core0.shadow_ui_value[1] top.chip.c_core0.shadow_ui_value[0]
+@200
+-fl
+@28
+top.chip.c_core0.r_fl.we
+@22
+#{top.chip.c_core0.r_fl.i0[15:0]} top.chip.c_core0.r_fl.i0[15] top.chip.c_core0.r_fl.i0[14] top.chip.c_core0.r_fl.i0[13] top.chip.c_core0.r_fl.i0[12] top.chip.c_core0.r_fl.i0[11] top.chip.c_core0.r_fl.i0[10] top.chip.c_core0.r_fl.i0[9] top.chip.c_core0.r_fl.i0[8] top.chip.c_core0.r_fl.i0[7] top.chip.c_core0.r_fl.i0[6] top.chip.c_core0.r_fl.i0[5] top.chip.c_core0.r_fl.i0[4] top.chip.c_core0.r_fl.i0[3] top.chip.c_core0.r_fl.i0[2] top.chip.c_core0.r_fl.i0[1] top.chip.c_core0.r_fl.i0[0]
+#{top.chip.c_core0.r_fl.o0[15:0]} top.chip.c_core0.r_fl.o0[15] top.chip.c_core0.r_fl.o0[14] top.chip.c_core0.r_fl.o0[13] top.chip.c_core0.r_fl.o0[12] top.chip.c_core0.r_fl.o0[11] top.chip.c_core0.r_fl.o0[10] top.chip.c_core0.r_fl.o0[9] top.chip.c_core0.r_fl.o0[8] top.chip.c_core0.r_fl.o0[7] top.chip.c_core0.r_fl.o0[6] top.chip.c_core0.r_fl.o0[5] top.chip.c_core0.r_fl.o0[4] top.chip.c_core0.r_fl.o0[3] top.chip.c_core0.r_fl.o0[2] top.chip.c_core0.r_fl.o0[1] top.chip.c_core0.r_fl.o0[0]
+@200
+-
+-bus_if
+@28
+top.chip.c_core0.owr
+top.chip.c_core0.owr
+top.chip.c_core0.ord
+top.chip.c_core0.ohlt
+@200
+-
+-con_sigs
+-signals0
+@28
+#{top.chip.c_core0.signals0.aluop[2:0]} top.chip.c_core0.signals0.aluop[2] top.chip.c_core0.signals0.aluop[1] top.chip.c_core0.signals0.aluop[0]
+top.chip.c_core0.signals0.cal
+#{top.chip.c_core0.signals0.fl[2:0]} top.chip.c_core0.signals0.fl[2] top.chip.c_core0.signals0.fl[1] top.chip.c_core0.signals0.fl[0]
+top.chip.c_core0.signals0.fwr
+top.chip.c_core0.signals0.hlt
+top.chip.c_core0.signals0.iim
+@22
+#{top.chip.c_core0.signals0.imm8[7:0]} top.chip.c_core0.signals0.imm8[7] top.chip.c_core0.signals0.imm8[6] top.chip.c_core0.signals0.imm8[5] top.chip.c_core0.signals0.imm8[4] top.chip.c_core0.signals0.imm8[3] top.chip.c_core0.signals0.imm8[2] top.chip.c_core0.signals0.imm8[1] top.chip.c_core0.signals0.imm8[0]
+#{top.chip.c_core0.s0_imm16[15:0]} top.chip.c_core0.s0_imm16[15] top.chip.c_core0.s0_imm16[14] top.chip.c_core0.s0_imm16[13] top.chip.c_core0.s0_imm16[12] top.chip.c_core0.s0_imm16[11] top.chip.c_core0.s0_imm16[10] top.chip.c_core0.s0_imm16[9] top.chip.c_core0.s0_imm16[8] top.chip.c_core0.s0_imm16[7] top.chip.c_core0.s0_imm16[6] top.chip.c_core0.s0_imm16[5] top.chip.c_core0.s0_imm16[4] top.chip.c_core0.s0_imm16[3] top.chip.c_core0.s0_imm16[2] top.chip.c_core0.s0_imm16[1] top.chip.c_core0.s0_imm16[0]
+@28
+top.chip.c_core0.signals0.jmp
+top.chip.c_core0.signals0.mrd
+top.chip.c_core0.signals0.mwr
+top.chip.c_core0.signals0.pop
+top.chip.c_core0.signals0.psh
+#{top.chip.c_core0.signals0.r0[2:0]} top.chip.c_core0.signals0.r0[2] top.chip.c_core0.signals0.r0[1] top.chip.c_core0.signals0.r0[0]
+#{top.chip.c_core0.signals0.r1[2:0]} top.chip.c_core0.signals0.r1[2] top.chip.c_core0.signals0.r1[1] top.chip.c_core0.signals0.r1[0]
+top.chip.c_core0.signals0.ret
+top.chip.c_core0.signals0.rwr
+#{top.chip.c_core0.signals0.src[2:0]} top.chip.c_core0.signals0.src[2] top.chip.c_core0.signals0.src[1] top.chip.c_core0.signals0.src[0]
+#{top.chip.c_core0.signals0.x0r[2:0]} top.chip.c_core0.signals0.x0r[2] top.chip.c_core0.signals0.x0r[1] top.chip.c_core0.signals0.x0r[0]
+#{top.chip.c_core0.signals0.x0w[2:0]} top.chip.c_core0.signals0.x0w[2] top.chip.c_core0.signals0.x0w[1] top.chip.c_core0.signals0.x0w[0]
+top.chip.c_core0.signals0.xwr
+@200
+-signals1
+@28
+#{top.chip.c_core0.signals1.aluop[2:0]} top.chip.c_core0.signals1.aluop[2] top.chip.c_core0.signals1.aluop[1] top.chip.c_core0.signals1.aluop[0]
+top.chip.c_core0.signals1.cal
+#{top.chip.c_core0.signals1.fl[2:0]} top.chip.c_core0.signals1.fl[2] top.chip.c_core0.signals1.fl[1] top.chip.c_core0.signals1.fl[0]
+top.chip.c_core0.signals1.fwr
+top.chip.c_core0.signals1.hlt
+top.chip.c_core0.signals1.iim
+@22
+#{top.chip.c_core0.signals1.imm8[7:0]} top.chip.c_core0.signals1.imm8[7] top.chip.c_core0.signals1.imm8[6] top.chip.c_core0.signals1.imm8[5] top.chip.c_core0.signals1.imm8[4] top.chip.c_core0.signals1.imm8[3] top.chip.c_core0.signals1.imm8[2] top.chip.c_core0.signals1.imm8[1] top.chip.c_core0.signals1.imm8[0]
+#{top.chip.c_core0.s1_imm16[15:0]} top.chip.c_core0.s1_imm16[15] top.chip.c_core0.s1_imm16[14] top.chip.c_core0.s1_imm16[13] top.chip.c_core0.s1_imm16[12] top.chip.c_core0.s1_imm16[11] top.chip.c_core0.s1_imm16[10] top.chip.c_core0.s1_imm16[9] top.chip.c_core0.s1_imm16[8] top.chip.c_core0.s1_imm16[7] top.chip.c_core0.s1_imm16[6] top.chip.c_core0.s1_imm16[5] top.chip.c_core0.s1_imm16[4] top.chip.c_core0.s1_imm16[3] top.chip.c_core0.s1_imm16[2] top.chip.c_core0.s1_imm16[1] top.chip.c_core0.s1_imm16[0]
+@28
+top.chip.c_core0.signals1.jmp
+top.chip.c_core0.signals1.mrd
+top.chip.c_core0.signals1.mwr
+top.chip.c_core0.signals1.pop
+top.chip.c_core0.signals1.psh
+#{top.chip.c_core0.signals1.r0[2:0]} top.chip.c_core0.signals1.r0[2] top.chip.c_core0.signals1.r0[1] top.chip.c_core0.signals1.r0[0]
+#{top.chip.c_core0.signals1.r1[2:0]} top.chip.c_core0.signals1.r1[2] top.chip.c_core0.signals1.r1[1] top.chip.c_core0.signals1.r1[0]
+top.chip.c_core0.signals1.ret
+top.chip.c_core0.signals1.rwr
+#{top.chip.c_core0.signals1.src[2:0]} top.chip.c_core0.signals1.src[2] top.chip.c_core0.signals1.src[1] top.chip.c_core0.signals1.src[0]
+#{top.chip.c_core0.signals1.x0r[2:0]} top.chip.c_core0.signals1.x0r[2] top.chip.c_core0.signals1.x0r[1] top.chip.c_core0.signals1.x0r[0]
+#{top.chip.c_core0.signals1.x0w[2:0]} top.chip.c_core0.signals1.x0w[2] top.chip.c_core0.signals1.x0w[1] top.chip.c_core0.signals1.x0w[0]
+top.chip.c_core0.signals1.xwr
+@200
+-
+-
+-mem0
+@420
+top.chip.c_mem0.addr
+@28
+top.chip.c_mem0.rdy
+top.chip.c_mem0.wr
+top.chip.c_mem0.rd
+@22
+#{top.chip.c_mem0.mem[0][15:0]} top.chip.c_mem0.mem[0][15] top.chip.c_mem0.mem[0][14] top.chip.c_mem0.mem[0][13] top.chip.c_mem0.mem[0][12] top.chip.c_mem0.mem[0][11] top.chip.c_mem0.mem[0][10] top.chip.c_mem0.mem[0][9] top.chip.c_mem0.mem[0][8] top.chip.c_mem0.mem[0][7] top.chip.c_mem0.mem[0][6] top.chip.c_mem0.mem[0][5] top.chip.c_mem0.mem[0][4] top.chip.c_mem0.mem[0][3] top.chip.c_mem0.mem[0][2] top.chip.c_mem0.mem[0][1] top.chip.c_mem0.mem[0][0]
+#{top.chip.c_mem0.mem[1][15:0]} top.chip.c_mem0.mem[1][15] top.chip.c_mem0.mem[1][14] top.chip.c_mem0.mem[1][13] top.chip.c_mem0.mem[1][12] top.chip.c_mem0.mem[1][11] top.chip.c_mem0.mem[1][10] top.chip.c_mem0.mem[1][9] top.chip.c_mem0.mem[1][8] top.chip.c_mem0.mem[1][7] top.chip.c_mem0.mem[1][6] top.chip.c_mem0.mem[1][5] top.chip.c_mem0.mem[1][4] top.chip.c_mem0.mem[1][3] top.chip.c_mem0.mem[1][2] top.chip.c_mem0.mem[1][1] top.chip.c_mem0.mem[1][0]
+#{top.chip.c_mem0.iodata[15:0]} top.chip.c_mem0.iodata[15] top.chip.c_mem0.iodata[14] top.chip.c_mem0.iodata[13] top.chip.c_mem0.iodata[12] top.chip.c_mem0.iodata[11] top.chip.c_mem0.iodata[10] top.chip.c_mem0.iodata[9] top.chip.c_mem0.iodata[8] top.chip.c_mem0.iodata[7] top.chip.c_mem0.iodata[6] top.chip.c_mem0.iodata[5] top.chip.c_mem0.iodata[4] top.chip.c_mem0.iodata[3] top.chip.c_mem0.iodata[2] top.chip.c_mem0.iodata[1] top.chip.c_mem0.iodata[0]
+[pattern_trace] 1
+[pattern_trace] 0

@@ -6,8 +6,9 @@ TYPES      := p_type
 ARITH      := arith
 REG        := reg
 MEM        := mem
+CACHE      := cache
 DECODE     := decode
-CORE       := core
+CORE       := core_oooe
 #CHIP       := chip
 CHIP       := chip_test
 CHIP_TESTS := chip_test
@@ -17,10 +18,10 @@ WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Ws
 #WARN := 
 
 FILES       := out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DECODE}.o out/${CORE}.o out/${CHIP}.o
-FILES_TESTS :=out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DECODE}.o out/${CORE}.o out/${CHIP_TEST}.o
+FILES_TESTS := out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DECODE}.o out/${CORE}.o out/${CHIP_TEST}.o
 
-UPPER_LIMIT       :=  4000ns
-UPPER_LIMIT_TESTS := 40000ns
+UPPER_LIMIT       :=   4000ns
+UPPER_LIMIT_TESTS :=  40000ns
 
 default:
 	@echo -e no option specified
@@ -110,3 +111,11 @@ out/${CHIP_TESTS}.o: src/${CHIP_TESTS}.vhdl
 	@ghdl -a --workdir=out  --std=08 ${WARN} src/${CHIP_TESTS}.vhdl
 src/${CHIP_TESTS}.vhdl:
 	@touch src/${CHIP_TESTS}.vhdl
+
+
+
+out/${CACHE}.o: src/${CACHE}.vhdl
+	@echo -e ${CY}analysing ${CACHE}.vhdl${CD}
+	@ghdl -a --workdir=out  --std=08 ${WARN} src/${CACHE}.vhdl
+src/${CACHE}.vhdl:
+	@touch src/${CACHE}.vhdl

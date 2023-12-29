@@ -434,6 +434,14 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::RDM: 
 		{
+			
+			if(program_flags & Program_Flags::warn)
+			{
+				if(second & 0b1)
+					std::cout << "WARNING: address is not aligned\n" 
+					          << "at " << instruction_pointer - 1 << "instr\n";
+			}			
+
 			memory_references++;
 
 			DEBUG_PRINT("RDM\n");
@@ -451,6 +459,13 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::WRM: 
 		{
+			if(program_flags & Program_Flags::warn)
+			{
+				if(second & 0b1)
+					std::cout << "WARNING: address is not aligned\n" 
+					          << "at " << instruction_pointer - 1 << "instr\n";
+			}			
+
 			memory_references++;
 
 			DEBUG_PRINT("WRM\n");

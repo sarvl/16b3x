@@ -61,10 +61,10 @@ ARCHITECTURE behav OF alu IS
 		);
 	END COMPONENT shifter_left_16bit;
 
-	SIGNAL adder_i1  : t_uword;
-	SIGNAL adder_out : t_uword;
-	SIGNAL shl_out   : t_uword;
-	SIGNAL shr_out   : t_uword;
+	SIGNAL adder_i1  : t_uword := x"0000";
+	SIGNAL adder_out : t_uword := x"0000";
+	SIGNAL shl_out   : t_uword := x"0000";
+	SIGNAL shr_out   : t_uword := x"0000";
 BEGIN
 
 	--handles both addition and subtraction due to how 2s complement work
@@ -121,7 +121,7 @@ END ENTITY adder;
 
 ARCHITECTURE behav OF adder IS
 	--purposefuly "size" not "size - 1", to extract carry
-	SIGNAL internal : std_ulogic_vector(size DOWNTO 0);
+	SIGNAL internal : std_ulogic_vector(size DOWNTO 0) := (OTHERS => '0');
 
 BEGIN
 	internal <= std_ulogic_vector(
@@ -151,7 +151,7 @@ ENTITY multiplier IS
 END ENTITY multiplier;
 
 ARCHITECTURE behav OF multiplier IS 
-	SIGNAL tmp : std_ulogic_vector(2 * size - 1 DOWNTO 0);
+	SIGNAL tmp : std_ulogic_vector(2 * size - 1 DOWNTO 0) := (OTHERS => '0');
 BEGIN
 	tmp <= std_ulogic_vector(unsigned(i0) * unsigned(i1));
 	o0  <= tmp(size - 1 DOWNTO 0);
@@ -172,7 +172,7 @@ ENTITY shifter_right_16bit IS
 END ENTITY shifter_right_16bit;
 
 ARCHITECTURE behav OF shifter_right_16bit IS
-	SIGNAL t0, t1, t2 : t_uword;
+	SIGNAL t0, t1, t2 : t_uword := x"0000";
 BEGIN
 --implemented as barrel shifter
 	t0 <=         "0" & i0(15 DOWNTO 1) WHEN iamnt(0) = '1' ELSE i0;	
@@ -195,7 +195,7 @@ ENTITY shifter_left_16bit IS
 END ENTITY shifter_left_16bit;
 
 ARCHITECTURE behav OF shifter_left_16bit IS 
-	SIGNAL t0, t1, t2 : t_uword;
+	SIGNAL t0, t1, t2 : t_uword := x"0000";
 BEGIN
 --implemented as barrel shifter
 	t0 <= i0(14 DOWNTO 0) &        "0" WHEN iamnt(0) = '1' ELSE i0;	

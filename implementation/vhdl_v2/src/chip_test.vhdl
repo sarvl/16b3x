@@ -26,11 +26,11 @@ ARCHITECTURE behav of chip IS
 	COMPONENT core IS 
 		PORT(
 			--they have to be resolved
-			iodata  : INOUT t_rword;
-			oaddr   : OUT   t_rword;
-			ord     : OUT   std_logic;
-			owr     : OUT   std_logic;
-			ohlt    : OUT   std_logic;
+			iodata  : INOUT t_rword := x"ZZZZ";
+			oaddr   : OUT   t_rword := x"ZZZZ";
+			ord     : OUT   std_logic := 'Z';
+			owr     : OUT   std_logic := 'Z';
+			ohlt    : OUT   std_logic := 'Z';
 			
 			--disables bus interface, MAY NOT STOP CLOCK
 			disable : IN std_ulogic;
@@ -67,14 +67,14 @@ ARCHITECTURE behav of chip IS
 
 	CONSTANT halfperiod : time := 1 NS;
 
-	SIGNAL c0_hlt      : std_ulogic;
+	SIGNAL c0_hlt      : std_ulogic := '0';
 	SIGNAL c0_disable  : std_ulogic := '1';
 	
 	SIGNAL bus_mem : t_rword := x"0000";
-	SIGNAL bus_adr : t_rword;
-	SIGNAL bus_crd : std_logic;
-	SIGNAL bus_cwr : std_logic;
-	SIGNAL bus_rdy : std_ulogic;
+	SIGNAL bus_adr : t_rword := x"0000";
+	SIGNAL bus_crd : std_logic := '0';
+	SIGNAL bus_cwr : std_logic := '0';
+	SIGNAL bus_rdy : std_ulogic := '0';
 
 	SIGNAL abort   : boolean := false;
 	
@@ -113,9 +113,9 @@ BEGIN
 		-- 'A' to 'F', or 'a' to 'f'.
 		FUNCTION str_to_slv(str : string) RETURN std_logic_vector IS
 		  ALIAS str_norm : string(1 TO str'length) IS str;
-		  VARIABLE char_v : character;
-		  VARIABLE val_of_char_v : natural;
-		  VARIABLE res_v : std_logic_vector(4 * str'length - 1 DOWNTO 0);
+		  VARIABLE char_v : character := ' ';
+		  VARIABLE val_of_char_v : natural := 0;
+		  VARIABLE res_v : std_logic_vector(4 * str'length - 1 DOWNTO 0) := (OTHERS => '0');
 		BEGIN
 		  FOR str_norm_idx IN str_norm'range LOOP
 		    char_v := str_norm(str_norm_idx);
@@ -220,6 +220,7 @@ BEGIN
 		file_close(data);
 
 		--dont drive them anymore
+		--can be 'Z' but nicely prevents warnings
 		bus_cwr <= 'Z';
 		bus_crd <= 'Z';
 		bus_mem <= x"ZZZZ";

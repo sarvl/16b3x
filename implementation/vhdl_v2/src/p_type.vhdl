@@ -17,6 +17,8 @@ PACKAGE p_types IS
 	--subarray
 	TYPE t_csh_sar IS ARRAY(  2 - 1 DOWNTO 0)   OF t_cache_entry;
 	TYPE t_csh_arr IS ARRAY(128 - 1 DOWNTO 0)   OF t_csh_sar;
+
+	TYPE t_reg_arr IS ARRAY(15 DOWNTO 0)        OF t_uword;
 END PACKAGE p_types;
 
 LIBRARY ieee;

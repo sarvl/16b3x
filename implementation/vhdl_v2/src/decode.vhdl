@@ -6,7 +6,7 @@ USE work.p_types.ALL;
 
 ENTITY decoder IS 
 	PORT(
-		instr : IN t_uword; 
+		instr : IN t_uword := x"0000"; 
 
 		clk           : IN std_ulogic;
 		--if the implementation can use mem bus in the same cycle as it provides instructio
@@ -96,34 +96,48 @@ ARCHITECTURE behav OF decoder IS
 		16#1F# => b"0_0_0_0_0_0_0_0_0_0_0_1"  --slr
 	));
 
-	SIGNAL opcode : std_ulogic_vector(4 DOWNTO 0);
-	SIGNAL aluop  : std_ulogic_vector(2 DOWNTO 0);
-	SIGNAL isimm  : std_ulogic;
+	SIGNAL opcode : std_logic_vector(4 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL aluop  : std_ulogic_vector(2 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL isimm  : std_ulogic := '0';
 
-	SIGNAL sgnls  : std_ulogic_vector(11 DOWNTO 0); 
-	SIGNAL rsrc   : std_ulogic_vector( 2 DOWNTO 0); 
+	SIGNAL sgnls  : std_ulogic_vector(11 DOWNTO 0) := (OTHERS => '0'); 
+	SIGNAL rsrc   : std_ulogic_vector( 2 DOWNTO 0) := (OTHERS => '0'); 
 
 	SIGNAL curcyc : integer := 0;
+
+	SIGNAL wrx_ip  : std_ulogic := '0';
 
 BEGIN
 	
 	isimm <= '1' WHEN instr(15 DOWNTO 11) /= "00000"
 	    ELSE '0';
 	
+
 	opcode <= instr(15 DOWNTO 11) WHEN isimm
 	     ELSE instr( 4 DOWNTO  0);
 
 	aluop <= opcode(2 DOWNTO 0);
 
-	sgnls <=  opsigs(curcyc)(to_integer(unsigned(opcode)));
+	--                                        Ed
+	wrx_ip <= '1' WHEN opcode = "01101" AND instr(10 DOWNTO 8) = "000"
+	     ELSE '0';
 
-	rsrc  <= "000" WHEN opcode = "00101" -- 05 mov 
-	    ELSE "000" WHEN opcode = "01101" -- 05 wrx 
-	    ELSE "001" WHEN opcode = "01100" -- 0C rdx
-	    ELSE "011" WHEN opcode = "10000" -- 10 mul
-	    ELSE "100" WHEN opcode = "00110" -- 06 rdm
-	    ELSE "100" WHEN opcode = "01111" -- 06 pop
-	    ELSE "010"; --alu 
+	sgnls <= opsigs(curcyc)(20) WHEN wrx_ip --on the fly translate wrx IP to unconditional jmp as it is the same
+	    ELSE opsigs(curcyc)(to_integer(unsigned(opcode)));
+
+
+	WITH opcode SELECT rsrc <=
+		"000" WHEN "00101", -- 05 mov 
+		"000" WHEN "01101", -- 05 wrx 
+		"001" WHEN "01100", -- 0C rdx
+		"011" WHEN "10000", -- 10 mul
+		"100" WHEN "00110", -- 06 rdm
+		"100" WHEN "01111", -- 06 pop
+	--these 3 are only for OOO impl as that simplifies it
+	    "000" WHEN "10100", -- 14 jmp 
+	    "000" WHEN "10101", -- 15 cal 
+	    "000" WHEN "10110", -- 16 ret 
+	    "010" WHEN OTHERS; --alu 
 
 	--introduces slight delay to avoid wrong feedback loops
 	curcyc <= 0  WHEN can_skip_wait
@@ -135,9 +149,13 @@ BEGIN
 
 	controls.aluop  <= aluop;
 
-	controls.r0     <= instr(10 DOWNTO 8);
-	controls.fl     <= instr(10 DOWNTO 8);
-	controls.x0w    <= instr(10 DOWNTO 8);
+	--translate wrx ip into jmp LEG 
+	controls.r0     <= "111" WHEN wrx_ip
+	              ELSE instr(10 DOWNTO 8);
+	controls.fl     <= "111" WHEN wrx_ip
+	              ELSE instr(10 DOWNTO 8);
+	controls.x0w    <= "111" WHEN wrx_ip
+	              ELSE instr(10 DOWNTO 8);
 
 	controls.r1     <= instr( 7 DOWNTO 5);
 	controls.x0r    <= instr( 7 DOWNTO 5);
