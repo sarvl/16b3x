@@ -2,9 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
 PACKAGE p_types IS 
-	SUBTYPE t_word IS std_ulogic_vector(15 DOWNTO 0);
+	SUBTYPE t_word  IS std_ulogic_vector(15 DOWNTO 0);
 	SUBTYPE t_uword IS std_ulogic_vector(15 DOWNTO 0);
-	SUBTYPE t_rword IS std_logic_vector(15 DOWNTO 0);
+	SUBTYPE t_rword IS std_logic_vector (15 DOWNTO 0);
+
+	SUBTYPE t_dword  IS std_ulogic_vector(31 DOWNTO 0);
+	SUBTYPE t_udword IS std_ulogic_vector(31 DOWNTO 0);
+	SUBTYPE t_rdword IS std_logic_vector (31 DOWNTO 0);
 
 	TYPE t_cache_entry IS RECORD 
 		present : std_ulogic;
@@ -14,6 +18,7 @@ PACKAGE p_types IS
 	END RECORD t_cache_entry;
 
 	TYPE t_mem_arr IS ARRAY(32768 - 1 DOWNTO 0) OF t_uword;
+	TYPE t_mem_wide_arr IS ARRAY(16384 - 1 DOWNTO 0) OF t_udword;
 	--subarray
 	TYPE t_csh_sar IS ARRAY(  2 - 1 DOWNTO 0)   OF t_cache_entry;
 	TYPE t_csh_arr IS ARRAY(128 - 1 DOWNTO 0)   OF t_csh_sar;

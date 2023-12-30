@@ -21,7 +21,7 @@ FILES       := out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DEC
 FILES_TESTS := out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DECODE}.o out/${CORE}.o out/${CHIP_TEST}.o
 
 UPPER_LIMIT       :=   4000ns
-UPPER_LIMIT_TESTS :=  40000ns
+UPPER_LIMIT_TESTS :=   8000ns
 
 default:
 	@echo -e no option specified

@@ -26,7 +26,7 @@ ARCHITECTURE behav of chip IS
 	COMPONENT core IS 
 		PORT(
 			--they have to be resolved
-			iodata  : INOUT t_rword := x"ZZZZ";
+			iodata  : INOUT t_rdword := (OTHERS => 'Z');
 			oaddr   : OUT   t_rword := x"ZZZZ";
 			ord     : OUT   std_logic := 'Z';
 			owr     : OUT   std_logic := 'Z';
@@ -45,11 +45,13 @@ ARCHITECTURE behav of chip IS
 		);
 		PORT(
 			ia            : IN    t_rword := x"0000";
-			iodata        : INOUT t_rword := x"0000";
+			iodata        : INOUT t_rdword := (OTHERS => '0');
 	
 			--determines whether to read/write value
 			rd            : IN  std_logic := '0';
 			wr            : IN  std_logic := '0';
+			--mostly for initialization
+			wide_wr       : IN  std_logic := '0';
 	
 			--if read or write, delay after which memory is usable again
 			rdy           : OUT std_logic := '0';
@@ -65,19 +67,19 @@ ARCHITECTURE behav of chip IS
 	SIGNAL clk_core0 : std_ulogic := '0';
 	SIGNAL clk_mem0  : std_ulogic := '0';
 
-	CONSTANT halfperiod : time := 1000 PS;
+	CONSTANT halfperiod : time := 1 NS;
 
 	SIGNAL c0_hlt      : std_ulogic := '0';
 	SIGNAL c0_disable  : std_ulogic := '1';
 	
-	SIGNAL bus_mem : t_rword := x"0000";
+	SIGNAL bus_mem : t_rdword := (OTHERS => '0');
 	SIGNAL bus_adr : t_rword := x"0000";
 	SIGNAL bus_crd : std_logic := '0';
 	SIGNAL bus_cwr : std_logic := '0';
+	SIGNAL bus_wwr : std_logic := '0';
 	SIGNAL bus_rdy : std_ulogic := '0';
 
 	SIGNAL abort   : boolean := false;
-
 	
 BEGIN
 	--connects everything that has to be connected
@@ -94,6 +96,7 @@ BEGIN
 	                             iodata        => bus_mem,
 	                             rd            => bus_crd,
 	                             wr            => bus_cwr,
+	                             wide_wr       => bus_wwr,
 	                             rdy           => bus_rdy,
 	                             disable_delay => '1', 
 	                             clk           => clk_mem0);
@@ -181,9 +184,9 @@ BEGIN
 
 		VARIABLE temp_slv  : std_logic_vector(31 DOWNTO 0);
 
-		ALIAS mem_data IS <<SIGNAL c_mem0.mem : t_mem_arr>>;
+		ALIAS mem_data IS <<SIGNAL c_mem0.mem : t_mem_wide_arr>>;
 		--to work around cache
-		VARIABLE mem_data_copy : t_mem_arr;
+		VARIABLE mem_data_copy : t_mem_wide_arr;
 		VARIABLE cycles : integer := 0;
 
 	BEGIN
@@ -193,26 +196,17 @@ BEGIN
 		--how should it work when delay is added? idk, maybe some bypassing
 		file_open(data, "input_prog.bin");
 		bus_cwr <= '1';
+		bus_wwr <= '1';
 		bus_crd <= '0';
 		WHILE NOT endfile(data) LOOP
 			read(data, temp_storage, size);
 			
 			temp_slv := str_to_slv(temp_storage);
 
-			bus_mem <= temp_slv(31 DOWNTO 16);
+			bus_mem <= temp_slv;
 			bus_adr <= std_logic_vector(index);
 
-			index := index + 2;	
-
-			clk_mem0 <= '0';
-			WAIT FOR 1 PS; --some slight delay
-			clk_mem0 <= '1';
-			WAIT FOR 1 PS; --some slight delay
-
-			bus_mem <= temp_slv(15 DOWNTO  0);
-			bus_adr <= std_logic_vector(index);
-
-			index := index + 2;	
+			index := index + 4;	
 
 			clk_mem0 <= '0';
 			WAIT FOR 1 PS; --some slight delay
@@ -224,8 +218,9 @@ BEGIN
 		--dont drive them anymore
 		--can be 'Z' but nicely prevents warnings
 		bus_cwr <= 'Z';
+		bus_wwr <= '0';
 		bus_crd <= 'Z';
-		bus_mem <= x"ZZZZ";
+		bus_mem <= (OTHERS => 'Z');
 		bus_adr <= x"ZZZZ";
 		c0_disable <= '0';
 		main: LOOP
@@ -258,28 +253,21 @@ BEGIN
 		--rather use alias to external signal
 
 		
-		index := x"0000";
-		FOR ind IN 0 TO (32768)/2 - 1 LOOP 
-			mem_data_copy(to_integer(index + 0)) := mem_data(to_integer(index + 0));
-			mem_data_copy(to_integer(index + 1)) := mem_data(to_integer(index + 1));
-			index := index + 2;	
+		--mostly in place for cache
+		FOR i IN 0 TO (16384) - 1 LOOP 
+			mem_data_copy(i) := mem_data(i);
 		END LOOP;
 
 		file_open(data, "dump.txt", WRITE_MODE);
-		index := x"0000";
-		FOR ind IN 0 TO (32768)/2 - 1 LOOP 
+		FOR i IN 0 TO (16384) - 1 LOOP 
 
-			temp_slv(31 DOWNTO 16) := mem_data_copy(to_integer(index + 0));
-			temp_slv(15 DOWNTO  0) := mem_data_copy(to_integer(index + 1));
-			index := index + 2;	
+			temp_storage := slv_to_str(mem_data_copy(i));
 
-			temp_storage := slv_to_str(temp_slv);
 			write(data, temp_storage & LF);
 		END LOOP;
 		file_close(data);
 
 		REPORT LF & LF & "cycles: " & integer'image(cycles);
-
 		finish;
 	END PROCESS;
 END ARCHITECTURE behav;
