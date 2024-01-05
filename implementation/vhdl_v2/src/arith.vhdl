@@ -239,7 +239,7 @@ ARCHITECTURE behav OF bc_2bit IS
 	ALIAS B : std_ulogic IS i0(0);
 	ALIAS C : std_ulogic IS ic;
 BEGIN
-	o0(1) <= (    B AND C) OR (A AND     (B OR C));
+	o0(1) <= (    B AND C) OR (A AND (    B OR C));
 	o0(0) <= (NOT B AND C) OR (A AND (NOT B OR C));
 END ARCHITECTURE behav;
 

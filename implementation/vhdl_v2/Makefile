@@ -5,13 +5,13 @@ CY := '\033[0;33m' #color yellow
 TYPES      := p_type
 ARITH      := arith
 REG        := reg
-MEM        := mem
+MEM        := mem_wide
 CACHE      := cache
 DECODE     := decode
-CORE       := core_oooe
+CORE       := core_wide_oooe
 #CHIP       := chip
-CHIP       := chip_test
-CHIP_TESTS := chip_test
+CHIP       := chip_wide_test
+CHIP_TESTS := chip_wide_test
 
 
 WARN := -Wlibrary -Wbinding -Wport -Wreserved -Wnested-comment -Wparenthesis -Wspecs -Wport-bounds -Wruntime-error -Wunused -Wnowrite -Wothers -Wuseless

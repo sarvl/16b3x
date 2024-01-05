@@ -11,7 +11,7 @@ ENTITY core IS
 		ord     : OUT   std_logic;
 		owr     : OUT   std_logic;
 
-		ohlt    : OUT   std_logic;
+		ohlt    : OUT   std_logic := '0';
 		disable : IN    std_ulogic;
 		
 		clk : IN  std_ulogic
@@ -157,6 +157,15 @@ ARCHITECTURE behav OF core IS
 		    branch_alt_dest | imm16 => x"0000",  
 			signals => SIGNALS_DEFAULT);
 
+	COMPONENT bc_2bit IS 
+		PORT(
+			i0 : IN  std_ulogic_vector(1 DOWNTO 0);
+			ic : IN  std_ulogic; 
+
+			o0 : OUT std_ulogic_vector(1 DOWNTO 0)
+		);
+	END COMPONENT bc_2bit;
+
 	SIGNAL 	r_ip : t_register := (x"0000", x"0000", '0');
 	SIGNAL 	r_sp : t_register := (x"0000", x"0000", '0');
 	SIGNAL 	r_lr : t_register := (x"0000", x"0000", '0');
@@ -284,11 +293,15 @@ ARCHITECTURE behav OF core IS
 	SIGNAL fetch0    : std_ulogic := '0';
 	SIGNAL fetch1    : std_ulogic := '0';
 
+	SIGNAL ignore0      : std_ulogic := '0';
+	SIGNAL ignore1      : std_ulogic := '0';
+
 	SIGNAL flcmp     : std_ulogic := '0';
 
 	SIGNAL misprediction : std_ulogic := '0';
 	SIGNAL branch_dest   : t_uword := x"0000";
 	SIGNAL branch_dest_misalign : std_ulogic := '0';
+	SIGNAL branch_dest_misalign_delayed : std_ulogic := '0';
 
 	--always taken for now
 	SIGNAL branch_predict_taken : std_ulogic := '1';
@@ -297,11 +310,11 @@ ARCHITECTURE behav OF core IS
 
 	--used to keep value before commit
 	--when 2 regs are trying to access it, zero it out
---	SIGNAL shadow_lr_present : std_ulogic := '0';
---	SIGNAL shadow_lr_value   : t_uword := x"0000";
 
 	SIGNAL shadow_ui_present : std_ulogic := '0';
 	SIGNAL shadow_ui_value   : t_uword := x"0000";
+
+	SIGNAL shadow_lr_value   : t_uword := x"0000";
 
 	SIGNAL s0_imm16 : t_uword := x"0000";
 	SIGNAL s1_imm16 : t_uword := x"0000";
@@ -325,7 +338,35 @@ ARCHITECTURE behav OF core IS
 	SIGNAL prev_branch  : std_ulogic := '0';
 	SIGNAL prev_flush   : std_ulogic := '0';
 	SIGNAL prev_flush_ui: std_ulogic := '0';
-	
+
+
+	SIGNAL cnt_misprediction : integer := 0;
+	SIGNAL cnt_fetch         : integer := 0;
+	SIGNAL cnt_retire2       : integer := 0;
+	SIGNAL cnt_retire1       : integer := 0;
+	SIGNAL cnt_retire0       : integer := 0;
+	SIGNAL cnt_exec2         : integer := 0;
+	SIGNAL cnt_exec1         : integer := 0;
+	SIGNAL cnt_exec0         : integer := 0;
+	SIGNAL cnt_movrr         : integer := 0;
+	SIGNAL cnt_ignore         : integer := 0;
+
+	TYPE t_bp_arr IS ARRAY(15 DOWNTO 0) OF std_ulogic_vector(1 DOWNTO 0); 
+	--because of heruistics from simulator, it is better to start from T than NT
+	SIGNAL bp_arr : t_bp_arr := (OTHERS => "11");
+
+	SIGNAL bp_arr_match        : std_ulogic_vector(1 DOWNTO 0);
+	SIGNAL bp_arr_match_to_inc : std_ulogic_vector(1 DOWNTO 0);
+	SIGNAL bp_arr_match_new    : std_ulogic_vector(1 DOWNTO 0);
+
+	TYPE t_ras IS ARRAY(3 DOWNTO 0) OF t_uword;
+	SIGNAL ras : t_ras := (OTHERS => x"0000");
+	SIGNAL ras_top_m1   : std_ulogic_vector(1 DOWNTO 0) := "11";
+	SIGNAL ras_top_p0   : std_ulogic_vector(1 DOWNTO 0) := "00";
+	SIGNAL ras_top_p1   : std_ulogic_vector(1 DOWNTO 0) := "01";
+	SIGNAL ras_top_m1_i : integer := 3; 
+	SIGNAL ras_top_p0_i : integer := 0; 
+	SIGNAL ras_top_p1_i : integer := 1; 
 BEGIN
 	
 	c_decoder0 : decoder  PORT MAP(instr         => instr0,
@@ -445,17 +486,31 @@ BEGIN
 	rat_1_s1_i <= to_integer(unsigned(signals1.r1));
 	rat_1_d0_i <= to_integer(unsigned(signals1.r0));
 
+	c_bp : bc_2bit PORT MAP(i0 => bp_arr_match_to_inc, ic => flcmp, o0 => bp_arr_match_new);
+	
+	--not needed
+--	c_ras_adder_0 : adder GENERIC MAP(size => 2) PORT MAP(i0=>ras_top_p0,i1=>"00",o0=>ras_top_p0,ic=>'0',oc=>OPEN); 
+	c_ras_adder_1 : adder GENERIC MAP(size => 2) PORT MAP(i0=>ras_top_p0,i1=>"01",o0=>ras_top_p1,ic=>'0',oc=>OPEN); 
+	c_ras_adder_2 : adder GENERIC MAP(size => 2) PORT MAP(i0=>ras_top_p0,i1=>"11",o0=>ras_top_m1,ic=>'0',oc=>OPEN); 
+
+	ras_top_p0_i <= to_integer(unsigned(ras_top_p0));
+	ras_top_p1_i <= to_integer(unsigned(ras_top_p1));
+	ras_top_m1_i <= to_integer(unsigned(ras_top_m1));
+
 	rob_FE(0) <= "000"     WHEN flush = '1' 
 	                        AND rising_edge(clk)
 	--rob_FE_i(1) not present implies rob_FE_i(0) not present
-	        ELSE rob_FE(2) WHEN rob(rob_FE_i(1)).present = '0'
-	                       AND instr_ready = '1' 
-	                       AND (s0_branch = '0' OR (branch_predict_taken = '0' AND s1_branch = '0'))
-	                       AND rising_edge(clk)
-	        ELSE rob_FE(1) WHEN rob(rob_FE_i(0)).present = '0'
-	                       AND instr_ready = '1' 
-	                       AND rising_edge(clk)
-	        ELSE UNAFFECTED;
+	        ELSE rob_FE(2) WHEN fetch0 AND NOT ignore0
+	                        AND fetch1 AND NOT ignore1
+	                        AND instr_ready AND to_std_ulogic(rising_edge(clk))
+	        ELSE rob_FE(1) WHEN fetch0 AND NOT ignore0
+	                        AND instr_ready AND to_std_ulogic(rising_edge(clk))
+			ELSE rob_FE(1) WHEN fetch0 AND     ignore0
+				            AND fetch1 AND NOT ignore1
+	                        AND instr_ready AND to_std_ulogic(rising_edge(clk))
+
+
+	        ELSE rob_FE(0);
 
 	--not necessary but looks better 
 	rob_SE(0) <= "000"     WHEN flush = '1' 
@@ -463,7 +518,7 @@ BEGIN
 	--retire1 implies retire0
 	        ELSE rob_SE(2) WHEN retire1 = '1' AND rising_edge(clk) 
 	        ELSE rob_SE(1) WHEN retire0 = '1' AND rising_edge(clk) 
-	        ELSE UNAFFECTED;
+	        ELSE rob_SE(0);
 
 	--when both instructions write to reg 
 	rfl_SE(0) <= "000"     WHEN  flush = '1'
@@ -477,7 +532,7 @@ BEGIN
 	        ELSE rfl_SE(1) WHEN (signals0.rwr = '1' XOR signals1.rwr = '1')
 	                        AND  instr_ready = '1'
 	                        AND  rising_edge(clk)
-	        ELSE UNAFFECTED;
+	        ELSE rfl_SE(0);
 
 	--present, finished and writing
 	rfl_FE(0) <= "000"     WHEN  flush = '1'
@@ -492,7 +547,7 @@ BEGIN
 	        ELSE rfl_FE(1) WHEN rising_edge(clk)
 	                        AND retire1 = '1'
 	                        AND rob(rob_SE_i(1)).signals.rwr = '1'
-	        ELSE UNAFFECTED;
+	        ELSE rfl_FE(0);
 
 	eu0.arg0 <= r00_data; 
 	eu0.arg1 <= eu0.imm16 WHEN eu0.signals.iim
@@ -535,40 +590,65 @@ BEGIN
 	s0_branch <= (signals0.jmp OR signals0.cal OR signals0.ret) AND instr_ready;
 	s1_branch <= (signals1.jmp OR signals1.cal OR signals1.ret) AND instr_ready;
 
+	bp_arr_match <= bp_arr(to_integer(unsigned(r_ip.o0(3 DOWNTO 0)))) WHEN signals0.jmp 
+	           ELSE bp_arr(to_integer(unsigned(r_ip_p1(3 DOWNTO 0)))); 
+	--incorrect for signals1.jmp 
+	bp_arr_match_to_inc <= bp_arr(to_integer(unsigned(cur_ip(3 DOWNTO 0)))); 
+	bp_arr(to_integer(unsigned(cur_ip(3 DOWNTO 0)))) <= bp_arr_match_new WHEN rob(rob_SE_i(0)).signals.jmp = '1' AND rising_edge(clk)
+	                                               ELSE UNAFFECTED;
+
 	--may break when 2 branches are fetched at once and predicted to be not taken 
 	branch               <= misprediction OR s0_branch OR s1_branch; 
-	--in general, ret is also always predict taken but for this moment it has to be predict not taken to make things a little bit easier 
-	branch_predict_taken <= NOT signals0.ret AND signals0.iim WHEN s0_branch 
-	                   ELSE NOT signals1.ret AND signals1.iim WHEN s1_branch 
+
+	--                        ret           
+	branch_predict_taken <=  (signals0.ret) 
+	--                        cal             jmp CCC            jmp LEG 
+	                     OR ((signals0.cal OR bp_arr_match(1) OR to_std_ulogic(signals0.fl = "111")) AND signals0.iim) 
+	                         WHEN s0_branch 
+	                   ELSE  (signals1.ret) 
+	                     OR ((signals1.cal OR bp_arr_match(1) OR to_std_ulogic(signals1.fl = "111")) AND signals1.iim) 
+	                         WHEN s1_branch 
 	                   ELSE '0'; 
 	--due to hard to get address, predict indirect ones as not taken, ALWAYS
 
 	flcmp  <= to_std_ulogic((r_fl.o0(2 DOWNTO 0) AND rob(rob_SE_i(0)).signals.fl) /= "000");
 	--whenever branch is retired it is definitely in slot 0 
-	misprediction <= '1' WHEN retire0 AND rob(rob_SE_i(0)).branch
+	misprediction <= retire0 AND rob(rob_SE_i(0)).branch
 	--flcmp does not agree
-	                      AND to_std_ulogic(flcmp /= rob(rob_SE_i(0)).branch_dest)
-	            ELSE '0'; 
+	             AND (  to_std_ulogic(flcmp /= rob(rob_SE_i(0)).branch_dest)
+	--addr in ret does not agree
+	                 OR to_std_ulogic(rob(rob_SE_i(0)).signals.ret      = '1' 
+	                              AND rob(rob_SE_i(0)).branch_dest      = '1' 
+	                              AND rob(rob_SE_i(0)).branch_alt_dest /= r_lr.o0)
+	                 );
 
-	branch_dest <= r_lr.o0                          WHEN misprediction AND rob(rob_SE_i(0)).signals.ret
-	          ELSE rob(rob_SE_i(0)).branch_alt_dest WHEN misprediction
+
+	branch_dest <= r_lr.o0                          WHEN misprediction AND     flcmp AND rob(rob_SE_i(0)).signals.ret
+	          ELSE cur_ip_p1                        WHEN misprediction AND NOT flcmp AND rob(rob_SE_i(0)).signals.ret
+	          ELSE rob(rob_SE_i(0)).branch_alt_dest WHEN misprediction AND     flcmp 
+	          ELSE rob(rob_SE_i(0)).nxt_ip          WHEN misprediction AND NOT flcmp 
 			  --may break
-	          ELSE cur_ip_p1                        WHEN flush_additional_wait --for more general flushes
-	          ELSE cur_ip_p1                        WHEN flush --for more general flushes
-	          ELSE s0_imm16 WHEN s0_branch AND branch_predict_taken
-	          ELSE s1_imm16 WHEN s1_branch AND branch_predict_taken
-	          ELSE r_ip_p1                WHEN s0_branch AND s1_branch
-	          ELSE r_ip_p2                WHEN s0_branch              
-	          ELSE r_ip_p2                WHEN s1_branch
-	          ELSE UNAFFECTED; 
+	          ELSE rob(rob_SE_i(0)).nxt_ip          WHEN flush_additional_wait --for more general flushes
+	          ELSE rob(rob_SE_i(0)).nxt_ip          WHEN flush --for more general flushes
+	--ret always predict taken
+	          ELSE shadow_lr_value                  WHEN s0_branch AND signals0.ret 
+	          ELSE s0_imm16                         WHEN s0_branch AND branch_predict_taken
+	--only 1 branch is handled in a single cycle, therefore if both are branches and predict not taken, other must wait
+	          ELSE r_ip_p1                          WHEN s0_branch AND s1_branch 
+	          ELSE r_ip_p2                          WHEN s0_branch              
+	          ELSE shadow_lr_value                  WHEN s1_branch AND signals1.ret 
+	          ELSE s1_imm16                         WHEN s1_branch AND branch_predict_taken
+	          ELSE r_ip_p2;
 	 --if LSB ithen it is misaligned
 	branch_dest_misalign <= branch_dest(0);
+	branch_dest_misalign_delayed <= branch_dest_misalign WHEN rising_edge(clk)
+	                           ELSE UNAFFECTED;
 
 	retire0 <=             rob(rob_SE_i(0)).present AND rob(rob_SE_i(0)).prfd0_p;
 	retire1 <= retire0 AND rob(rob_SE_i(1)).present AND rob(rob_SE_i(1)).prfd0_p
-	--cannot retire branch with anything in the same cycle
-	                   AND NOT rob(rob_SE_i(0)).branch
+	--cannot retire 2 branches in the same cycle and branch must be first thing to retire due to how misprediction is determined
 	                   AND NOT rob(rob_SE_i(1)).branch
+	                   AND NOT misprediction 
 	--cannot retire halt with anything in the same cycle
 	                   AND NOT rob(rob_SE_i(0)).signals.hlt
 	                   AND NOT rob(rob_SE_i(1)).signals.hlt
@@ -576,37 +656,69 @@ BEGIN
 
 
 	--when 3 b_filter entries say that this addr was seen then it probably was seen
+	--but more important is that when it was seen then b_filter will say that it was seen
 	write_to_instr <= b_filter(to_integer(unsigned(internal_oaddr( 7 DOWNTO  0))))
 	              AND b_filter(to_integer(unsigned(internal_oaddr(15 DOWNTO  8))))
 	              AND b_filter(to_integer(unsigned(internal_oaddr(11 DOWNTO  4))))
 	             WHEN eu1.signals.mwr
-	             ELSE '0';
+	             ELSE '0'; 
 	
 
-	--both must be fetched at once so 2 entries must be free 
+	--both fetched at once so 2 entries must be free 
+	--simplifies things
 	fetch0 <= NOT rob(rob_FE_i(0)).present AND NOT rob(rob_FE_i(1)).present AND instr_ready;
 	--        fetch0      prev is not branch     or if it is then it must be predict not taken and current must not be a branch 
 	fetch1 <= fetch0 AND (NOT s0_branch OR (NOT branch_predict_taken AND NOT s1_branch));
 
 
-	s0_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals0.imm8 WHEN prev_flush_ui AND NOT branch_dest_misalign
+	--nop
+	ignore0   <= '1' WHEN instr0 = x"0000" AND fetch0 = '1'
+	--wrx UI, imm   AND next is fetched AND next is not rdx UI 
+	        ELSE '1' WHEN signals0.xwr  = '1' AND signals0.x0w = "100" AND signals0.iim = '1'
+	                  AND fetch1        = '1' 
+	                  AND signals1.src /= "001" --less logic and it is unlikely to have eg wrx UI,v followed by rdx LR 
+	        ELSE '0';
+	--nop
+	ignore1   <= to_std_ulogic(instr1 = x"0000" AND fetch1 = '1');
+
+	s0_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals0.imm8 WHEN prev_flush_ui AND NOT branch_dest_misalign_delayed
 	       ELSE shadow_ui_value(7 DOWNTO 0) & signals0.imm8 WHEN shadow_ui_present
 	       ELSE x"00"                       & signals0.imm8;
 
-	s1_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals1.imm8 WHEN prev_flush_ui AND     branch_dest_misalign
+	s1_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals1.imm8 WHEN prev_flush_ui AND     branch_dest_misalign_delayed
 	       ELSE signals0.imm8               & signals1.imm8 WHEN signals0.xwr = '1' AND signals0.x0w = "100" AND signals0.iim = '1' 
 	       ELSE x"00"                       & signals1.imm8;
 
-	shadow_ui_present <= '1' WHEN  signals1.xwr = '1' AND signals1.x0w = "100" AND signals1.iim = '1'
+	shadow_ui_present <= '1' WHEN  fetch1 = '1' 
+	                          AND signals1.xwr = '1' AND signals1.x0w = "100" AND signals1.iim = '1'
 	                          AND (s0_branch    = '0'  OR branch_predict_taken = '0') 
 	                          AND  instr_ready  = '1' AND rising_edge(clk) 
 	                ELSE '0' WHEN  instr_ready  = '1' AND rising_edge(clk) 
 	                ELSE UNAFFECTED;
-	shadow_ui_value   <= x"00" & signals1.imm8 WHEN  signals1.xwr = '1' AND signals1.x0w = "100" 
+	shadow_ui_value   <= x"00" & signals1.imm8 WHEN  fetch1 = '1'
+	                                            AND signals1.xwr = '1' AND signals1.x0w = "100" 
 	                                            AND (s0_branch    = '0'  OR branch_predict_taken = '0') 
 	                                            AND  instr_ready  = '1' AND rising_edge(clk) 
 	                ELSE x"DEAD"               WHEN  instr_ready  = '1' AND rising_edge(clk) 
 	                ELSE UNAFFECTED;
+
+
+	ras(ras_top_p1_i) <= r_ip_p2 WHEN fetch1 = '1' AND signals1.cal = '1' AND rising_edge(clk)
+	                ELSE r_ip_p1 WHEN fetch0 = '1' AND signals0.cal = '1' AND rising_edge(clk)
+	                ELSE UNAFFECTED;
+
+	ras_top_p0        <= ras_top_p1 WHEN  fetch1 = '1' AND signals1.cal = '1' AND rising_edge(clk)
+	                ELSE ras_top_p1 WHEN  fetch0 = '1' AND signals0.cal = '1' AND rising_edge(clk)
+	                ELSE ras_top_m1 WHEN  fetch1 = '1' AND signals1.ret = '1' AND rising_edge(clk)
+	                ELSE ras_top_m1 WHEN  fetch0 = '1' AND signals0.ret = '1' AND rising_edge(clk)
+	                ELSE UNAFFECTED;
+
+--	shadow_lr_value   <= x"0000";
+--	shadow_lr_value   <= ras(ras_top_p0_i);
+	shadow_lr_value   <= r_ip_p2 WHEN signals1.cal = '1' AND rising_edge(clk)
+	                ELSE r_ip_p1 WHEN signals0.cal = '1' AND rising_edge(clk)
+	                ELSE UNAFFECTED;
+	
 
 	--bad instructions loaded
 	flush <= misprediction
@@ -652,6 +764,10 @@ BEGIN
 		VARIABLE prfprev_id : std_ulogic_vector(3 DOWNTO 0);
 
 		VARIABLE branch_alt_dest : t_uword := x"0000";
+
+		VARIABLE rob_fetch_0 : t_rob_entry;
+		VARIABLE rob_fetch_1 : t_rob_entry;
+
 	BEGIN
 		--at all points, mapping must be different
 		--but check slightly later to make sure it is visible in wave
@@ -702,10 +818,10 @@ BEGIN
 
 		ELSE 
 			--when predict taken, next ip 
-			branch_alt_dest := r_ip_p1  WHEN s0_branch AND branch_predict_taken
-			              ELSE r_ip_p2  WHEN s1_branch AND branch_predict_taken
-			              ELSE s0_imm16 WHEN s0_branch
-			              ELSE s1_imm16 WHEN s1_branch
+			branch_alt_dest := shadow_lr_value WHEN s0_branch AND signals0.ret  
+			              ELSE shadow_lr_value WHEN s1_branch AND signals1.ret  
+			              ELSE s0_imm16        WHEN s0_branch
+			              ELSE s1_imm16        WHEN s1_branch
 			              ELSE x"DEAD";
 
 			--finish execution
@@ -794,37 +910,34 @@ BEGIN
 			IF rising_edge(clk) AND instr_ready = '1' THEN 
 				
 				--case when two destinations are the same and both are writing is different
-				rob(rob_FE_i(0)) <= (present         => '1' , 
-									 instr           => instr0,
-									 signals         => signals0,
-									 -- is where it should OR something writes to it right now  
-									 prfs0_p         => prf_present(to_integer(unsigned(rat(rat_0_s0_i).transl)))
-													 OR (to_std_ulogic(eu0.rd = rat(rat_0_s0_i).transl) AND eu0.signals.rwr AND eu0.present) 
-													 OR (to_std_ulogic(eu1.rd = rat(rat_0_s0_i).transl) AND eu1.signals.rwr AND eu1.present), 
-									 prfs0_id        => rat(rat_0_s0_i).transl, 
-									 -- same as prfs0_p 
-									 prfs1_p         => prf_present(to_integer(unsigned(rat(rat_0_s1_i).transl))) OR signals0.iim
-													 OR (to_std_ulogic(eu0.rd = rat(rat_0_s1_i).transl) AND eu0.signals.rwr AND eu0.present) 
-													 OR (to_std_ulogic(eu1.rd = rat(rat_0_s1_i).transl) AND eu1.signals.rwr AND eu1.present), 
-									 prfs1_id        => rat(rat_0_s1_i).transl, 
-									 -- indirect jumps must not have the result present 
-									 prfd0_p         => NOT signals0.rwr 
-									                AND NOT signals0.mwr 
-									                AND NOT signals0.fwr 
-									                AND NOT signals0.xwr 
-									 -- execute will always put data to branch_alt_dest 
-									                AND NOT (s0_branch AND NOT signals0.iim), 
-									 prfd0_id        => rfl(rfl_SE_i(0)), 
-									 prfprev_id      => rat(rat_0_d0_i).transl,
-									 imm16           => s0_imm16, 
-									 nxt_ip          => r_ip_p1,  
-									 flags           => "000",
-									 branch          => s0_branch,
-									 branch_dest     => branch_predict_taken,
-									 branch_alt_dest => branch_alt_dest) 
-								  WHEN fetch0 
-							 ELSE UNAFFECTED;
-
+				rob_fetch_0 := (present         => '1' , 
+							    instr           => instr0,
+							    signals         => signals0,
+							    -- is where it should OR something writes to it right now  
+							    prfs0_p         => prf_present(to_integer(unsigned(rat(rat_0_s0_i).transl)))
+							       			    OR (to_std_ulogic(eu0.rd = rat(rat_0_s0_i).transl) AND eu0.signals.rwr AND eu0.present) 
+							       			    OR (to_std_ulogic(eu1.rd = rat(rat_0_s0_i).transl) AND eu1.signals.rwr AND eu1.present), 
+							    prfs0_id        => rat(rat_0_s0_i).transl, 
+							    -- same as prfs0_p 
+							    prfs1_p         => prf_present(to_integer(unsigned(rat(rat_0_s1_i).transl))) OR signals0.iim
+							       			    OR (to_std_ulogic(eu0.rd = rat(rat_0_s1_i).transl) AND eu0.signals.rwr AND eu0.present) 
+							       			    OR (to_std_ulogic(eu1.rd = rat(rat_0_s1_i).transl) AND eu1.signals.rwr AND eu1.present), 
+							    prfs1_id        => rat(rat_0_s1_i).transl, 
+							    -- indirect jumps must not have the result present 
+							    prfd0_p         => NOT signals0.rwr 
+							                   AND NOT signals0.mwr 
+							                   AND NOT signals0.fwr 
+							                   AND NOT signals0.xwr 
+							    -- execute will always put data to branch_alt_dest 
+							                   AND NOT (s0_branch AND NOT signals0.iim), 
+							    prfd0_id        => rfl(rfl_SE_i(0)), 
+							    prfprev_id      => rat(rat_0_d0_i).transl,
+							    imm16           => s0_imm16, 
+							    nxt_ip          => r_ip_p1,  
+							    flags           => "000",
+							    branch          => s0_branch,
+							    branch_dest     => branch_predict_taken,
+							    branch_alt_dest => branch_alt_dest); 
 
 				--these tests should also incorporate additional decisions like checking whether R0 really is register in that instruction
 				--eg jmp LEG has R0 = 0b111 but does not care about R0
@@ -843,42 +956,49 @@ BEGIN
 				prfprev_id := rfl(rfl_SE_i(0)) WHEN same_dest 
 						 ELSE rat(rat_1_d0_i).transl;
 
-				rob(rob_FE_i(1)) <= (present         => '1' , 
-									 instr           => instr1,
-									 signals         => signals1,
-									 prfs0_p         => (prf_present(to_integer(unsigned(rat(rat_1_s0_i).transl))) AND (to_std_ulogic(signals0.r0 /= signals1.r0) OR NOT signals0.rwr)) 
-													 OR (to_std_ulogic(eu0.rd = prfs0_id) AND eu0.signals.rwr AND eu0.present) 
-													 OR (to_std_ulogic(eu1.rd = prfs0_id) AND eu1.signals.rwr AND eu1.present), 
-									 prfs0_id        => prfs0_id, 
-									 prfs1_p         => signals1.iim 
-													 OR (prf_present(to_integer(unsigned(rat(rat_1_s1_i).transl))) AND (to_std_ulogic(signals0.r0 /= signals1.r1) OR NOT signals0.rwr))
-													 OR (to_std_ulogic(eu0.rd = prfs1_id) AND eu0.signals.rwr AND eu0.present) 
-													 OR (to_std_ulogic(eu1.rd = prfs1_id) AND eu1.signals.rwr AND eu1.present), 
-									 --points to previous instruction if it writes to r1 
-									 prfs1_id        => prfs1_id,
-									 prfd0_p         => NOT signals1.rwr 
-									                AND NOT signals1.mwr 
-									                AND NOT signals1.fwr 
-									                AND NOT signals1.xwr 
-									 -- execute will always put data to branch_alt_dest 
-									                AND NOT (s1_branch AND NOT signals1.iim), 
-									 prfd0_id        => prfd0_id, 
-									 prfprev_id      => prfprev_id, 
-									 imm16           => s1_imm16, 
-									 nxt_ip          => r_ip_p2,  
-									 flags           => "000",
-									 branch          => s1_branch,
-									 branch_dest     => branch_predict_taken,
-									 branch_alt_dest => branch_alt_dest) 
-									WHEN fetch1 
-							 ELSE UNAFFECTED;
+				rob_fetch_1 := (present         => '1' , 
+						        instr           => instr1,
+						        signals         => signals1,
+						        prfs0_p         => (prf_present(to_integer(unsigned(rat(rat_1_s0_i).transl))) AND (to_std_ulogic(signals0.r0 /= signals1.r0) OR NOT signals0.rwr)) 
+						           			    OR (to_std_ulogic(eu0.rd = prfs0_id) AND eu0.signals.rwr AND eu0.present) 
+						           			    OR (to_std_ulogic(eu1.rd = prfs0_id) AND eu1.signals.rwr AND eu1.present), 
+						        prfs0_id        => prfs0_id, 
+						        prfs1_p         => signals1.iim 
+						           			    OR (prf_present(to_integer(unsigned(rat(rat_1_s1_i).transl))) AND (to_std_ulogic(signals0.r0 /= signals1.r1) OR NOT signals0.rwr))
+						           			    OR (to_std_ulogic(eu0.rd = prfs1_id) AND eu0.signals.rwr AND eu0.present) 
+						           			    OR (to_std_ulogic(eu1.rd = prfs1_id) AND eu1.signals.rwr AND eu1.present), 
+						        --points to previous instruction if it writes to r1 
+						        prfs1_id        => prfs1_id,
+						        prfd0_p         => NOT signals1.rwr 
+						                       AND NOT signals1.mwr 
+						                       AND NOT signals1.fwr 
+						                       AND NOT signals1.xwr 
+						        -- execute will always put data to branch_alt_dest 
+						                       AND NOT (s1_branch AND NOT signals1.iim), 
+						        prfd0_id        => prfd0_id, 
+						        prfprev_id      => prfprev_id, 
+						        imm16           => s1_imm16, 
+						        nxt_ip          => r_ip_p2,  
+						        flags           => "000",
+						        branch          => s1_branch,
+						        branch_dest     => branch_predict_taken,
+						        branch_alt_dest => branch_alt_dest);
+
+
+				rob(rob_FE_i(0)) <= rob_fetch_0 WHEN fetch0 AND NOT ignore0
+				               ELSE rob_fetch_1 WHEN fetch0 AND     ignore0
+				                                 AND fetch1 AND NOT ignore1
+				               ELSE UNAFFECTED;
+				rob(rob_FE_i(1)) <= rob_fetch_1 WHEN fetch0 AND NOT ignore0
+				                                 AND fetch1 AND NOT ignore1 
+				               ELSE UNAFFECTED;
 
 
 				--now change the mapping
 				--highly likely that it fails because the conditions are different 
 				--FOR FUCKS SAKE
 
-				IF fetch0 AND fetch1 AND signals0.rwr AND signals1.rwr AND NOT (s0_branch AND branch_predict_taken) THEN
+				IF fetch0 AND fetch1 AND signals0.rwr AND signals1.rwr AND NOT (s0_branch AND branch_predict_taken) AND NOT ignore0 AND NOT ignore1 THEN
 					prf_present(to_integer(unsigned(rfl(rfl_SE_i(0))))) <= '0';
 --					rat(rat_0_d0_i).present <= '0';
 					rat(rat_0_d0_i).transl  <= rfl(rfl_SE_i(0));
@@ -889,6 +1009,9 @@ BEGIN
 				ELSIF fetch0 AND signals0.rwr THEN 
 					prf_present(to_integer(unsigned(rfl(rfl_SE_i(0))))) <= '0';
 					rat(rat_0_d0_i).transl  <= rfl(rfl_SE_i(0));
+				ELSIF fetch0 AND ignore0 AND fetch1 AND signals1.rwr THEN 
+					prf_present(to_integer(unsigned(prfd0_id))) <= '0';
+					rat(rat_1_d0_i).transl  <= prfd0_id;
 				ELSIF fetch1 AND signals1.rwr AND  NOT (s0_branch AND branch_predict_taken) THEN 
 					prf_present(to_integer(unsigned(prfd0_id))) <= '0';
 					rat(rat_1_d0_i).transl  <= prfd0_id;
@@ -978,6 +1101,21 @@ BEGIN
 						EXIT;
 					END IF;
 				END LOOP;
+				--allow mem access to be as 1st as long as 0 is not branch, hack for now
+--				IF    to_std_ulogic(NOT found1) 
+--				  AND NOT misprediction
+--				  AND rob(rob_SE_i(1)).present     AND     rob(rob_SE_i(1)).prfs0_p
+--				  AND rob(rob_SE_i(1)).prfs1_p     AND NOT rob(rob_SE_i(1)).prfd0_p 
+--				  AND (rob(rob_SE_i(1)).signals.mrd OR     rob(rob_SE_i(1)).signals.mwr)
+--				THEN
+--					eu1_mem <= '1';
+--					eu1 <= (rob_entry=>rob_SE(1),present=> '1',rd=>rob(rob_SE_i(1)).prfd0_id,
+--							r0=>rob(rob_SE_i(1)).prfs0_id,r1=>rob(rob_SE_i(1)).prfs1_id,
+--							signals=>rob(rob_SE_i(1)).signals,arg0|arg1|res => x"ZZZZ",
+--							imm16 => rob(rob_SE_i(1)).imm16);
+--
+--					found1 := true;
+--				END IF;
 			END IF;
 
 			IF NOT found1 THEN 
@@ -997,11 +1135,6 @@ BEGIN
 	owr <= 'Z' WHEN disable
 	  ELSE eu1.signals.mwr WHEN eu1_mem
 	  ELSE '0';
-
-	--hlt must be the only instr retired 
-	ohlt <= rob(rob_SE_i(0)).present     
-	    AND rob(rob_SE_i(0)).signals.hlt 
-	    AND flcmp; 
 
 	iodata <= (OTHERS => 'Z')    WHEN disable 
 	--      next 2 depend on alignment 
@@ -1050,7 +1183,7 @@ BEGIN
 	r_sp.i0 <= eu0.arg1 WHEN eu0.signals.xwr = '1' AND eu0.signals.x0w = "001"
 	      ELSE r_sp_p2  WHEN rob(rob_SE_i(0)).signals.pop AND retire0
 	      ELSE r_sp_s2  WHEN rob(rob_SE_i(0)).signals.psh AND retire0
-	      ELSE UNAFFECTED;
+	      ELSE r_sp.o0; --whatever really
 
 	--guarantee ip is even
 	r_ip.i0 <= branch_dest(15 DOWNTO 1) & '0' WHEN flush OR branch
@@ -1061,8 +1194,10 @@ BEGIN
 
 	      ELSE r_ip_p2;
 
+	r_ui.we <= to_std_ulogic(   (eu0.signals.xwr = '1' AND eu0.signals.x0w = "100")
+	                         OR (retire0 = '1' AND NOT (rob(rob_SE_i(0)).signals.xwr = '1' AND rob(rob_SE_i(0)).signals.x0w = "100"))); 
 	r_ui.i0 <= eu0.arg1 WHEN eu0.signals.xwr = '1' AND eu0.signals.x0w = "100"
-	      ELSE UNAFFECTED; 
+	      ELSE x"0000"; 
 
 	r_lr.i0 <= eu0.arg1 WHEN eu0.signals.xwr = '1' AND eu0.signals.x0w = "010"
 	      ELSE cur_ip_p1; 
@@ -1073,6 +1208,69 @@ BEGIN
 	      ELSE x"000" & "0" & rob(rob_SE_i(1)).flags WHEN retire1 AND rob(rob_SE_i(1)).signals.fwr 
 	      ELSE x"000" & "0" & rob(rob_SE_i(0)).flags; 
 
+
+	--hlt must be the only instr retired 
+	PROCESS (clk) IS 
+	BEGIN
+		IF rising_edge(clk) THEN
+			cnt_misprediction <= cnt_misprediction + 1 WHEN misprediction
+			                ELSE UNAFFECTED;
+			cnt_fetch         <= cnt_fetch         + 1 WHEN can_fetch 
+			                ELSE UNAFFECTED;
+			cnt_retire2       <= cnt_retire2       + 1 WHEN retire0 AND retire1 
+			                ELSE UNAFFECTED;
+			cnt_retire1       <= cnt_retire1       + 1 WHEN retire0 AND NOT retire1
+			                ELSE UNAFFECTED;
+			cnt_retire0       <= cnt_retire0       + 1 WHEN NOT retire0
+			                ELSE UNAFFECTED;
+			cnt_exec2         <= cnt_exec2         + 1 WHEN eu0.present AND eu1.present 
+			                ELSE UNAFFECTED;
+			cnt_exec1         <= cnt_exec1         + 1 WHEN eu0.present XOR eu1.present
+			                ELSE UNAFFECTED;
+			cnt_exec0         <= cnt_exec0         + 1 WHEN eu0.present NOR eu1.present 
+			                ELSE UNAFFECTED;
+			cnt_movrr         <= cnt_movrr         + 2 WHEN retire0 = '1' AND rob(rob_SE_i(0)).signals.src = "000" AND rob(rob_SE_i(0)).signals.iim = '0' 
+			                                            AND retire1 = '1' AND rob(rob_SE_i(1)).signals.src = "000" AND rob(rob_SE_i(1)).signals.iim = '0' 
+			                ELSE cnt_movrr         + 1 WHEN retire0 = '1' AND rob(rob_SE_i(0)).signals.src = "000" AND rob(rob_SE_i(0)).signals.iim = '0' 
+			                ELSE cnt_movrr         + 1 WHEN retire1 = '1' AND rob(rob_SE_i(1)).signals.src = "000" AND rob(rob_SE_i(1)).signals.iim = '0' 
+			                ELSE UNAFFECTED;
+			cnt_ignore        <= cnt_ignore        + 2 WHEN ignore0 AND ignore1
+			                ELSE cnt_ignore        + 1 WHEN ignore0 XOR ignore1
+			                ELSE UNAFFECTED; 
+
+			IF  rob(rob_SE_i(0)).present     
+			AND rob(rob_SE_i(0)).signals.hlt 
+			AND flcmp
+			THEN 
+				ohlt <= '1';
+
+				REPORT LF  
+					& LF & "count miss   : " & integer'image(cnt_misprediction)
+					& LF & "count fetch  : " & integer'image(cnt_fetch        )
+					& LF & "count retire0: " & integer'image(cnt_retire0      )
+					& LF & "count retire1: " & integer'image(cnt_retire1      )
+					& LF & "count retire2: " & integer'image(cnt_retire2      )
+					& LF & "count exec0  : " & integer'image(cnt_exec0        )
+					& LF & "count exec1  : " & integer'image(cnt_exec1        )
+					& LF & "count exec2  : " & integer'image(cnt_exec2        )
+					& LF & "count movrr  : " & integer'image(cnt_movrr        )
+					& LF & "count ignore : " & integer'image(cnt_ignore       )
+					& LF;
+				REPORT LF
+					& LF & "R0: " & integer'image(to_integer(unsigned(debug_regs(0))))
+					& LF & "R1: " & integer'image(to_integer(unsigned(debug_regs(1))))
+					& LF & "R2: " & integer'image(to_integer(unsigned(debug_regs(2))))
+					& LF & "R3: " & integer'image(to_integer(unsigned(debug_regs(3))))
+					& LF & "R4: " & integer'image(to_integer(unsigned(debug_regs(4))))
+					& LF & "R5: " & integer'image(to_integer(unsigned(debug_regs(5))))
+					& LF & "R6: " & integer'image(to_integer(unsigned(debug_regs(6))))
+					& LF & "R7: " & integer'image(to_integer(unsigned(debug_regs(7))))
+				    & LF;
+			ELSE
+				ohlt <= '0';
+			END IF;
+		END IF;
+	END PROCESS;
 
 	PROCESS IS 
 		ALIAS reg_data IS <<SIGNAL c_regfile.data : t_reg_arr>>;

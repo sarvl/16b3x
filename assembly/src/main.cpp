@@ -388,16 +388,26 @@ int main(int argc, char* argv[])
 insert_instruction:
 		uint16_t val;
 		if(iformat)
+		{
+			if(arg1 > 0xFF)
+			{
+				error("immiediate is greater than 256 or 0xFF, consider using wrx UI",
+				      tokens[0][tid - 3].line, tokens[0][tid - 3].file);
+				continue;
+			}
+
 			val = static_cast<uint16_t>(opcode << 11)
 			    | static_cast<uint16_t>(arg0   <<  8)
 			    | static_cast<uint16_t>(arg1   <<  0)
 			    ;
+		}
 		else
+		{
 			val = static_cast<uint16_t>(arg0   <<  8)
 			    | static_cast<uint16_t>(arg1   <<  5)
 			    | static_cast<uint16_t>(opcode <<  0)
 			    ;
-		
+		}
 
 		output[cur_instr * 5 + 0] = val_hex((val >> 12) & 0xF);
 		output[cur_instr * 5 + 1] = val_hex((val >>  8) & 0xF);
