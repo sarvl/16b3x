@@ -1,23 +1,25 @@
 [*]
 [*] GTKWave Analyzer v3.3.117 (w)1999-2023 BSI
-[*] Tue Jan  2 09:16:03 2024
+[*] Mon Jan  8 04:56:38 2024
 [*]
 [dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl_v2/wave.ghw"
-[dumpfile_mtime] "Tue Jan  2 09:15:18 2024"
-[dumpfile_size] 2141929
+[dumpfile_mtime] "Mon Jan  8 04:54:49 2024"
+[dumpfile_size] 2486847
 [savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl_v2/wide_oooe.gtkw"
-[timestart] 0
-[size] 948 987
-[pos] -1 -698
-*-23.411512 7022000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 11120000
+[size] 1366 768
+[pos] -1 -1
+*-23.411512 33018000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.chip.
+[treeopen] top.chip.c_core0.
 [treeopen] top.chip.c_core0.eu0.signals.
 [treeopen] top.chip.c_core0.eu1.signals.
+[treeopen] top.chip.c_core0.rob.
 [sst_width] 273
-[signals_width] 231
+[signals_width] 271
 [sst_expanded] 1
-[sst_vpaned_height] 291
+[sst_vpaned_height] 354
 @28
 top.chip.clk_core0
 top.chip.clk_mem0
@@ -29,7 +31,7 @@ top.chip.c0_hlt
 @200
 -
 -bus
-@23
+@22
 #{top.chip.bus_mem[31:0]} top.chip.bus_mem[31] top.chip.bus_mem[30] top.chip.bus_mem[29] top.chip.bus_mem[28] top.chip.bus_mem[27] top.chip.bus_mem[26] top.chip.bus_mem[25] top.chip.bus_mem[24] top.chip.bus_mem[23] top.chip.bus_mem[22] top.chip.bus_mem[21] top.chip.bus_mem[20] top.chip.bus_mem[19] top.chip.bus_mem[18] top.chip.bus_mem[17] top.chip.bus_mem[16] top.chip.bus_mem[15] top.chip.bus_mem[14] top.chip.bus_mem[13] top.chip.bus_mem[12] top.chip.bus_mem[11] top.chip.bus_mem[10] top.chip.bus_mem[9] top.chip.bus_mem[8] top.chip.bus_mem[7] top.chip.bus_mem[6] top.chip.bus_mem[5] top.chip.bus_mem[4] top.chip.bus_mem[3] top.chip.bus_mem[2] top.chip.bus_mem[1] top.chip.bus_mem[0]
 @c00022
 #{top.chip.bus_adr[15:0]} top.chip.bus_adr[15] top.chip.bus_adr[14] top.chip.bus_adr[13] top.chip.bus_adr[12] top.chip.bus_adr[11] top.chip.bus_adr[10] top.chip.bus_adr[9] top.chip.bus_adr[8] top.chip.bus_adr[7] top.chip.bus_adr[6] top.chip.bus_adr[5] top.chip.bus_adr[4] top.chip.bus_adr[3] top.chip.bus_adr[2] top.chip.bus_adr[1] top.chip.bus_adr[0]
@@ -60,6 +62,8 @@ top.chip.bus_adr[0]
 -
 -
 -branch_prdct
+@22
+#{top.chip.c_core0.cur_ip_p1[15:0]} top.chip.c_core0.cur_ip_p1[15] top.chip.c_core0.cur_ip_p1[14] top.chip.c_core0.cur_ip_p1[13] top.chip.c_core0.cur_ip_p1[12] top.chip.c_core0.cur_ip_p1[11] top.chip.c_core0.cur_ip_p1[10] top.chip.c_core0.cur_ip_p1[9] top.chip.c_core0.cur_ip_p1[8] top.chip.c_core0.cur_ip_p1[7] top.chip.c_core0.cur_ip_p1[6] top.chip.c_core0.cur_ip_p1[5] top.chip.c_core0.cur_ip_p1[4] top.chip.c_core0.cur_ip_p1[3] top.chip.c_core0.cur_ip_p1[2] top.chip.c_core0.cur_ip_p1[1] top.chip.c_core0.cur_ip_p1[0]
 @28
 top.chip.c_core0.branch
 top.chip.c_core0.misprediction
@@ -70,12 +74,14 @@ top.chip.c_core0.branch_predict_taken
 @28
 top.chip.c_core0.branch_dest_misalign
 top.chip.c_core0.s0_branch
+@29
 top.chip.c_core0.s1_branch
 @200
 -
 -core0
 @28
 top.chip.c_core0.can_fetch
+top.chip.c_core0.can_cache
 top.chip.c_core0.flush
 top.chip.c_core0.write_to_instr
 top.chip.c_core0.instr_ready
@@ -117,6 +123,8 @@ top.chip.c_core0.eu1.present
 @28
 top.chip.c_core0.fetch0
 top.chip.c_core0.fetch1
+top.chip.c_core0.ignore0
+top.chip.c_core0.ignore1
 top.chip.c_core0.retire0
 top.chip.c_core0.retire1
 @200
@@ -145,6 +153,7 @@ top.chip.c_core0.rob[0].branch
 top.chip.c_core0.rob[0].branch_dest
 @22
 #{top.chip.c_core0.rob[0].branch_alt_dest[15:0]} top.chip.c_core0.rob[0].branch_alt_dest[15] top.chip.c_core0.rob[0].branch_alt_dest[14] top.chip.c_core0.rob[0].branch_alt_dest[13] top.chip.c_core0.rob[0].branch_alt_dest[12] top.chip.c_core0.rob[0].branch_alt_dest[11] top.chip.c_core0.rob[0].branch_alt_dest[10] top.chip.c_core0.rob[0].branch_alt_dest[9] top.chip.c_core0.rob[0].branch_alt_dest[8] top.chip.c_core0.rob[0].branch_alt_dest[7] top.chip.c_core0.rob[0].branch_alt_dest[6] top.chip.c_core0.rob[0].branch_alt_dest[5] top.chip.c_core0.rob[0].branch_alt_dest[4] top.chip.c_core0.rob[0].branch_alt_dest[3] top.chip.c_core0.rob[0].branch_alt_dest[2] top.chip.c_core0.rob[0].branch_alt_dest[1] top.chip.c_core0.rob[0].branch_alt_dest[0]
+#{top.chip.c_core0.rob[0].nxt_ip[15:0]} top.chip.c_core0.rob[0].nxt_ip[15] top.chip.c_core0.rob[0].nxt_ip[14] top.chip.c_core0.rob[0].nxt_ip[13] top.chip.c_core0.rob[0].nxt_ip[12] top.chip.c_core0.rob[0].nxt_ip[11] top.chip.c_core0.rob[0].nxt_ip[10] top.chip.c_core0.rob[0].nxt_ip[9] top.chip.c_core0.rob[0].nxt_ip[8] top.chip.c_core0.rob[0].nxt_ip[7] top.chip.c_core0.rob[0].nxt_ip[6] top.chip.c_core0.rob[0].nxt_ip[5] top.chip.c_core0.rob[0].nxt_ip[4] top.chip.c_core0.rob[0].nxt_ip[3] top.chip.c_core0.rob[0].nxt_ip[2] top.chip.c_core0.rob[0].nxt_ip[1] top.chip.c_core0.rob[0].nxt_ip[0]
 @200
 -entry1
 @28
@@ -171,6 +180,7 @@ top.chip.c_core0.rob[1].branch
 top.chip.c_core0.rob[1].branch_dest
 @22
 #{top.chip.c_core0.rob[1].branch_alt_dest[15:0]} top.chip.c_core0.rob[1].branch_alt_dest[15] top.chip.c_core0.rob[1].branch_alt_dest[14] top.chip.c_core0.rob[1].branch_alt_dest[13] top.chip.c_core0.rob[1].branch_alt_dest[12] top.chip.c_core0.rob[1].branch_alt_dest[11] top.chip.c_core0.rob[1].branch_alt_dest[10] top.chip.c_core0.rob[1].branch_alt_dest[9] top.chip.c_core0.rob[1].branch_alt_dest[8] top.chip.c_core0.rob[1].branch_alt_dest[7] top.chip.c_core0.rob[1].branch_alt_dest[6] top.chip.c_core0.rob[1].branch_alt_dest[5] top.chip.c_core0.rob[1].branch_alt_dest[4] top.chip.c_core0.rob[1].branch_alt_dest[3] top.chip.c_core0.rob[1].branch_alt_dest[2] top.chip.c_core0.rob[1].branch_alt_dest[1] top.chip.c_core0.rob[1].branch_alt_dest[0]
+#{top.chip.c_core0.rob[1].nxt_ip[15:0]} top.chip.c_core0.rob[1].nxt_ip[15] top.chip.c_core0.rob[1].nxt_ip[14] top.chip.c_core0.rob[1].nxt_ip[13] top.chip.c_core0.rob[1].nxt_ip[12] top.chip.c_core0.rob[1].nxt_ip[11] top.chip.c_core0.rob[1].nxt_ip[10] top.chip.c_core0.rob[1].nxt_ip[9] top.chip.c_core0.rob[1].nxt_ip[8] top.chip.c_core0.rob[1].nxt_ip[7] top.chip.c_core0.rob[1].nxt_ip[6] top.chip.c_core0.rob[1].nxt_ip[5] top.chip.c_core0.rob[1].nxt_ip[4] top.chip.c_core0.rob[1].nxt_ip[3] top.chip.c_core0.rob[1].nxt_ip[2] top.chip.c_core0.rob[1].nxt_ip[1] top.chip.c_core0.rob[1].nxt_ip[0]
 @200
 -entry2
 @28
@@ -197,6 +207,7 @@ top.chip.c_core0.rob[2].branch
 top.chip.c_core0.rob[2].branch_dest
 @22
 #{top.chip.c_core0.rob[2].branch_alt_dest[15:0]} top.chip.c_core0.rob[2].branch_alt_dest[15] top.chip.c_core0.rob[2].branch_alt_dest[14] top.chip.c_core0.rob[2].branch_alt_dest[13] top.chip.c_core0.rob[2].branch_alt_dest[12] top.chip.c_core0.rob[2].branch_alt_dest[11] top.chip.c_core0.rob[2].branch_alt_dest[10] top.chip.c_core0.rob[2].branch_alt_dest[9] top.chip.c_core0.rob[2].branch_alt_dest[8] top.chip.c_core0.rob[2].branch_alt_dest[7] top.chip.c_core0.rob[2].branch_alt_dest[6] top.chip.c_core0.rob[2].branch_alt_dest[5] top.chip.c_core0.rob[2].branch_alt_dest[4] top.chip.c_core0.rob[2].branch_alt_dest[3] top.chip.c_core0.rob[2].branch_alt_dest[2] top.chip.c_core0.rob[2].branch_alt_dest[1] top.chip.c_core0.rob[2].branch_alt_dest[0]
+#{top.chip.c_core0.rob[2].nxt_ip[15:0]} top.chip.c_core0.rob[2].nxt_ip[15] top.chip.c_core0.rob[2].nxt_ip[14] top.chip.c_core0.rob[2].nxt_ip[13] top.chip.c_core0.rob[2].nxt_ip[12] top.chip.c_core0.rob[2].nxt_ip[11] top.chip.c_core0.rob[2].nxt_ip[10] top.chip.c_core0.rob[2].nxt_ip[9] top.chip.c_core0.rob[2].nxt_ip[8] top.chip.c_core0.rob[2].nxt_ip[7] top.chip.c_core0.rob[2].nxt_ip[6] top.chip.c_core0.rob[2].nxt_ip[5] top.chip.c_core0.rob[2].nxt_ip[4] top.chip.c_core0.rob[2].nxt_ip[3] top.chip.c_core0.rob[2].nxt_ip[2] top.chip.c_core0.rob[2].nxt_ip[1] top.chip.c_core0.rob[2].nxt_ip[0]
 @200
 -entry3
 @28
@@ -223,6 +234,7 @@ top.chip.c_core0.rob[3].branch
 top.chip.c_core0.rob[3].branch_dest
 @22
 #{top.chip.c_core0.rob[3].branch_alt_dest[15:0]} top.chip.c_core0.rob[3].branch_alt_dest[15] top.chip.c_core0.rob[3].branch_alt_dest[14] top.chip.c_core0.rob[3].branch_alt_dest[13] top.chip.c_core0.rob[3].branch_alt_dest[12] top.chip.c_core0.rob[3].branch_alt_dest[11] top.chip.c_core0.rob[3].branch_alt_dest[10] top.chip.c_core0.rob[3].branch_alt_dest[9] top.chip.c_core0.rob[3].branch_alt_dest[8] top.chip.c_core0.rob[3].branch_alt_dest[7] top.chip.c_core0.rob[3].branch_alt_dest[6] top.chip.c_core0.rob[3].branch_alt_dest[5] top.chip.c_core0.rob[3].branch_alt_dest[4] top.chip.c_core0.rob[3].branch_alt_dest[3] top.chip.c_core0.rob[3].branch_alt_dest[2] top.chip.c_core0.rob[3].branch_alt_dest[1] top.chip.c_core0.rob[3].branch_alt_dest[0]
+#{top.chip.c_core0.rob[3].nxt_ip[15:0]} top.chip.c_core0.rob[3].nxt_ip[15] top.chip.c_core0.rob[3].nxt_ip[14] top.chip.c_core0.rob[3].nxt_ip[13] top.chip.c_core0.rob[3].nxt_ip[12] top.chip.c_core0.rob[3].nxt_ip[11] top.chip.c_core0.rob[3].nxt_ip[10] top.chip.c_core0.rob[3].nxt_ip[9] top.chip.c_core0.rob[3].nxt_ip[8] top.chip.c_core0.rob[3].nxt_ip[7] top.chip.c_core0.rob[3].nxt_ip[6] top.chip.c_core0.rob[3].nxt_ip[5] top.chip.c_core0.rob[3].nxt_ip[4] top.chip.c_core0.rob[3].nxt_ip[3] top.chip.c_core0.rob[3].nxt_ip[2] top.chip.c_core0.rob[3].nxt_ip[1] top.chip.c_core0.rob[3].nxt_ip[0]
 @200
 -entry4
 @28
@@ -249,6 +261,7 @@ top.chip.c_core0.rob[4].branch
 top.chip.c_core0.rob[4].branch_dest
 @22
 #{top.chip.c_core0.rob[4].branch_alt_dest[15:0]} top.chip.c_core0.rob[4].branch_alt_dest[15] top.chip.c_core0.rob[4].branch_alt_dest[14] top.chip.c_core0.rob[4].branch_alt_dest[13] top.chip.c_core0.rob[4].branch_alt_dest[12] top.chip.c_core0.rob[4].branch_alt_dest[11] top.chip.c_core0.rob[4].branch_alt_dest[10] top.chip.c_core0.rob[4].branch_alt_dest[9] top.chip.c_core0.rob[4].branch_alt_dest[8] top.chip.c_core0.rob[4].branch_alt_dest[7] top.chip.c_core0.rob[4].branch_alt_dest[6] top.chip.c_core0.rob[4].branch_alt_dest[5] top.chip.c_core0.rob[4].branch_alt_dest[4] top.chip.c_core0.rob[4].branch_alt_dest[3] top.chip.c_core0.rob[4].branch_alt_dest[2] top.chip.c_core0.rob[4].branch_alt_dest[1] top.chip.c_core0.rob[4].branch_alt_dest[0]
+#{top.chip.c_core0.rob[4].nxt_ip[15:0]} top.chip.c_core0.rob[4].nxt_ip[15] top.chip.c_core0.rob[4].nxt_ip[14] top.chip.c_core0.rob[4].nxt_ip[13] top.chip.c_core0.rob[4].nxt_ip[12] top.chip.c_core0.rob[4].nxt_ip[11] top.chip.c_core0.rob[4].nxt_ip[10] top.chip.c_core0.rob[4].nxt_ip[9] top.chip.c_core0.rob[4].nxt_ip[8] top.chip.c_core0.rob[4].nxt_ip[7] top.chip.c_core0.rob[4].nxt_ip[6] top.chip.c_core0.rob[4].nxt_ip[5] top.chip.c_core0.rob[4].nxt_ip[4] top.chip.c_core0.rob[4].nxt_ip[3] top.chip.c_core0.rob[4].nxt_ip[2] top.chip.c_core0.rob[4].nxt_ip[1] top.chip.c_core0.rob[4].nxt_ip[0]
 @200
 -entry5
 @28
@@ -275,6 +288,7 @@ top.chip.c_core0.rob[5].branch
 top.chip.c_core0.rob[5].branch_dest
 @22
 #{top.chip.c_core0.rob[5].branch_alt_dest[15:0]} top.chip.c_core0.rob[5].branch_alt_dest[15] top.chip.c_core0.rob[5].branch_alt_dest[14] top.chip.c_core0.rob[5].branch_alt_dest[13] top.chip.c_core0.rob[5].branch_alt_dest[12] top.chip.c_core0.rob[5].branch_alt_dest[11] top.chip.c_core0.rob[5].branch_alt_dest[10] top.chip.c_core0.rob[5].branch_alt_dest[9] top.chip.c_core0.rob[5].branch_alt_dest[8] top.chip.c_core0.rob[5].branch_alt_dest[7] top.chip.c_core0.rob[5].branch_alt_dest[6] top.chip.c_core0.rob[5].branch_alt_dest[5] top.chip.c_core0.rob[5].branch_alt_dest[4] top.chip.c_core0.rob[5].branch_alt_dest[3] top.chip.c_core0.rob[5].branch_alt_dest[2] top.chip.c_core0.rob[5].branch_alt_dest[1] top.chip.c_core0.rob[5].branch_alt_dest[0]
+#{top.chip.c_core0.rob[5].nxt_ip[15:0]} top.chip.c_core0.rob[5].nxt_ip[15] top.chip.c_core0.rob[5].nxt_ip[14] top.chip.c_core0.rob[5].nxt_ip[13] top.chip.c_core0.rob[5].nxt_ip[12] top.chip.c_core0.rob[5].nxt_ip[11] top.chip.c_core0.rob[5].nxt_ip[10] top.chip.c_core0.rob[5].nxt_ip[9] top.chip.c_core0.rob[5].nxt_ip[8] top.chip.c_core0.rob[5].nxt_ip[7] top.chip.c_core0.rob[5].nxt_ip[6] top.chip.c_core0.rob[5].nxt_ip[5] top.chip.c_core0.rob[5].nxt_ip[4] top.chip.c_core0.rob[5].nxt_ip[3] top.chip.c_core0.rob[5].nxt_ip[2] top.chip.c_core0.rob[5].nxt_ip[1] top.chip.c_core0.rob[5].nxt_ip[0]
 @200
 -entry6
 @28
@@ -301,6 +315,7 @@ top.chip.c_core0.rob[6].branch
 top.chip.c_core0.rob[6].branch_dest
 @22
 #{top.chip.c_core0.rob[6].branch_alt_dest[15:0]} top.chip.c_core0.rob[6].branch_alt_dest[15] top.chip.c_core0.rob[6].branch_alt_dest[14] top.chip.c_core0.rob[6].branch_alt_dest[13] top.chip.c_core0.rob[6].branch_alt_dest[12] top.chip.c_core0.rob[6].branch_alt_dest[11] top.chip.c_core0.rob[6].branch_alt_dest[10] top.chip.c_core0.rob[6].branch_alt_dest[9] top.chip.c_core0.rob[6].branch_alt_dest[8] top.chip.c_core0.rob[6].branch_alt_dest[7] top.chip.c_core0.rob[6].branch_alt_dest[6] top.chip.c_core0.rob[6].branch_alt_dest[5] top.chip.c_core0.rob[6].branch_alt_dest[4] top.chip.c_core0.rob[6].branch_alt_dest[3] top.chip.c_core0.rob[6].branch_alt_dest[2] top.chip.c_core0.rob[6].branch_alt_dest[1] top.chip.c_core0.rob[6].branch_alt_dest[0]
+#{top.chip.c_core0.rob[6].nxt_ip[15:0]} top.chip.c_core0.rob[6].nxt_ip[15] top.chip.c_core0.rob[6].nxt_ip[14] top.chip.c_core0.rob[6].nxt_ip[13] top.chip.c_core0.rob[6].nxt_ip[12] top.chip.c_core0.rob[6].nxt_ip[11] top.chip.c_core0.rob[6].nxt_ip[10] top.chip.c_core0.rob[6].nxt_ip[9] top.chip.c_core0.rob[6].nxt_ip[8] top.chip.c_core0.rob[6].nxt_ip[7] top.chip.c_core0.rob[6].nxt_ip[6] top.chip.c_core0.rob[6].nxt_ip[5] top.chip.c_core0.rob[6].nxt_ip[4] top.chip.c_core0.rob[6].nxt_ip[3] top.chip.c_core0.rob[6].nxt_ip[2] top.chip.c_core0.rob[6].nxt_ip[1] top.chip.c_core0.rob[6].nxt_ip[0]
 @200
 -entry7
 @28
@@ -327,6 +342,7 @@ top.chip.c_core0.rob[7].branch
 top.chip.c_core0.rob[7].branch_dest
 @22
 #{top.chip.c_core0.rob[7].branch_alt_dest[15:0]} top.chip.c_core0.rob[7].branch_alt_dest[15] top.chip.c_core0.rob[7].branch_alt_dest[14] top.chip.c_core0.rob[7].branch_alt_dest[13] top.chip.c_core0.rob[7].branch_alt_dest[12] top.chip.c_core0.rob[7].branch_alt_dest[11] top.chip.c_core0.rob[7].branch_alt_dest[10] top.chip.c_core0.rob[7].branch_alt_dest[9] top.chip.c_core0.rob[7].branch_alt_dest[8] top.chip.c_core0.rob[7].branch_alt_dest[7] top.chip.c_core0.rob[7].branch_alt_dest[6] top.chip.c_core0.rob[7].branch_alt_dest[5] top.chip.c_core0.rob[7].branch_alt_dest[4] top.chip.c_core0.rob[7].branch_alt_dest[3] top.chip.c_core0.rob[7].branch_alt_dest[2] top.chip.c_core0.rob[7].branch_alt_dest[1] top.chip.c_core0.rob[7].branch_alt_dest[0]
+#{top.chip.c_core0.rob[7].nxt_ip[15:0]} top.chip.c_core0.rob[7].nxt_ip[15] top.chip.c_core0.rob[7].nxt_ip[14] top.chip.c_core0.rob[7].nxt_ip[13] top.chip.c_core0.rob[7].nxt_ip[12] top.chip.c_core0.rob[7].nxt_ip[11] top.chip.c_core0.rob[7].nxt_ip[10] top.chip.c_core0.rob[7].nxt_ip[9] top.chip.c_core0.rob[7].nxt_ip[8] top.chip.c_core0.rob[7].nxt_ip[7] top.chip.c_core0.rob[7].nxt_ip[6] top.chip.c_core0.rob[7].nxt_ip[5] top.chip.c_core0.rob[7].nxt_ip[4] top.chip.c_core0.rob[7].nxt_ip[3] top.chip.c_core0.rob[7].nxt_ip[2] top.chip.c_core0.rob[7].nxt_ip[1] top.chip.c_core0.rob[7].nxt_ip[0]
 @200
 -
 -rat
@@ -427,10 +443,10 @@ top.chip.c_core0.debug_regs[7][0]
 @200
 -
 -rfl
-@28
-#{top.chip.c_core0.rfl_se[0][2:0]} top.chip.c_core0.rfl_se[0][2] top.chip.c_core0.rfl_se[0][1] top.chip.c_core0.rfl_se[0][0]
-#{top.chip.c_core0.rfl_fe[0][2:0]} top.chip.c_core0.rfl_fe[0][2] top.chip.c_core0.rfl_fe[0][1] top.chip.c_core0.rfl_fe[0][0]
 @22
+#{top.chip.c_core0.rfl_se[0][3:0]} top.chip.c_core0.rfl_se[0][3] top.chip.c_core0.rfl_se[0][2] top.chip.c_core0.rfl_se[0][1] top.chip.c_core0.rfl_se[0][0]
+#{top.chip.c_core0.rfl_fe[0][3:0]} top.chip.c_core0.rfl_fe[0][3] top.chip.c_core0.rfl_fe[0][2] top.chip.c_core0.rfl_fe[0][1] top.chip.c_core0.rfl_fe[0][0]
+#{top.chip.c_core0.rfl_se_com[0][3:0]} top.chip.c_core0.rfl_se_com[0][3] top.chip.c_core0.rfl_se_com[0][2] top.chip.c_core0.rfl_se_com[0][1] top.chip.c_core0.rfl_se_com[0][0]
 #{top.chip.c_core0.rfl[0][3:0]} top.chip.c_core0.rfl[0][3] top.chip.c_core0.rfl[0][2] top.chip.c_core0.rfl[0][1] top.chip.c_core0.rfl[0][0]
 #{top.chip.c_core0.rfl[1][3:0]} top.chip.c_core0.rfl[1][3] top.chip.c_core0.rfl[1][2] top.chip.c_core0.rfl[1][1] top.chip.c_core0.rfl[1][0]
 #{top.chip.c_core0.rfl[2][3:0]} top.chip.c_core0.rfl[2][3] top.chip.c_core0.rfl[2][2] top.chip.c_core0.rfl[2][1] top.chip.c_core0.rfl[2][0]
@@ -439,6 +455,14 @@ top.chip.c_core0.debug_regs[7][0]
 #{top.chip.c_core0.rfl[5][3:0]} top.chip.c_core0.rfl[5][3] top.chip.c_core0.rfl[5][2] top.chip.c_core0.rfl[5][1] top.chip.c_core0.rfl[5][0]
 #{top.chip.c_core0.rfl[6][3:0]} top.chip.c_core0.rfl[6][3] top.chip.c_core0.rfl[6][2] top.chip.c_core0.rfl[6][1] top.chip.c_core0.rfl[6][0]
 #{top.chip.c_core0.rfl[7][3:0]} top.chip.c_core0.rfl[7][3] top.chip.c_core0.rfl[7][2] top.chip.c_core0.rfl[7][1] top.chip.c_core0.rfl[7][0]
+#{top.chip.c_core0.rfl[8][3:0]} top.chip.c_core0.rfl[8][3] top.chip.c_core0.rfl[8][2] top.chip.c_core0.rfl[8][1] top.chip.c_core0.rfl[8][0]
+#{top.chip.c_core0.rfl[9][3:0]} top.chip.c_core0.rfl[9][3] top.chip.c_core0.rfl[9][2] top.chip.c_core0.rfl[9][1] top.chip.c_core0.rfl[9][0]
+#{top.chip.c_core0.rfl[10][3:0]} top.chip.c_core0.rfl[10][3] top.chip.c_core0.rfl[10][2] top.chip.c_core0.rfl[10][1] top.chip.c_core0.rfl[10][0]
+#{top.chip.c_core0.rfl[11][3:0]} top.chip.c_core0.rfl[11][3] top.chip.c_core0.rfl[11][2] top.chip.c_core0.rfl[11][1] top.chip.c_core0.rfl[11][0]
+#{top.chip.c_core0.rfl[12][3:0]} top.chip.c_core0.rfl[12][3] top.chip.c_core0.rfl[12][2] top.chip.c_core0.rfl[12][1] top.chip.c_core0.rfl[12][0]
+#{top.chip.c_core0.rfl[13][3:0]} top.chip.c_core0.rfl[13][3] top.chip.c_core0.rfl[13][2] top.chip.c_core0.rfl[13][1] top.chip.c_core0.rfl[13][0]
+#{top.chip.c_core0.rfl[14][3:0]} top.chip.c_core0.rfl[14][3] top.chip.c_core0.rfl[14][2] top.chip.c_core0.rfl[14][1] top.chip.c_core0.rfl[14][0]
+#{top.chip.c_core0.rfl[15][3:0]} top.chip.c_core0.rfl[15][3] top.chip.c_core0.rfl[15][2] top.chip.c_core0.rfl[15][1] top.chip.c_core0.rfl[15][0]
 @200
 -
 -prf
@@ -542,6 +566,7 @@ top.chip.c_core0.c_regfile.data[15][0]
 @1401200
 -group_end
 @200
+-prf_used_cnt
 -
 -external
 -ip
@@ -659,6 +684,15 @@ top.chip.c_mem0.rd
 #{top.chip.c_mem0.mem[0][15:0]} top.chip.c_mem0.mem[0][15] top.chip.c_mem0.mem[0][14] top.chip.c_mem0.mem[0][13] top.chip.c_mem0.mem[0][12] top.chip.c_mem0.mem[0][11] top.chip.c_mem0.mem[0][10] top.chip.c_mem0.mem[0][9] top.chip.c_mem0.mem[0][8] top.chip.c_mem0.mem[0][7] top.chip.c_mem0.mem[0][6] top.chip.c_mem0.mem[0][5] top.chip.c_mem0.mem[0][4] top.chip.c_mem0.mem[0][3] top.chip.c_mem0.mem[0][2] top.chip.c_mem0.mem[0][1] top.chip.c_mem0.mem[0][0]
 #{top.chip.c_mem0.mem[1][15:0]} top.chip.c_mem0.mem[1][15] top.chip.c_mem0.mem[1][14] top.chip.c_mem0.mem[1][13] top.chip.c_mem0.mem[1][12] top.chip.c_mem0.mem[1][11] top.chip.c_mem0.mem[1][10] top.chip.c_mem0.mem[1][9] top.chip.c_mem0.mem[1][8] top.chip.c_mem0.mem[1][7] top.chip.c_mem0.mem[1][6] top.chip.c_mem0.mem[1][5] top.chip.c_mem0.mem[1][4] top.chip.c_mem0.mem[1][3] top.chip.c_mem0.mem[1][2] top.chip.c_mem0.mem[1][1] top.chip.c_mem0.mem[1][0]
 #{top.chip.c_mem0.iodata[15:0]} top.chip.c_mem0.iodata[15] top.chip.c_mem0.iodata[14] top.chip.c_mem0.iodata[13] top.chip.c_mem0.iodata[12] top.chip.c_mem0.iodata[11] top.chip.c_mem0.iodata[10] top.chip.c_mem0.iodata[9] top.chip.c_mem0.iodata[8] top.chip.c_mem0.iodata[7] top.chip.c_mem0.iodata[6] top.chip.c_mem0.iodata[5] top.chip.c_mem0.iodata[4] top.chip.c_mem0.iodata[3] top.chip.c_mem0.iodata[2] top.chip.c_mem0.iodata[1] top.chip.c_mem0.iodata[0]
+@200
+-
+-i$
+@28
+top.chip.c_core0.cache_hit
+@420
+top.chip.c_core0.cache_addr
+@22
+#{top.chip.c_core0.cache_data[31:0]} top.chip.c_core0.cache_data[31] top.chip.c_core0.cache_data[30] top.chip.c_core0.cache_data[29] top.chip.c_core0.cache_data[28] top.chip.c_core0.cache_data[27] top.chip.c_core0.cache_data[26] top.chip.c_core0.cache_data[25] top.chip.c_core0.cache_data[24] top.chip.c_core0.cache_data[23] top.chip.c_core0.cache_data[22] top.chip.c_core0.cache_data[21] top.chip.c_core0.cache_data[20] top.chip.c_core0.cache_data[19] top.chip.c_core0.cache_data[18] top.chip.c_core0.cache_data[17] top.chip.c_core0.cache_data[16] top.chip.c_core0.cache_data[15] top.chip.c_core0.cache_data[14] top.chip.c_core0.cache_data[13] top.chip.c_core0.cache_data[12] top.chip.c_core0.cache_data[11] top.chip.c_core0.cache_data[10] top.chip.c_core0.cache_data[9] top.chip.c_core0.cache_data[8] top.chip.c_core0.cache_data[7] top.chip.c_core0.cache_data[6] top.chip.c_core0.cache_data[5] top.chip.c_core0.cache_data[4] top.chip.c_core0.cache_data[3] top.chip.c_core0.cache_data[2] top.chip.c_core0.cache_data[1] top.chip.c_core0.cache_data[0]
 @200
 -
 -bp_state

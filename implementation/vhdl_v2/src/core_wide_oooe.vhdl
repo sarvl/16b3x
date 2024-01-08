@@ -195,7 +195,7 @@ ARCHITECTURE behav OF core IS
 	TYPE t_rat_arr IS ARRAY(7 DOWNTO 0) OF t_rat_entry;
 	--technically may need present but in practice this is not needed 
 	--because it is impossible to use entire list 
-	TYPE t_reg_free_arr IS ARRAY(7 DOWNTO 0) OF std_ulogic_vector(3 DOWNTO 0);
+	TYPE t_reg_free_arr IS ARRAY(15 DOWNTO 0) OF std_ulogic_vector(3 DOWNTO 0);
 	TYPE t_regs IS ARRAY(7 DOWNTO 0) OF t_uword; 
 
 	SIGNAL  rob : t_rob_arr := (OTHERS => ROB_ENTRY_DEFAULT);
@@ -204,34 +204,39 @@ ARCHITECTURE behav OF core IS
 	                            4=>('1',x"4",x"4"),5=>('1',x"5",x"5"),
 	                            6=>('1',x"6",x"6"),7=>('1',x"7",x"7"));
 	SIGNAL  rfl : t_reg_free_arr := (
-		0 => x"8", 1 => x"9", 2 => x"A", 3 => x"B", 
-		4 => x"C", 5 => x"D", 6 => x"E", 7 => x"F");
+		 0 => x"8",  1 => x"9",  2 => x"A",  3 => x"B", 
+		 4 => x"C",  5 => x"D",  6 => x"E",  7 => x"F",
+		 8 => x"0",  9 => x"0", 10 => x"0", 11 => x"0", 
+		12 => x"0", 13 => x"0", 14 => x"0", 15 => x"0");
 
 	SIGNAL  debug_regs : t_regs := (OTHERS => x"0000");
 
 	--rob start entry
 	TYPE t_arr_slv20 IS ARRAY(integer RANGE <>) OF std_ulogic_vector(2 DOWNTO 0);
-	TYPE t_arr_int70 IS ARRAY(integer RANGE <>) OF integer RANGE 7 DOWNTO 0;
+	TYPE t_arr_slv30 IS ARRAY(integer RANGE <>) OF std_ulogic_vector(3 DOWNTO 0);
+	TYPE t_arr_int70 IS ARRAY(integer RANGE <>) OF integer RANGE  7 DOWNTO 0;
+	TYPE t_arr_intF0 IS ARRAY(integer RANGE <>) OF integer RANGE 15 DOWNTO 0;
 	SIGNAL rob_SE : t_arr_slv20(0 TO 7) := ("000", "001", "010", "011",
 	                                            "100", "101", "110", "111");
 	--rob free entry
 	SIGNAL rob_FE : t_arr_slv20(0 TO 2) := ("000", "001", "010");
 
 	--free reg list start entry
-	SIGNAL rfl_SE : t_arr_slv20(0 TO 2) := ("000", "001", "010");
+	SIGNAL rfl_SE : t_arr_slv30(0 TO 2) := ("0000", "0001", "0010");
 	--free reg list free entry
 	--values are not a mistake
-	SIGNAL rfl_FE : t_arr_slv20(0 TO 2) := ("000", "001", "010");
+	SIGNAL rfl_FE : t_arr_slv30(0 TO 2) := ("1000", "1001", "1010");
 
+	SIGNAL rfl_SE_com : t_arr_slv30(0 TO 2) := ("0000", "0001", "0010");
 
 	SIGNAL rob_SE_i : t_arr_int70(0 TO 7) := (0,1,2,3,4,5,6,7);
 	--rob free entry
 	SIGNAL rob_FE_i : t_arr_int70(0 TO 1) := (0,1);
 	--free reg list start entry
-	SIGNAL rfl_SE_i : t_arr_int70(0 TO 2) := (0,1,2);
+	SIGNAL rfl_SE_i : t_arr_intF0(0 TO 2) := (0,1,2);
 	--free reg list free entry
 	--values are not a mistake
-	SIGNAL rfl_FE_i : t_arr_int70(0 TO 2) := (0,1,2);
+	SIGNAL rfl_FE_i : t_arr_intF0(0 TO 2) := (8,9,10);
 
 	SIGNAL  rat_0_s0_i     : integer RANGE 7 DOWNTO 0 := 0;
 	SIGNAL  rat_0_s1_i     : integer RANGE 7 DOWNTO 0 := 1;
@@ -241,6 +246,7 @@ ARCHITECTURE behav OF core IS
 	SIGNAL  rat_1_d0_i     : integer RANGE 7 DOWNTO 0 := 0;
 
 	SIGNAL  can_fetch      : std_ulogic := '1';
+	SIGNAL  can_cache      : std_ulogic := '0';
 
 	TYPE t_exec_unit IS RECORD 
 		rob_entry : std_ulogic_vector(2 DOWNTO 0);
@@ -296,6 +302,9 @@ ARCHITECTURE behav OF core IS
 	SIGNAL ignore0      : std_ulogic := '0';
 	SIGNAL ignore1      : std_ulogic := '0';
 
+	SIGNAL movrr0       : std_ulogic := '0';
+	SIGNAL movrr1       : std_ulogic := '0';
+
 	SIGNAL flcmp     : std_ulogic := '0';
 
 	SIGNAL misprediction : std_ulogic := '0';
@@ -338,10 +347,11 @@ ARCHITECTURE behav OF core IS
 	SIGNAL prev_branch  : std_ulogic := '0';
 	SIGNAL prev_flush   : std_ulogic := '0';
 	SIGNAL prev_flush_ui: std_ulogic := '0';
-
+	SIGNAL prev_cache   : std_ulogic := '0';
 
 	SIGNAL cnt_misprediction : integer := 0;
 	SIGNAL cnt_fetch         : integer := 0;
+	SIGNAL cnt_cache         : integer := 0;
 	SIGNAL cnt_retire2       : integer := 0;
 	SIGNAL cnt_retire1       : integer := 0;
 	SIGNAL cnt_retire0       : integer := 0;
@@ -349,7 +359,12 @@ ARCHITECTURE behav OF core IS
 	SIGNAL cnt_exec1         : integer := 0;
 	SIGNAL cnt_exec0         : integer := 0;
 	SIGNAL cnt_movrr         : integer := 0;
-	SIGNAL cnt_ignore         : integer := 0;
+	SIGNAL cnt_ignore        : integer := 0;
+	SIGNAL cnt_instr         : integer := 0;
+	SIGNAL cnt_cyc           : integer := 0;
+	SIGNAL cnt_flush         : integer := 0;
+	SIGNAL cnt_robful        : integer := 0;
+	SIGNAL cnt_w2iflush      : integer := 0;
 
 	TYPE t_bp_arr IS ARRAY(15 DOWNTO 0) OF std_ulogic_vector(1 DOWNTO 0); 
 	--because of heruistics from simulator, it is better to start from T than NT
@@ -367,6 +382,28 @@ ARCHITECTURE behav OF core IS
 	SIGNAL ras_top_m1_i : integer := 3; 
 	SIGNAL ras_top_p0_i : integer := 0; 
 	SIGNAL ras_top_p1_i : integer := 1; 
+
+	SIGNAL prfs0_id   : std_ulogic_vector(3 DOWNTO 0);
+	SIGNAL prfs1_id   : std_ulogic_vector(3 DOWNTO 0);
+	SIGNAL prfd0_id   : std_ulogic_vector(3 DOWNTO 0);
+	SIGNAL prfprev_id : std_ulogic_vector(3 DOWNTO 0);
+
+
+	TYPE t_cache_entry IS RECORD 
+		present : std_ulogic;
+		tag     : t_uword;
+		data    : std_ulogic_vector(31 DOWNTO 0);
+	END RECORD t_cache_entry;
+	CONSTANT cache_entry_default : t_cache_entry := (present => '0', tag => (OTHERS => '0'), data => (OTHERS => '0'));
+
+	TYPE t_cache IS ARRAY(15 DOWNTO 0) OF t_cache_entry;
+
+	SIGNAL cache : t_cache := (OTHERS => cache_entry_default);
+	SIGNAL cache_addr : integer := 0;
+	SIGNAL cache_data : std_ulogic_vector(31 DOWNTO 0);
+
+	SIGNAL cache_hit : std_ulogic := '0';
+
 BEGIN
 	
 	c_decoder0 : decoder  PORT MAP(instr         => instr0,
@@ -457,14 +494,19 @@ BEGIN
 	c_rfe_adder_2 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_FE(0),i1=>"010",o0=>rob_FE(2),ic=>'0',oc=>OPEN);
 
 	--not needed
---	c_rfl_adder_0 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rfl_SE(0),i1=>"000",o0=>rfl_SE(0),ic=>'0',oc=>OPEN);
-	c_rfl_adder_1 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rfl_SE(0),i1=>"001",o0=>rfl_SE(1),ic=>'0',oc=>OPEN);
-	c_rfl_adder_2 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rfl_SE(0),i1=>"010",o0=>rfl_SE(2),ic=>'0',oc=>OPEN);
+--	c_rfl_adder_0 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE(0),i1=>"0000",o0=>rfl_SE(0),ic=>'0',oc=>OPEN);
+	c_rfl_adder_1 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE(0),i1=>"0001",o0=>rfl_SE(1),ic=>'0',oc=>OPEN);
+	c_rfl_adder_2 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE(0),i1=>"0010",o0=>rfl_SE(2),ic=>'0',oc=>OPEN);
 
 	--not needed
---	c_rfl_adder_3 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rfl_FE(0),i1=>"000",o0=>rfl_FE(0),ic=>'0',oc=>OPEN);
-	c_rfl_adder_4 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rfl_FE(0),i1=>"001",o0=>rfl_FE(1),ic=>'0',oc=>OPEN);
-	c_rfl_adder_5 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rfl_FE(0),i1=>"010",o0=>rfl_FE(2),ic=>'0',oc=>OPEN);
+--	c_rfl_adder_3 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_FE(0),i1=>"0000",o0=>rfl_FE(0),ic=>'0',oc=>OPEN);
+	c_rfl_adder_4 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_FE(0),i1=>"0001",o0=>rfl_FE(1),ic=>'0',oc=>OPEN);
+	c_rfl_adder_5 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_FE(0),i1=>"0010",o0=>rfl_FE(2),ic=>'0',oc=>OPEN);
+
+	--not needed
+--	c_rfl_adder_6 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE_com(0),i1=>"0000",o0=>rfl_SE_com(0),ic=>'0',oc=>OPEN);
+	c_rfl_adder_7 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE_com(0),i1=>"0001",o0=>rfl_SE_com(1),ic=>'0',oc=>OPEN);
+	c_rfl_adder_8 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE_com(0),i1=>"0010",o0=>rfl_SE_com(2),ic=>'0',oc=>OPEN);
 
 	--convert all slvs into ints
 	u0: FOR i IN 0 TO 7 GENERATE
@@ -520,24 +562,22 @@ BEGIN
 	        ELSE rob_SE(1) WHEN retire0 = '1' AND rising_edge(clk) 
 	        ELSE rob_SE(0);
 
+	--no instruction that writes to reg can cause flush 
+	rfl_SE(0) <= rfl_SE_com(0) WHEN  flush = '1' AND rising_edge(clk)
 	--when both instructions write to reg 
-	rfl_SE(0) <= "000"     WHEN  flush = '1'
-	                        AND  rising_edge(clk) 
-	        ELSE rfl_SE(0) WHEN  s0_branch = '1' AND branch_predict_taken = '1'
-	                        AND  instr_ready = '1'
-	                        AND  rising_edge(clk) 
-	        ELSE rfl_SE(2) WHEN (signals0.rwr = '1' AND signals1.rwr = '1')
-	                        AND  instr_ready = '1'
-	                        AND  rising_edge(clk)
-	        ELSE rfl_SE(1) WHEN (signals0.rwr = '1' XOR signals1.rwr = '1')
-	                        AND  instr_ready = '1'
-	                        AND  rising_edge(clk)
+	        ELSE rfl_SE(0)     WHEN  s0_branch = '1' AND branch_predict_taken = '1'
+	                            AND  instr_ready = '1'
+	                            AND  rising_edge(clk) 
+	        ELSE rfl_SE(2)     WHEN (signals0.rwr = '1' AND signals1.rwr = '1')
+	                            AND  instr_ready = '1'
+	                            AND  rising_edge(clk)
+	        ELSE rfl_SE(1)     WHEN (signals0.rwr = '1' XOR signals1.rwr = '1')
+	                            AND  instr_ready = '1'
+	                            AND  rising_edge(clk)
 	        ELSE rfl_SE(0);
 
 	--present, finished and writing
-	rfl_FE(0) <= "000"     WHEN  flush = '1'
-	                        AND  rising_edge(clk) 
-	        ELSE rfl_FE(2) WHEN rising_edge(clk)
+	rfl_FE(0) <= rfl_FE(2) WHEN rising_edge(clk)
 	                        AND retire0 = '1' AND retire1 = '1'
 	                        AND rob(rob_SE_i(0)).signals.rwr = '1'
 	                        AND rob(rob_SE_i(1)).signals.rwr = '1'
@@ -548,6 +588,15 @@ BEGIN
 	                        AND retire1 = '1'
 	                        AND rob(rob_SE_i(1)).signals.rwr = '1'
 	        ELSE rfl_FE(0);
+
+	rfl_SE_com(0) <= rfl_SE_com(2) WHEN rising_edge(clk)
+	                                AND retire0 = '1' AND rob(rob_SE_i(0)).signals.rwr = '1'
+	                                AND retire1 = '1' AND rob(rob_SE_i(1)).signals.rwr = '1'
+	            ELSE rfl_SE_com(1) WHEN rising_edge(clk)
+	                                AND retire0 = '1' AND rob(rob_SE_i(0)).signals.rwr = '1'
+	            ELSE rfl_SE_com(1) WHEN rising_edge(clk)
+	                                AND retire1 = '1' AND rob(rob_SE_i(1)).signals.rwr = '1'
+	            ELSE rfl_SE_com(0);
 
 	eu0.arg0 <= r00_data; 
 	eu0.arg1 <= eu0.imm16 WHEN eu0.signals.iim
@@ -587,8 +636,8 @@ BEGIN
 	      ELSE iodata(15 DOWNTO  0);
 
 	same_dest <=  signals0.rwr AND signals1.rwr AND to_std_ulogic(signals0.r0 = signals1.r0);
-	s0_branch <= (signals0.jmp OR signals0.cal OR signals0.ret) AND instr_ready;
-	s1_branch <= (signals1.jmp OR signals1.cal OR signals1.ret) AND instr_ready;
+	s0_branch <= (signals0.jmp OR signals0.cal OR signals0.ret) AND NOT (prev_eu1_mem AND prev_flush);
+	s1_branch <= (signals1.jmp OR signals1.cal OR signals1.ret) AND NOT (prev_eu1_mem AND prev_flush);
 
 	bp_arr_match <= bp_arr(to_integer(unsigned(r_ip.o0(3 DOWNTO 0)))) WHEN signals0.jmp 
 	           ELSE bp_arr(to_integer(unsigned(r_ip_p1(3 DOWNTO 0)))); 
@@ -681,6 +730,9 @@ BEGIN
 	--nop
 	ignore1   <= to_std_ulogic(instr1 = x"0000" AND fetch1 = '1');
 
+	movrr0    <= to_std_ulogic(signals0.rwr = '1' AND signals0.src = "000" AND signals0.iim = '0' AND fetch0 = '1');
+	movrr1    <= to_std_ulogic(signals1.rwr = '1' AND signals1.src = "000" AND signals1.iim = '0' AND fetch1 = '1');
+
 	s0_imm16 <= r_ui.o0(7 DOWNTO 0)         & signals0.imm8 WHEN prev_flush_ui AND NOT branch_dest_misalign_delayed
 	       ELSE shadow_ui_value(7 DOWNTO 0) & signals0.imm8 WHEN shadow_ui_present
 	       ELSE x"00"                       & signals0.imm8;
@@ -733,12 +785,17 @@ BEGIN
 	flush_additional_wait <= to_std_ulogic(eu0.signals.xwr = '1' AND eu0.signals.x0w = "100" AND eu0.signals.iim = '0');
 
 
-	prev_eu1_mem <= eu1_mem WHEN rising_edge(clk)
+	prev_eu1_mem <= eu1_mem   WHEN rising_edge(clk)
 	           ELSE UNAFFECTED;
-	prev_branch  <= branch  WHEN rising_edge(clk)
+	prev_branch  <= branch    WHEN rising_edge(clk)
 	           ELSE UNAFFECTED;
-	prev_flush   <= flush   WHEN rising_edge(clk)
+	prev_flush   <= flush     WHEN rising_edge(clk)
 	           ELSE UNAFFECTED;
+
+	prev_cache   <= can_cache WHEN rising_edge(clk)
+	           ELSE UNAFFECTED;
+
+
 	--bloom filter
 	PROCESS (ALL) IS 
 	BEGIN
@@ -754,14 +811,29 @@ BEGIN
 		END IF;
 	END PROCESS;
 
+
+
+	--these tests should also incorporate additional decisions like checking whether R0 really is register in that instruction
+	--eg jmp LEG has R0 = 0b111 but does not care about R0
+	--can be done at once with the check whether r0 really needs to be a dependency
+	--like in a case of mov r0, r1 ; mov r0, r2
+	--if instr0 writes to instr1.r0 forward dep
+	prfs0_id   <= rfl(rfl_SE_i(0)) WHEN to_std_ulogic(signals0.r0 = signals1.r0) AND signals0.rwr
+			 ELSE rat(rat_1_s0_i).transl; 
+	--if instr0 writes to instr1.r1 forward dep
+	prfs1_id   <= rfl(rfl_SE_i(0)) WHEN to_std_ulogic(signals0.r0 = signals1.r1) AND signals0.rwr
+			 ELSE rat(rat_1_s1_i).transl; 
+	--correctly choose free register in case only 1 writes
+	prfd0_id   <= rfl(rfl_SE_i(1)) WHEN signals0.rwr
+			 ELSE rfl(rfl_SE_i(0)); 
+	--correctly choose prev register dep in case both write to the same one
+	prfprev_id <= rfl(rfl_SE_i(0)) WHEN same_dest 
+			 ELSE rat(rat_1_d0_i).transl;
+
 	--in order:
 	--retire finished entries
 	--insert entries into rob
 	PROCESS (ALL) IS
-		VARIABLE prfs0_id   : std_ulogic_vector(3 DOWNTO 0);
-		VARIABLE prfs1_id   : std_ulogic_vector(3 DOWNTO 0);
-		VARIABLE prfd0_id   : std_ulogic_vector(3 DOWNTO 0);
-		VARIABLE prfprev_id : std_ulogic_vector(3 DOWNTO 0);
 
 		VARIABLE branch_alt_dest : t_uword := x"0000";
 
@@ -769,8 +841,6 @@ BEGIN
 		VARIABLE rob_fetch_1 : t_rob_entry;
 
 	BEGIN
-		--at all points, mapping must be different
-		--but check slightly later to make sure it is visible in wave
 		IF rising_edge(clk) THEN 
 			FOR i IN 0 TO 7 LOOP
 				FOR j IN i + 1 TO 7 LOOP
@@ -779,23 +849,10 @@ BEGIN
 						REPORT "FATAL ERROR: RAT ENTRIES " & integer'image(i) & " " & integer'image(j) & " HAVE THE SAME TRANSLATION" & LF
 						SEVERITY failure;
 
-					--same implies that somethign was returned in the wrong order to the RFL
-					ASSERT rfl(i) /= rfl(j)
-						REPORT "FATAL ERROR: RFL ENTRIES " & integer'image(i) & " " & integer'image(j) & " HAVE THE SAME VALUE" & LF
-						SEVERITY failure;
 				END LOOP;
 			END LOOP;
 		END IF;
-		IF rising_edge(clk) THEN 
-			FOR i IN 0 TO 7 LOOP
-				FOR j IN 0 TO 7 LOOP
-					--never the same since that implies total mess and unpredictable behavior
-					ASSERT rat(i).commit /= rfl(j)
-						REPORT "FATAL ERROR: RAT ENTRY " & integer'image(i) & " IS IN THE RFL " & integer'image(j) & LF
-						SEVERITY failure;
-				END LOOP;
-			END LOOP;
-		END IF;
+
 
 		ASSERT r_ip.o0(0) = '0' 
 			REPORT "FATAL ERROR: IP IS NOT EVEN" & LF
@@ -849,7 +906,6 @@ BEGIN
 	      			                                             ELSE "001";
 
 					rob(to_integer(unsigned(eu1.rob_entry))).branch_alt_dest <= eu1.res;
-
 
 					--trivial dependency management
 					FOR i IN 0 TO 7 LOOP 
@@ -939,23 +995,6 @@ BEGIN
 							    branch_dest     => branch_predict_taken,
 							    branch_alt_dest => branch_alt_dest); 
 
-				--these tests should also incorporate additional decisions like checking whether R0 really is register in that instruction
-				--eg jmp LEG has R0 = 0b111 but does not care about R0
-				--can be done at once with the check whether r0 really needs to be a dependency
-				--like in a case of mov r0, r1 ; mov r0, r2
-				--if instr0 writes to instr1.r0 forward dep
-				prfs0_id   := rfl(rfl_SE_i(0)) WHEN to_std_ulogic(signals0.r0 = signals1.r0) AND signals0.rwr
-						 ELSE rat(rat_1_s0_i).transl; 
-				--if instr0 writes to instr1.r1 forward dep
-				prfs1_id   := rfl(rfl_SE_i(0)) WHEN to_std_ulogic(signals0.r0 = signals1.r1) AND signals0.rwr
-						 ELSE rat(rat_1_s1_i).transl; 
-				--correctly choose free register in case only 1 writes
-				prfd0_id   := rfl(rfl_SE_i(1)) WHEN signals0.rwr
-						 ELSE rfl(rfl_SE_i(0)); 
-				--correctly choose prev register dep in case both write to the same one
-				prfprev_id := rfl(rfl_SE_i(0)) WHEN same_dest 
-						 ELSE rat(rat_1_d0_i).transl;
-
 				rob_fetch_1 := (present         => '1' , 
 						        instr           => instr1,
 						        signals         => signals1,
@@ -1005,16 +1044,20 @@ BEGIN
 					prf_present(to_integer(unsigned(prfd0_id))) <= '0';
 --					rat(rat_1_d0_i).present <= '0';
 					rat(rat_1_d0_i).transl  <= prfd0_id; 
+
 				--only one catches 
 				ELSIF fetch0 AND signals0.rwr THEN 
 					prf_present(to_integer(unsigned(rfl(rfl_SE_i(0))))) <= '0';
 					rat(rat_0_d0_i).transl  <= rfl(rfl_SE_i(0));
+
 				ELSIF fetch0 AND ignore0 AND fetch1 AND signals1.rwr THEN 
 					prf_present(to_integer(unsigned(prfd0_id))) <= '0';
 					rat(rat_1_d0_i).transl  <= prfd0_id;
+
 				ELSIF fetch1 AND signals1.rwr AND  NOT (s0_branch AND branch_predict_taken) THEN 
 					prf_present(to_integer(unsigned(prfd0_id))) <= '0';
 					rat(rat_1_d0_i).transl  <= prfd0_id;
+
 				END IF;
 			END IF;
 		
@@ -1102,20 +1145,22 @@ BEGIN
 					END IF;
 				END LOOP;
 				--allow mem access to be as 1st as long as 0 is not branch, hack for now
---				IF    to_std_ulogic(NOT found1) 
---				  AND NOT misprediction
---				  AND rob(rob_SE_i(1)).present     AND     rob(rob_SE_i(1)).prfs0_p
---				  AND rob(rob_SE_i(1)).prfs1_p     AND NOT rob(rob_SE_i(1)).prfd0_p 
---				  AND (rob(rob_SE_i(1)).signals.mrd OR     rob(rob_SE_i(1)).signals.mwr)
---				THEN
---					eu1_mem <= '1';
---					eu1 <= (rob_entry=>rob_SE(1),present=> '1',rd=>rob(rob_SE_i(1)).prfd0_id,
---							r0=>rob(rob_SE_i(1)).prfs0_id,r1=>rob(rob_SE_i(1)).prfs1_id,
---							signals=>rob(rob_SE_i(1)).signals,arg0|arg1|res => x"ZZZZ",
---							imm16 => rob(rob_SE_i(1)).imm16);
---
---					found1 := true;
---				END IF;
+				--also to not have problems with b_filter, only reads are allowed to go earlier
+				IF    to_std_ulogic(NOT found1) 
+				  AND NOT misprediction
+				  AND rob(rob_SE_i(1)).present     AND     rob(rob_SE_i(1)).prfs0_p
+				  AND rob(rob_SE_i(1)).prfs1_p     AND NOT rob(rob_SE_i(1)).prfd0_p 
+				  AND rob(rob_SE_i(1)).signals.mrd
+				  AND NOT rob(rob_SE_i(1)).signals.pop
+				THEN
+					eu1_mem <= '1';
+					eu1 <= (rob_entry=>rob_SE(1),present=> '1',rd=>rob(rob_SE_i(1)).prfd0_id,
+							r0=>rob(rob_SE_i(1)).prfs0_id,r1=>rob(rob_SE_i(1)).prfs1_id,
+							signals=>rob(rob_SE_i(1)).signals,arg0|arg1|res => x"ZZZZ",
+							imm16 => rob(rob_SE_i(1)).imm16);
+
+					found1 := true;
+				END IF;
 			END IF;
 
 			IF NOT found1 THEN 
@@ -1123,15 +1168,33 @@ BEGIN
 				eu1 <= (rob_entry=>"000",rd|r0|r1=>"0000",present=> '0',
 						signals=>SIGNALS_DEFAULT,arg0|arg1|res|imm16 => x"ZZZZ");
 			END IF;
-
-
 		END IF; --flush
 	END PROCESS;
 
+	--cache
+	cache_addr        <= to_integer(unsigned(r_ip.i0(4 DOWNTO 1))) WHEN rising_edge(clk)
+	                ELSE UNAFFECTED; 
+
+	--otherwise, oscilation happens on clock edge which cannot possibly happen because of cache delay
+	cache_data        <= cache(cache_addr).data;
+	cache_hit         <= cache(cache_addr).present AND to_std_ulogic(cache(cache_addr).tag = r_ip.i0);
+
+	PROCESS(clk) IS 
+	BEGIN 
+		IF rising_edge(clk) THEN
+			IF write_to_instr THEN
+				FOR i IN 0 TO cache'length - 1 LOOP
+					cache(i) <= cache_entry_default;
+				END LOOP;
+			ELSIF can_fetch AND NOT cache_hit THEN
+				cache(cache_addr) <= (present => '1', tag => r_ip.i0, data => iodata);
+			END IF;
+		END IF;
+	END PROCESS;
 	
 	ord <= 'Z' WHEN disable 
 	  ELSE eu1.signals.mrd WHEN eu1_mem
-	  ELSE can_fetch; 
+	  ELSE can_fetch AND NOT can_cache; 
 	owr <= 'Z' WHEN disable
 	  ELSE eu1.signals.mwr WHEN eu1_mem
 	  ELSE '0';
@@ -1143,17 +1206,19 @@ BEGIN
 	     ELSE (OTHERS => 'Z');
 
 	--aligned
-	instr0 <= x"0000"              WHEN flush = '1'     AND branch_dest_misalign = '1' AND rising_edge(clk)
-	     ELSE x"0000"              WHEN branch = '1'    AND branch_dest_misalign = '1' AND rising_edge(clk)
-	     ELSE iodata(31 DOWNTO 16) WHEN can_fetch = '1'                                AND rising_edge(clk)
+	instr0 <= x"0000"                  WHEN flush = '1'     AND branch_dest_misalign = '1'                        AND rising_edge(clk)
+	     ELSE x"0000"                  WHEN branch = '1'    AND branch_dest_misalign = '1' AND instr_ready  = '1' AND rising_edge(clk)
+	     ELSE cache_data(31 DOWNTO 16) WHEN can_cache = '1'                                AND rising_edge(clk)
+	     ELSE iodata(31 DOWNTO 16)     WHEN can_fetch = '1'                                AND rising_edge(clk)
 	     ELSE UNAFFECTED;
 
 	--not aligned 
-	instr1 <= iodata(15 DOWNTO  0) WHEN can_fetch = '1' AND rising_edge(clk)
+	instr1 <= cache_data(15 DOWNTO  0) WHEN can_cache = '1' AND rising_edge(clk)
+	     ELSE iodata(15 DOWNTO  0)     WHEN can_fetch = '1' AND rising_edge(clk)
 	     ELSE UNAFFECTED;
 
 	instr_ready <= '0' WHEN prev_eu1_mem AND prev_flush
-	          ELSE can_fetch; 
+	          ELSE can_fetch OR can_cache; 
 
 	internal_oaddr <= x"ZZZZ"  WHEN disable
 	             ELSE r_sp_s2  WHEN eu1.signals.psh
@@ -1164,9 +1229,12 @@ BEGIN
 
 	can_fetch <= (NOT eu1_mem AND NOT rob(rob_FE_i(1)).present)
 	          OR (flush AND NOT write_to_instr);
+	can_cache <= cache_hit AND NOT rob(rob_FE_i(1)).present
+	          AND NOT flush AND NOT write_to_instr;
+
 
 	--fetch only when place for 1 
-	r_ip.we <= can_fetch OR flush OR branch; 
+	r_ip.we <= can_fetch OR flush OR can_cache; 
 	--only rob0 matters because cal is branch
 	r_lr.we <= (rob(rob_SE_i(0)).signals.cal AND (retire0 AND flcmp)) 
 	        OR to_std_ulogic(eu0.signals.xwr = '1' AND eu0.signals.x0w = "010");
@@ -1187,6 +1255,7 @@ BEGIN
 
 	--guarantee ip is even
 	r_ip.i0 <= branch_dest(15 DOWNTO 1) & '0' WHEN flush OR branch
+	      ELSE r_ip_p2                        WHEN prev_eu1_mem AND prev_branch AND prev_cache
 	      ELSE r_ip.o0                        WHEN prev_eu1_mem AND prev_branch
 	      ELSE r_ip.o0                        WHEN prev_eu1_mem AND prev_flush
 --	      ELSE r_ip.o0                        WHEN s0_branch AND s1_branch  AND NOT branch_predict_taken
@@ -1211,11 +1280,14 @@ BEGIN
 
 	--hlt must be the only instr retired 
 	PROCESS (clk) IS 
+		VARIABLE ipc : real;
 	BEGIN
 		IF rising_edge(clk) THEN
 			cnt_misprediction <= cnt_misprediction + 1 WHEN misprediction
 			                ELSE UNAFFECTED;
-			cnt_fetch         <= cnt_fetch         + 1 WHEN can_fetch 
+			cnt_fetch         <= cnt_fetch         + 1 WHEN can_fetch AND NOT can_cache 
+			                ELSE UNAFFECTED;
+			cnt_cache         <= cnt_cache         + 1 WHEN can_cache
 			                ELSE UNAFFECTED;
 			cnt_retire2       <= cnt_retire2       + 1 WHEN retire0 AND retire1 
 			                ELSE UNAFFECTED;
@@ -1229,14 +1301,25 @@ BEGIN
 			                ELSE UNAFFECTED;
 			cnt_exec0         <= cnt_exec0         + 1 WHEN eu0.present NOR eu1.present 
 			                ELSE UNAFFECTED;
-			cnt_movrr         <= cnt_movrr         + 2 WHEN retire0 = '1' AND rob(rob_SE_i(0)).signals.src = "000" AND rob(rob_SE_i(0)).signals.iim = '0' 
-			                                            AND retire1 = '1' AND rob(rob_SE_i(1)).signals.src = "000" AND rob(rob_SE_i(1)).signals.iim = '0' 
-			                ELSE cnt_movrr         + 1 WHEN retire0 = '1' AND rob(rob_SE_i(0)).signals.src = "000" AND rob(rob_SE_i(0)).signals.iim = '0' 
-			                ELSE cnt_movrr         + 1 WHEN retire1 = '1' AND rob(rob_SE_i(1)).signals.src = "000" AND rob(rob_SE_i(1)).signals.iim = '0' 
+			cnt_movrr         <= cnt_movrr         + 2 WHEN movrr0 AND movrr1 
+			                ELSE cnt_movrr         + 1 WHEN movrr0 XOR movrr1 
 			                ELSE UNAFFECTED;
 			cnt_ignore        <= cnt_ignore        + 2 WHEN ignore0 AND ignore1
 			                ELSE cnt_ignore        + 1 WHEN ignore0 XOR ignore1
 			                ELSE UNAFFECTED; 
+
+			cnt_instr         <= cnt_instr         + 2 WHEN retire0 AND retire1
+			                ELSE cnt_instr         + 1 WHEN retire0 AND NOT retire1
+			                ELSE UNAFFECTED;
+			cnt_flush         <= cnt_flush         + 1 WHEN flush
+			                ELSE UNAFFECTED;
+			cnt_w2iflush      <= cnt_w2iflush      + 1 WHEN write_to_instr
+			                ELSE UNAFFECTED;
+			cnt_robful        <= cnt_robful        + 1 WHEN rob(rob_FE_i(1)).present
+			                ELSE UNAFFECTED;
+
+			cnt_cyc           <= cnt_cyc           + 1;
+
 
 			IF  rob(rob_SE_i(0)).present     
 			AND rob(rob_SE_i(0)).signals.hlt 
@@ -1244,9 +1327,12 @@ BEGIN
 			THEN 
 				ohlt <= '1';
 
+				ipc := real(cnt_instr) / real(cnt_cyc);
+
 				REPORT LF  
 					& LF & "count miss   : " & integer'image(cnt_misprediction)
 					& LF & "count fetch  : " & integer'image(cnt_fetch        )
+					& LF & "count cache  : " & integer'image(cnt_cache        )
 					& LF & "count retire0: " & integer'image(cnt_retire0      )
 					& LF & "count retire1: " & integer'image(cnt_retire1      )
 					& LF & "count retire2: " & integer'image(cnt_retire2      )
@@ -1255,6 +1341,12 @@ BEGIN
 					& LF & "count exec2  : " & integer'image(cnt_exec2        )
 					& LF & "count movrr  : " & integer'image(cnt_movrr        )
 					& LF & "count ignore : " & integer'image(cnt_ignore       )
+					& LF & "count flush  : " & integer'image(cnt_flush        )
+					& LF & "count w2i    : " & integer'image(cnt_flush        )
+					& LF & "count robfull: " & integer'image(cnt_robful       )
+					& LF 
+					--trim string
+--					& LF & "IPC          : " & (real'image(ipc)(1 TO 4))
 					& LF;
 				REPORT LF
 					& LF & "R0: " & integer'image(to_integer(unsigned(debug_regs(0))))
