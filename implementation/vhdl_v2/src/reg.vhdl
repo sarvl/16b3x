@@ -85,6 +85,10 @@ USE ieee.numeric_std.ALL;
 USE work.p_types.ALL;
 
 ENTITY reg_file_oooe IS 
+	GENERIC(
+		count    : integer;
+		count_lg : integer
+	);
 	PORT(
 		i00  : IN  t_uword;
 		i10  : IN  t_uword;
@@ -94,12 +98,12 @@ ENTITY reg_file_oooe IS
 		o10  : OUT t_uword;
 		o11  : OUT t_uword;
 
-		r0d  : IN  std_ulogic_vector(3 DOWNTO 0);
-		r00  : IN  std_ulogic_vector(3 DOWNTO 0);
-		r01  : IN  std_ulogic_vector(3 DOWNTO 0);
-		r1d  : IN  std_ulogic_vector(3 DOWNTO 0);
-		r10  : IN  std_ulogic_vector(3 DOWNTO 0);
-		r11  : IN  std_ulogic_vector(3 DOWNTO 0);
+		r0d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r00  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r01  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r1d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r10  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r11  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 
 		we0  : IN  std_ulogic;
 		we1  : IN  std_ulogic;
@@ -110,7 +114,7 @@ END ENTITY reg_file_oooe;
 
 ARCHITECTURE behav OF reg_file_oooe IS 
 
-	SIGNAL data : t_reg_arr := (OTHERS => x"0000");
+	SIGNAL data : t_reg_arr(count - 1 DOWNTO 0) := (OTHERS => x"0000");
 BEGIN
 
 	o00 <= data(to_integer(unsigned(r00)));

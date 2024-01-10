@@ -56,6 +56,10 @@ ARCHITECTURE behav OF core IS
 	END COMPONENT multiplier; 
 
 	COMPONENT reg_file_oooe IS 
+		GENERIC(
+			count    : integer;
+			count_lg : integer
+		);
 		PORT(
 			i00  : IN  t_uword;
 			i10  : IN  t_uword;
@@ -65,12 +69,12 @@ ARCHITECTURE behav OF core IS
 			o10  : OUT t_uword;
 			o11  : OUT t_uword;
 
-			r0d  : IN  std_ulogic_vector(3 DOWNTO 0);
-			r00  : IN  std_ulogic_vector(3 DOWNTO 0);
-			r01  : IN  std_ulogic_vector(3 DOWNTO 0);
-			r1d  : IN  std_ulogic_vector(3 DOWNTO 0);
-			r10  : IN  std_ulogic_vector(3 DOWNTO 0);
-			r11  : IN  std_ulogic_vector(3 DOWNTO 0);
+			r0d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+			r00  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+			r01  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+			r1d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+			r10  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+			r11  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 
 			we0  : IN  std_ulogic;
 			we1  : IN  std_ulogic;
@@ -106,7 +110,7 @@ ARCHITECTURE behav OF core IS
 		);
 	END COMPONENT decoder ;
 
-	FUNCTION to_std_ulogic(x : boolean) return std_ulogic IS 
+	FUNCTION to_std_ulogic(x : boolean) RETURN std_ulogic IS 
 	BEGIN
 		IF x THEN
 			RETURN '1';
@@ -115,6 +119,12 @@ ARCHITECTURE behav OF core IS
 		END IF;
 	END FUNCTION to_std_ulogic;
 
+	CONSTANT par_rob_size_lg : integer := 3;
+	CONSTANT par_rob_size    : integer := 2 ** par_rob_size_lg;
+	CONSTANT par_prf_size_lg : integer := par_rob_size_lg + 1;
+	CONSTANT par_prf_size    : integer := par_rob_size    * 2;
+	CONSTANT par_rfl_size_lg : integer := par_prf_size_lg; 
+	CONSTANT par_rfl_size    : integer := par_prf_size;
 
 	--used to group signals from external_regs
 	TYPE t_register IS RECORD
@@ -129,15 +139,15 @@ ARCHITECTURE behav OF core IS
 		signals    : t_signals;
 		
 		prfs0_p    : std_ulogic;
-		prfs0_id   : std_ulogic_vector(3 DOWNTO 0);
+		prfs0_id   : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 		
 		prfs1_p    : std_ulogic;
-		prfs1_id   : std_ulogic_vector(3 DOWNTO 0);
+		prfs1_id   : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 		
 		prfd0_p    : std_ulogic;
-		prfd0_id   : std_ulogic_vector(3 DOWNTO 0);
+		prfd0_id   : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 
-		prfprev_id : std_ulogic_vector(3 DOWNTO 0);
+		prfprev_id : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 
 		flags      : std_ulogic_vector(2 DOWNTO 0);
 		branch          : std_ulogic;
@@ -152,7 +162,7 @@ ARCHITECTURE behav OF core IS
 			present | prfs0_p | prfs1_p     => '0',
 			prfd0_p | branch  | branch_dest => '0',
 			instr   | nxt_ip => x"0000",
-			prfs0_id | prfs1_id | prfd0_id | prfprev_id => x"0",
+			prfs0_id | prfs1_id | prfd0_id | prfprev_id => (OTHERS => '0'),
 			flags => "000",
 		    branch_alt_dest | imm16 => x"0000",  
 			signals => SIGNALS_DEFAULT);
@@ -187,56 +197,81 @@ ARCHITECTURE behav OF core IS
 
 	TYPE t_rat_entry IS RECORD
 		present : std_ulogic;
-		transl  : std_ulogic_vector(3 DOWNTO 0);
-		commit  : std_ulogic_vector(3 DOWNTO 0);
+		transl  : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
+		commit  : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 	END RECORD t_rat_entry;
 
-	TYPE t_rob_arr IS ARRAY(7 DOWNTO 0) OF t_rob_entry;
-	TYPE t_rat_arr IS ARRAY(7 DOWNTO 0) OF t_rat_entry;
+	TYPE t_rob_arr IS ARRAY(par_rob_size - 1 DOWNTO 0) OF t_rob_entry;
+	--arch reg 
+	TYPE t_rat_arr IS ARRAY(               7 DOWNTO 0) OF t_rat_entry;
 	--technically may need present but in practice this is not needed 
 	--because it is impossible to use entire list 
-	TYPE t_reg_free_arr IS ARRAY(15 DOWNTO 0) OF std_ulogic_vector(3 DOWNTO 0);
+	TYPE t_reg_free_arr IS ARRAY(par_rfl_size - 1 DOWNTO 0) OF std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 	TYPE t_regs IS ARRAY(7 DOWNTO 0) OF t_uword; 
 
 	SIGNAL  rob : t_rob_arr := (OTHERS => ROB_ENTRY_DEFAULT);
-	SIGNAL  rat : t_rat_arr := (0=>('1',x"0",x"0"),1=>('1',x"1",x"1"),
-	                            2=>('1',x"2",x"2"),3=>('1',x"3",x"3"),
-	                            4=>('1',x"4",x"4"),5=>('1',x"5",x"5"),
-	                            6=>('1',x"6",x"6"),7=>('1',x"7",x"7"));
+
+	FUNCTION to_prf_id(i : integer) RETURN std_ulogic_vector IS
+	BEGIN
+		RETURN std_ulogic_vector(to_unsigned(i, par_prf_size_lg));
+	END;
+
+	SIGNAL  rat : t_rat_arr := (0=>(present=>'1',transl|commit=>to_prf_id(0)),
+	                            1=>(present=>'1',transl|commit=>to_prf_id(1)),
+	                            2=>(present=>'1',transl|commit=>to_prf_id(2)),
+	                            3=>(present=>'1',transl|commit=>to_prf_id(3)),
+	                            4=>(present=>'1',transl|commit=>to_prf_id(4)),
+	                            5=>(present=>'1',transl|commit=>to_prf_id(5)),
+	                            6=>(present=>'1',transl|commit=>to_prf_id(6)),
+	                            7=>(present=>'1',transl|commit=>to_prf_id(7)));
+
+	--should be generalized somehow
+--rob16
+--	SIGNAL  rfl : t_reg_free_arr := (
+--		 0 => '0'&x"0",  1 => '0'&x"1",  2 => '0'&x"2",  3 => '0'&x"3", 
+--		 4 => '0'&x"4",  5 => '0'&x"5",  6 => '0'&x"6",  7 => '0'&x"7",
+--		 8 => '0'&x"8",  9 => '0'&x"9", 10 => '0'&x"A", 11 => '0'&x"B", 
+--		12 => '0'&x"C", 13 => '0'&x"D", 14 => '0'&x"E", 15 => '0'&x"F",
+--		16 => '1'&x"0", 17 => '1'&x"1", 18 => '1'&x"2", 19 => '1'&x"3", 
+--		20 => '1'&x"4", 21 => '1'&x"5", 22 => '1'&x"6", 23 => '1'&x"7",
+--		24 => '1'&x"8", 25 => '1'&x"9", 26 => '1'&x"A", 27 => '1'&x"B", 
+--		28 => '1'&x"C", 29 => '1'&x"D", 30 => '1'&x"E", 31 => '1'&x"F");
+--rob08
 	SIGNAL  rfl : t_reg_free_arr := (
-		 0 => x"8",  1 => x"9",  2 => x"A",  3 => x"B", 
-		 4 => x"C",  5 => x"D",  6 => x"E",  7 => x"F",
-		 8 => x"0",  9 => x"0", 10 => x"0", 11 => x"0", 
-		12 => x"0", 13 => x"0", 14 => x"0", 15 => x"0");
+		 0 => x"0",  1 => x"1",  2 => x"2",  3 => x"3", 
+		 4 => x"4",  5 => x"5",  6 => x"6",  7 => x"7",
+		 8 => x"8",  9 => x"9", 10 => x"A", 11 => x"B", 
+		12 => x"C", 13 => x"D", 14 => x"E", 15 => x"F");
 
 	SIGNAL  debug_regs : t_regs := (OTHERS => x"0000");
 
 	--rob start entry
-	TYPE t_arr_slv20 IS ARRAY(integer RANGE <>) OF std_ulogic_vector(2 DOWNTO 0);
-	TYPE t_arr_slv30 IS ARRAY(integer RANGE <>) OF std_ulogic_vector(3 DOWNTO 0);
-	TYPE t_arr_int70 IS ARRAY(integer RANGE <>) OF integer RANGE  7 DOWNTO 0;
-	TYPE t_arr_intF0 IS ARRAY(integer RANGE <>) OF integer RANGE 15 DOWNTO 0;
-	SIGNAL rob_SE : t_arr_slv20(0 TO 7) := ("000", "001", "010", "011",
-	                                            "100", "101", "110", "111");
+	TYPE t_arr_slv_robs IS ARRAY(integer RANGE <>) OF std_ulogic_vector(par_rob_size_lg - 1 DOWNTO 0);
+	TYPE t_arr_slv_robf IS ARRAY(integer RANGE <>) OF std_ulogic_vector(par_rob_size_lg - 1 DOWNTO 0);
+	TYPE t_arr_slv_rfl  IS ARRAY(integer RANGE <>) OF std_ulogic_vector(par_rfl_size_lg - 1 DOWNTO 0);
+	TYPE t_arr_int_rob IS ARRAY(integer RANGE <>) OF integer RANGE  par_rob_size - 1 DOWNTO 0;
+	TYPE t_arr_int_rfl IS ARRAY(integer RANGE <>) OF integer RANGE par_rfl_size - 1 DOWNTO 0;
+
+	SIGNAL rob_SE : t_arr_slv_robs(0 TO par_rob_size - 1) := (OTHERS => (OTHERS => '0'));
+
 	--rob free entry
-	SIGNAL rob_FE : t_arr_slv20(0 TO 2) := ("000", "001", "010");
+	SIGNAL rob_FE : t_arr_slv_robf(0 TO 2) := (OTHERS => (OTHERS => '0'));
 
 	--free reg list start entry
-	SIGNAL rfl_SE : t_arr_slv30(0 TO 2) := ("0000", "0001", "0010");
+	--later dont matter
+	SIGNAL rfl_SE : t_arr_slv_rfl(0 TO 2) := (std_ulogic_vector(to_unsigned(8, par_rfl_size_lg)), OTHERS=>(OTHERS=>'0'));
 	--free reg list free entry
-	--values are not a mistake
-	SIGNAL rfl_FE : t_arr_slv30(0 TO 2) := ("1000", "1001", "1010");
+	SIGNAL rfl_FE : t_arr_slv_rfl(0 TO 2) := (OTHERS=>(OTHERS=>'0'));
 
-	SIGNAL rfl_SE_com : t_arr_slv30(0 TO 2) := ("0000", "0001", "0010");
+	SIGNAL rfl_SE_com : t_arr_slv_rfl(0 TO 2) := (std_ulogic_vector(to_unsigned(8, par_rfl_size_lg)), OTHERS=>(OTHERS=>'0'));
 
-	SIGNAL rob_SE_i : t_arr_int70(0 TO 7) := (0,1,2,3,4,5,6,7);
+	SIGNAL rob_SE_i : t_arr_int_rob(0 TO par_rob_size-1);
 	--rob free entry
-	SIGNAL rob_FE_i : t_arr_int70(0 TO 1) := (0,1);
+	SIGNAL rob_FE_i : t_arr_int_rob(0 TO 1);
 	--free reg list start entry
-	SIGNAL rfl_SE_i : t_arr_intF0(0 TO 2) := (0,1,2);
+	SIGNAL rfl_SE_i : t_arr_int_rfl(0 TO 2);
 	--free reg list free entry
-	--values are not a mistake
-	SIGNAL rfl_FE_i : t_arr_intF0(0 TO 2) := (8,9,10);
+	SIGNAL rfl_FE_i : t_arr_int_rfl(0 TO 2);
 
 	SIGNAL  rat_0_s0_i     : integer RANGE 7 DOWNTO 0 := 0;
 	SIGNAL  rat_0_s1_i     : integer RANGE 7 DOWNTO 0 := 1;
@@ -249,14 +284,14 @@ ARCHITECTURE behav OF core IS
 	SIGNAL  can_cache      : std_ulogic := '0';
 
 	TYPE t_exec_unit IS RECORD 
-		rob_entry : std_ulogic_vector(2 DOWNTO 0);
+		rob_entry : std_ulogic_vector(par_rob_size_lg - 1 DOWNTO 0);
 		present   : std_logic;
-		rd   : std_ulogic_vector(3 DOWNTO 0);
+		rd   : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 		res  : t_rword;
 
-		r0   : std_ulogic_vector(3 DOWNTO 0);
+		r0   : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 		arg0 : t_rword;
-		r1   : std_ulogic_vector(3 DOWNTO 0);
+		r1   : std_ulogic_vector(par_prf_size_lg - 1 DOWNTO 0);
 		arg1 : t_rword;
 
 		imm16  : t_uword;
@@ -264,9 +299,9 @@ ARCHITECTURE behav OF core IS
 		signals : t_signals;
 	END RECORD t_exec_unit;
 	CONSTANT EXEC_UNIT_DEFAULT : t_exec_unit := (
-		rob_entry                 => "000",
+		rob_entry                 => (OTHERS => '0'),
 		present                   => '0',
-		rd | r0 | r1              => x"0",
+		rd | r0 | r1              => (OTHERS => '0'),
 		res | arg0 | arg1 | imm16 => x"ZZZZ",  
 		signals                   => SIGNALS_DEFAULT);
 
@@ -328,7 +363,7 @@ ARCHITECTURE behav OF core IS
 	SIGNAL s0_imm16 : t_uword := x"0000";
 	SIGNAL s1_imm16 : t_uword := x"0000";
 
-	SIGNAL prf_present : std_ulogic_vector(15 DOWNTO 0) := x"FFFF";
+	SIGNAL prf_present : std_ulogic_vector(par_prf_size - 1 DOWNTO 0) := (OTHERS=>'1');
 
 	SIGNAL flush : std_ulogic := '0';
 	SIGNAL flush_additional_wait : std_ulogic := '0';
@@ -383,15 +418,15 @@ ARCHITECTURE behav OF core IS
 	SIGNAL ras_top_p0_i : integer := 0; 
 	SIGNAL ras_top_p1_i : integer := 1; 
 
-	SIGNAL prfs0_id   : std_ulogic_vector(3 DOWNTO 0);
-	SIGNAL prfs1_id   : std_ulogic_vector(3 DOWNTO 0);
-	SIGNAL prfd0_id   : std_ulogic_vector(3 DOWNTO 0);
-	SIGNAL prfprev_id : std_ulogic_vector(3 DOWNTO 0);
+	SIGNAL prfs0_id   : std_ulogic_vector(par_prf_size_lg-1 DOWNTO 0);
+	SIGNAL prfs1_id   : std_ulogic_vector(par_prf_size_lg-1 DOWNTO 0);
+	SIGNAL prfd0_id   : std_ulogic_vector(par_prf_size_lg-1 DOWNTO 0);
+	SIGNAL prfprev_id : std_ulogic_vector(par_prf_size_lg-1 DOWNTO 0);
 
 
 	TYPE t_cache_entry IS RECORD 
 		present : std_ulogic;
-		tag     : t_uword;
+		tag     : std_ulogic_vector( 9 DOWNTO 0);
 		data    : std_ulogic_vector(31 DOWNTO 0);
 	END RECORD t_cache_entry;
 	CONSTANT cache_entry_default : t_cache_entry := (present => '0', tag => (OTHERS => '0'), data => (OTHERS => '0'));
@@ -404,6 +439,10 @@ ARCHITECTURE behav OF core IS
 
 	SIGNAL cache_hit : std_ulogic := '0';
 
+
+	SIGNAL feature_cache   : std_ulogic := '1';
+	SIGNAL feature_w2iprot : std_ulogic := '1';
+
 BEGIN
 	
 	c_decoder0 : decoder  PORT MAP(instr         => instr0,
@@ -415,7 +454,9 @@ BEGIN
 	                               can_skip_wait => '1',
 	                               controls      => signals1);
 
-	c_regfile  : reg_file_oooe PORT MAP(r0d => eu0.rd,
+	c_regfile  : reg_file_oooe GENERIC MAP(count    => par_rob_size * 2, 
+	                                       count_lg => par_rob_size_lg + 1)
+	                           PORT MAP(r0d => eu0.rd,
 	                                    i00 => eu0.res,
 	                                    r00 => eu0.r0, 
 	                                    o00 => r00_data,
@@ -479,37 +520,31 @@ BEGIN
 
 
 	--not needed
---	c_rse_adder_0 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"000",o0=>rob_SE(0),ic=>'0',oc=>OPEN);
-	c_rse_adder_1 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"001",o0=>rob_SE(1),ic=>'0',oc=>OPEN);
-	c_rse_adder_2 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"010",o0=>rob_SE(2),ic=>'0',oc=>OPEN);
-	c_rse_adder_3 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"011",o0=>rob_SE(3),ic=>'0',oc=>OPEN);
-	c_rse_adder_4 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"100",o0=>rob_SE(4),ic=>'0',oc=>OPEN);
-	c_rse_adder_5 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"101",o0=>rob_SE(5),ic=>'0',oc=>OPEN);
-	c_rse_adder_6 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"110",o0=>rob_SE(6),ic=>'0',oc=>OPEN);
-	c_rse_adder_7 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_SE(0),i1=>"111",o0=>rob_SE(7),ic=>'0',oc=>OPEN);
+--	c_rse_adder_0 : adder GENERIC MAP(size=>par_rob_size_lg) PORT MAP(i0=>rob_SE(0),i1=>"000",o0=>rob_SE(0),ic=>'0',oc=>OPEN);
+	u3: FOR i IN 1 TO par_rob_size - 1 GENERATE
+		c: adder GENERIC MAP(size=>par_rob_size_lg)
+		         PORT    MAP(i0=>rob_SE(0),i1=>std_ulogic_vector(to_unsigned(i, par_rob_size_lg)),o0=>rob_SE(i),ic=>'0',oc=>OPEN);
+	END GENERATE u3;
 
 	--not needed
---	c_rfe_adder_0 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_FE(0),i1=>"000",o0=>rob_FE(0),ic=>'0',oc=>OPEN);
-	c_rfe_adder_1 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_FE(0),i1=>"001",o0=>rob_FE(1),ic=>'0',oc=>OPEN);
-	c_rfe_adder_2 : adder GENERIC MAP(size=>3) PORT MAP(i0=>rob_FE(0),i1=>"010",o0=>rob_FE(2),ic=>'0',oc=>OPEN);
-
-	--not needed
+--	c_rfe_adder_0 : adder GENERIC MAP(size=>par_rob_size_lg) PORT MAP(i0=>rob_FE(0),i1=>"000",o0=>rob_FE(0),ic=>'0',oc=>OPEN);
 --	c_rfl_adder_0 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE(0),i1=>"0000",o0=>rfl_SE(0),ic=>'0',oc=>OPEN);
-	c_rfl_adder_1 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE(0),i1=>"0001",o0=>rfl_SE(1),ic=>'0',oc=>OPEN);
-	c_rfl_adder_2 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE(0),i1=>"0010",o0=>rfl_SE(2),ic=>'0',oc=>OPEN);
-
-	--not needed
 --	c_rfl_adder_3 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_FE(0),i1=>"0000",o0=>rfl_FE(0),ic=>'0',oc=>OPEN);
-	c_rfl_adder_4 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_FE(0),i1=>"0001",o0=>rfl_FE(1),ic=>'0',oc=>OPEN);
-	c_rfl_adder_5 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_FE(0),i1=>"0010",o0=>rfl_FE(2),ic=>'0',oc=>OPEN);
-
-	--not needed
 --	c_rfl_adder_6 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE_com(0),i1=>"0000",o0=>rfl_SE_com(0),ic=>'0',oc=>OPEN);
-	c_rfl_adder_7 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE_com(0),i1=>"0001",o0=>rfl_SE_com(1),ic=>'0',oc=>OPEN);
-	c_rfl_adder_8 : adder GENERIC MAP(size=>4) PORT MAP(i0=>rfl_SE_com(0),i1=>"0010",o0=>rfl_SE_com(2),ic=>'0',oc=>OPEN);
+
+	u4: FOR i IN 1 TO 2 GENERATE
+		c_rfe_adder : adder GENERIC MAP(size=>par_rob_size_lg) 
+		                    PORT    MAP(i0=>rob_FE(0),i1=>std_ulogic_vector(to_unsigned(i, par_rob_size_lg)),o0=>rob_FE(i),ic=>'0',oc=>OPEN);
+		c_rfl_adder0: adder GENERIC MAP(size=>par_rfl_size_lg)
+		                    PORT    MAP(i0=>rfl_SE(0),i1=>std_ulogic_vector(to_unsigned(i, par_rfl_size_lg)),o0=>rfl_SE(i),ic=>'0',oc=>OPEN);
+		c_rfl_adder1: adder GENERIC MAP(size=>par_rfl_size_lg) 
+		                    PORT    MAP(i0=>rfl_FE(0),i1=>std_ulogic_vector(to_unsigned(i, par_rfl_size_lg)),o0=>rfl_FE(i),ic=>'0',oc=>OPEN);
+		c_rfl_adder2: adder GENERIC MAP(size=>par_rfl_size_lg)
+		                    PORT    MAP(i0=>rfl_SE_com(0),i1=>std_ulogic_vector(to_unsigned(i, par_rfl_size_lg)),o0=>rfl_SE_com(i),ic=>'0',oc=>OPEN);
+	END GENERATE u4;
 
 	--convert all slvs into ints
-	u0: FOR i IN 0 TO 7 GENERATE
+	u0: FOR i IN 0 TO par_rob_size - 1 GENERATE
 		rob_SE_i(i) <= to_integer(unsigned(rob_SE(i)));
 	END GENERATE u0;
 	u1: FOR i IN 0 TO 1 GENERATE
@@ -539,27 +574,27 @@ BEGIN
 	ras_top_p1_i <= to_integer(unsigned(ras_top_p1));
 	ras_top_m1_i <= to_integer(unsigned(ras_top_m1));
 
-	rob_FE(0) <= "000"     WHEN flush = '1' 
-	                        AND rising_edge(clk)
+	rob_FE(0) <= (OTHERS=>'0') WHEN flush = '1' 
+	                            AND rising_edge(clk)
 	--rob_FE_i(1) not present implies rob_FE_i(0) not present
-	        ELSE rob_FE(2) WHEN fetch0 AND NOT ignore0
-	                        AND fetch1 AND NOT ignore1
-	                        AND instr_ready AND to_std_ulogic(rising_edge(clk))
-	        ELSE rob_FE(1) WHEN fetch0 AND NOT ignore0
-	                        AND instr_ready AND to_std_ulogic(rising_edge(clk))
-			ELSE rob_FE(1) WHEN fetch0 AND     ignore0
-				            AND fetch1 AND NOT ignore1
-	                        AND instr_ready AND to_std_ulogic(rising_edge(clk))
+	        ELSE rob_FE(2)     WHEN fetch0 AND NOT ignore0
+	                            AND fetch1 AND NOT ignore1
+	                            AND instr_ready AND to_std_ulogic(rising_edge(clk))
+	        ELSE rob_FE(1)     WHEN fetch0 AND NOT ignore0
+	                            AND instr_ready AND to_std_ulogic(rising_edge(clk))
+			ELSE rob_FE(1)     WHEN fetch0 AND     ignore0
+				                AND fetch1 AND NOT ignore1
+	                            AND instr_ready AND to_std_ulogic(rising_edge(clk))
 
 
 	        ELSE rob_FE(0);
 
 	--not necessary but looks better 
-	rob_SE(0) <= "000"     WHEN flush = '1' 
-	                        AND rising_edge(clk)
+	rob_SE(0) <= (OTHERS=>'0') WHEN flush = '1' 
+	                            AND rising_edge(clk)
 	--retire1 implies retire0
-	        ELSE rob_SE(2) WHEN retire1 = '1' AND rising_edge(clk) 
-	        ELSE rob_SE(1) WHEN retire0 = '1' AND rising_edge(clk) 
+	        ELSE rob_SE(2)     WHEN retire1 = '1' AND rising_edge(clk) 
+	        ELSE rob_SE(1)     WHEN retire0 = '1' AND rising_edge(clk) 
 	        ELSE rob_SE(0);
 
 	--no instruction that writes to reg can cause flush 
@@ -706,7 +741,8 @@ BEGIN
 
 	--when 3 b_filter entries say that this addr was seen then it probably was seen
 	--but more important is that when it was seen then b_filter will say that it was seen
-	write_to_instr <= b_filter(to_integer(unsigned(internal_oaddr( 7 DOWNTO  0))))
+	write_to_instr <= feature_w2iprot
+	              AND b_filter(to_integer(unsigned(internal_oaddr( 7 DOWNTO  0))))
 	              AND b_filter(to_integer(unsigned(internal_oaddr(15 DOWNTO  8))))
 	              AND b_filter(to_integer(unsigned(internal_oaddr(11 DOWNTO  4))))
 	             WHEN eu1.signals.mwr
@@ -741,7 +777,8 @@ BEGIN
 	       ELSE signals0.imm8               & signals1.imm8 WHEN signals0.xwr = '1' AND signals0.x0w = "100" AND signals0.iim = '1' 
 	       ELSE x"00"                       & signals1.imm8;
 
-	shadow_ui_present <= '1' WHEN  fetch1 = '1' 
+	shadow_ui_present <= '1' WHEN flush = '0' 
+	                          AND fetch1 = '1' 
 	                          AND signals1.xwr = '1' AND signals1.x0w = "100" AND signals1.iim = '1'
 	                          AND (s0_branch    = '0'  OR branch_predict_taken = '0') 
 	                          AND  instr_ready  = '1' AND rising_edge(clk) 
@@ -859,7 +896,7 @@ BEGIN
 			SEVERITY failure;
 
 		IF rising_edge(clk) AND flush = '1' THEN 
-			FOR i IN 0 TO 7 LOOP
+			FOR i IN 0 TO par_rob_size - 1 LOOP
 				rob(i) <= ROB_ENTRY_DEFAULT;
 			END LOOP;
 
@@ -892,11 +929,11 @@ BEGIN
 					rob(to_integer(unsigned(eu0.rob_entry))).branch_alt_dest <= eu0.res;
 
 					--trivial dependency management
-					FOR i IN 0 TO 7 LOOP 
-						rob(i).prfs0_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs0_id = eu0.rd ELSE UNAFFECTED;
-						rob(i).prfs1_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs1_id = eu0.rd ELSE UNAFFECTED;
+					FOR i IN 0 TO par_rob_size - 1 LOOP 
+						rob(i).prfs0_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs0_id = eu0.rd AND eu0.signals.rwr = '1' ELSE UNAFFECTED;
+						rob(i).prfs1_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs1_id = eu0.rd AND eu0.signals.rwr = '1' ELSE UNAFFECTED;
 					END LOOP; 
-					prf_present(to_integer(unsigned(eu0.rd))) <= '1';
+					prf_present(to_integer(unsigned(eu0.rd))) <= '1' WHEN eu0.signals.rwr ELSE UNAFFECTED;
 --					rat(to_integer(unsigned(eu0.signals.r0))).present <= '1';
 				END IF;
 				IF eu1.present THEN
@@ -908,11 +945,11 @@ BEGIN
 					rob(to_integer(unsigned(eu1.rob_entry))).branch_alt_dest <= eu1.res;
 
 					--trivial dependency management
-					FOR i IN 0 TO 7 LOOP 
-						rob(i).prfs0_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs0_id = eu1.rd ELSE UNAFFECTED;
-						rob(i).prfs1_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs1_id = eu1.rd ELSE UNAFFECTED;
+					FOR i IN 0 TO par_rob_size - 1 LOOP 
+						rob(i).prfs0_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs0_id = eu1.rd  AND eu1.signals.rwr = '1' ELSE UNAFFECTED;
+						rob(i).prfs1_p <= '1' WHEN rob(i).present = '1' AND rob(i).prfs1_id = eu1.rd  AND eu1.signals.rwr = '1' ELSE UNAFFECTED;
 					END LOOP; 
-					prf_present(to_integer(unsigned(eu1.rd))) <= '1';
+					prf_present(to_integer(unsigned(eu1.rd))) <= '1' WHEN eu1.signals.rwr ELSE UNAFFECTED;
 --					rat(to_integer(unsigned(eu1.signals.r0))).present <= '1';
 				END IF;
 			END IF;
@@ -1082,7 +1119,7 @@ BEGIN
 			--and it was just added so there is no need to execute it 
 			--ie NOP or mov
 			--choose first in program order that can be used
-			FOR i IN 0 TO 7 LOOP
+			FOR i IN 0 TO par_rob_size - 1 LOOP
 				IF        rob(rob_SE_i(i)).present     AND     rob(rob_SE_i(i)).prfs0_p
 				  AND     rob(rob_SE_i(i)).prfs1_p     AND NOT rob(rob_SE_i(i)).prfd0_p 
 				  AND NOT rob(rob_SE_i(i)).signals.mwr AND NOT rob(rob_SE_i(i)).signals.mrd
@@ -1100,23 +1137,18 @@ BEGIN
 			END LOOP;
 
 			IF NOT found0 THEN
-				eu0 <= (rob_entry=>"000",rd|r0|r1=>"0000",present=> '0',
+				eu0 <= (rob_entry=>(OTHERS=>'0'),rd|r0|r1=>(OTHERS=>'0'),present=> '0',
 						signals=>SIGNALS_DEFAULT,arg0|arg1|res|imm16 => x"ZZZZ");
 			END IF;
 
-
-			--second one must watch out for the conflict with the first one
-			--however second one can never use first rob entry as if it was free the first eu would use it 
-			--one less check then
-			--choose first in program order that is not used by eu0 (aka second in program order)
-			FOR i IN 1 TO 7 LOOP 
-				IF        rob(rob_SE_i(i)).present     AND     rob(rob_SE_i(i)).prfs0_p
-				  AND     rob(rob_SE_i(i)).prfs1_p     AND NOT rob(rob_SE_i(i)).prfd0_p 
-				  AND NOT rob(rob_SE_i(i)).signals.mrd AND NOT rob(rob_SE_i(i)).signals.mwr
-				  AND NOT rob(rob_SE_i(i)).signals.xwr AND NOT to_std_ulogic(rob(rob_SE_i(i)).signals.src = "001") --xrd
-				  AND to_std_ulogic(eu0.rob_entry /= rob_SE(i))
-				THEN 
-					eu1_mem <= '0';
+			--first try to do mem operations as they are usually quite high and are a bottleneck
+			--when i can go higher than 1, memory ordering fuckups are expected
+			FOR i IN 0 TO 0 LOOP
+				IF    rob(rob_SE_i(i)).present     AND     rob(rob_SE_i(i)).prfs0_p
+				  AND rob(rob_SE_i(i)).prfs1_p     AND NOT rob(rob_SE_i(i)).prfd0_p 
+				  AND (rob(rob_SE_i(i)).signals.mrd OR     rob(rob_SE_i(i)).signals.mwr)
+				THEN
+					eu1_mem <= '1';
 					eu1 <= (rob_entry=>rob_SE(i),present=> '1',rd=>rob(rob_SE_i(i)).prfd0_id,
 							r0=>rob(rob_SE_i(i)).prfs0_id,r1=>rob(rob_SE_i(i)).prfs1_id,
 							signals=>rob(rob_SE_i(i)).signals,arg0|arg1|res => x"ZZZZ",
@@ -1126,15 +1158,37 @@ BEGIN
 					EXIT;
 				END IF;
 			END LOOP;
-			--now try to use mem op
+			--allow mem access to be as 1st as long as 0 is not branch, hack for now
+			--also to not have problems with b_filter, only reads are allowed to go earlier
+			IF    to_std_ulogic(NOT found1) 
+			  AND NOT misprediction
+			  AND rob(rob_SE_i(1)).present     AND     rob(rob_SE_i(1)).prfs0_p
+			  AND rob(rob_SE_i(1)).prfs1_p     AND NOT rob(rob_SE_i(1)).prfd0_p 
+			  AND rob(rob_SE_i(1)).signals.mrd
+			  AND NOT rob(rob_SE_i(1)).signals.pop
+			THEN
+				eu1_mem <= '1';
+				eu1 <= (rob_entry=>rob_SE(1),present=> '1',rd=>rob(rob_SE_i(1)).prfd0_id,
+						r0=>rob(rob_SE_i(1)).prfs0_id,r1=>rob(rob_SE_i(1)).prfs1_id,
+						signals=>rob(rob_SE_i(1)).signals,arg0|arg1|res => x"ZZZZ",
+						imm16 => rob(rob_SE_i(1)).imm16);
+
+				found1 := true;
+			END IF;
+
+			--second one must watch out for the conflict with the first one
+			--however second one can never use first rob entry as if it was free the first eu would use it 
+			--one less check then
+			--choose first in program order that is not used by eu0 (aka second in program order)
 			IF NOT found1 THEN
-				--when i can go higher than 1, memory ordering fuckups are expected
-				FOR i IN 0 TO 0 LOOP
-					IF    rob(rob_SE_i(i)).present     AND     rob(rob_SE_i(i)).prfs0_p
-					  AND rob(rob_SE_i(i)).prfs1_p     AND NOT rob(rob_SE_i(i)).prfd0_p 
-					  AND (rob(rob_SE_i(i)).signals.mrd OR     rob(rob_SE_i(i)).signals.mwr)
-					THEN
-						eu1_mem <= '1';
+				FOR i IN 1 TO par_rob_size - 1 LOOP 
+					IF        rob(rob_SE_i(i)).present     AND     rob(rob_SE_i(i)).prfs0_p
+					  AND     rob(rob_SE_i(i)).prfs1_p     AND NOT rob(rob_SE_i(i)).prfd0_p 
+					  AND NOT rob(rob_SE_i(i)).signals.mrd AND NOT rob(rob_SE_i(i)).signals.mwr
+					  AND NOT rob(rob_SE_i(i)).signals.xwr AND NOT to_std_ulogic(rob(rob_SE_i(i)).signals.src = "001") --xrd
+					  AND to_std_ulogic(eu0.rob_entry /= rob_SE(i))
+					THEN 
+						eu1_mem <= '0';
 						eu1 <= (rob_entry=>rob_SE(i),present=> '1',rd=>rob(rob_SE_i(i)).prfd0_id,
 								r0=>rob(rob_SE_i(i)).prfs0_id,r1=>rob(rob_SE_i(i)).prfs1_id,
 								signals=>rob(rob_SE_i(i)).signals,arg0|arg1|res => x"ZZZZ",
@@ -1144,40 +1198,22 @@ BEGIN
 						EXIT;
 					END IF;
 				END LOOP;
-				--allow mem access to be as 1st as long as 0 is not branch, hack for now
-				--also to not have problems with b_filter, only reads are allowed to go earlier
-				IF    to_std_ulogic(NOT found1) 
-				  AND NOT misprediction
-				  AND rob(rob_SE_i(1)).present     AND     rob(rob_SE_i(1)).prfs0_p
-				  AND rob(rob_SE_i(1)).prfs1_p     AND NOT rob(rob_SE_i(1)).prfd0_p 
-				  AND rob(rob_SE_i(1)).signals.mrd
-				  AND NOT rob(rob_SE_i(1)).signals.pop
-				THEN
-					eu1_mem <= '1';
-					eu1 <= (rob_entry=>rob_SE(1),present=> '1',rd=>rob(rob_SE_i(1)).prfd0_id,
-							r0=>rob(rob_SE_i(1)).prfs0_id,r1=>rob(rob_SE_i(1)).prfs1_id,
-							signals=>rob(rob_SE_i(1)).signals,arg0|arg1|res => x"ZZZZ",
-							imm16 => rob(rob_SE_i(1)).imm16);
-
-					found1 := true;
-				END IF;
 			END IF;
 
 			IF NOT found1 THEN 
 				eu1_mem <= '0';
-				eu1 <= (rob_entry=>"000",rd|r0|r1=>"0000",present=> '0',
+				eu1 <= (rob_entry=>(OTHERS=>'0'),rd|r0|r1=>(OTHERS=>'0'),present=> '0',
 						signals=>SIGNALS_DEFAULT,arg0|arg1|res|imm16 => x"ZZZZ");
 			END IF;
 		END IF; --flush
 	END PROCESS;
 
 	--cache
-	cache_addr        <= to_integer(unsigned(r_ip.i0(4 DOWNTO 1))) WHEN rising_edge(clk)
-	                ELSE UNAFFECTED; 
+	cache_addr        <= to_integer(unsigned(r_ip.i0(4 DOWNTO 1)));
 
 	--otherwise, oscilation happens on clock edge which cannot possibly happen because of cache delay
 	cache_data        <= cache(cache_addr).data;
-	cache_hit         <= cache(cache_addr).present AND to_std_ulogic(cache(cache_addr).tag = r_ip.i0);
+	cache_hit         <= cache(cache_addr).present AND to_std_ulogic(cache(cache_addr).tag = r_ip.i0(14 DOWNTO 5));
 
 	PROCESS(clk) IS 
 	BEGIN 
@@ -1187,7 +1223,7 @@ BEGIN
 					cache(i) <= cache_entry_default;
 				END LOOP;
 			ELSIF can_fetch AND NOT cache_hit THEN
-				cache(cache_addr) <= (present => '1', tag => r_ip.i0, data => iodata);
+				cache(cache_addr) <= (present => '1', tag => r_ip.i0(14 DOWNTO 5), data => iodata);
 			END IF;
 		END IF;
 	END PROCESS;
@@ -1229,8 +1265,9 @@ BEGIN
 
 	can_fetch <= (NOT eu1_mem AND NOT rob(rob_FE_i(1)).present)
 	          OR (flush AND NOT write_to_instr);
-	can_cache <= cache_hit AND NOT rob(rob_FE_i(1)).present
-	          AND NOT flush AND NOT write_to_instr;
+	can_cache <= feature_cache
+	         AND cache_hit AND NOT rob(rob_FE_i(1)).present
+	         AND NOT flush AND NOT write_to_instr;
 
 
 	--fetch only when place for 1 
@@ -1342,8 +1379,9 @@ BEGIN
 					& LF & "count movrr  : " & integer'image(cnt_movrr        )
 					& LF & "count ignore : " & integer'image(cnt_ignore       )
 					& LF & "count flush  : " & integer'image(cnt_flush        )
-					& LF & "count w2i    : " & integer'image(cnt_flush        )
+					& LF & "count w2i    : " & integer'image(cnt_w2iflush     )
 					& LF & "count robfull: " & integer'image(cnt_robful       )
+					& LF & "count instr  : " & integer'image(cnt_instr        )
 					& LF 
 					--trim string
 --					& LF & "IPC          : " & (real'image(ipc)(1 TO 4))
