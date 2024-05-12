@@ -38,7 +38,7 @@ ARCHITECTURE behav of chip IS
 
 	COMPONENT memory IS 
 		GENERIC(
-			delay : time := 0 NS
+			delay : time :=  0 NS
 		);
 		PORT(
 			ia     : IN    t_rword := x"0000";
@@ -85,7 +85,7 @@ BEGIN
 	                        disable => c0_disable, 
 	                        clk     => clk_core0);
 
-	c_mem0  : memory GENERIC MAP(delay  => 0 NS)
+	c_mem0  : memory GENERIC MAP(delay  => 10 NS)
 	                 PORT    MAP(ia     => bus_adr,
 	                             iodata => bus_mem,
 	                             rd     => bus_crd,

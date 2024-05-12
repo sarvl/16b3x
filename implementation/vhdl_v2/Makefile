@@ -5,12 +5,14 @@ CY := '\033[0;33m' #color yellow
 TYPES      := p_type
 ARITH      := arith
 REG        := reg
+#MEM        := mem
 MEM        := mem_wide
 CACHE      := cache
 DECODE     := decode
+#CORE       := core
 CORE       := core_wide_oooe
-#CHIP       := chip
 CHIP       := chip_wide_test
+#CHIP       := chip_test
 CHIP_TESTS := chip_wide_test
 
 
@@ -21,7 +23,7 @@ FILES       := out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DEC
 FILES_TESTS := out/${TYPES}.o out/${ARITH}.o out/${REG}.o out/${MEM}.o out/${DECODE}.o out/${CORE}.o out/${CHIP_TEST}.o
 
 UPPER_LIMIT       :=   4000ns
-UPPER_LIMIT_TESTS :=   8000ns
+UPPER_LIMIT_TESTS :=  40000ns
 
 default:
 	@echo -e no option specified

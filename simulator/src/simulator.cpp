@@ -41,7 +41,6 @@ constexpr int par_bp_his_l_and  = par_bp_his_l_size - 1;
 constexpr int par_bp_his_g_and  = par_bp_his_g_size - 1;
 
 
-
 namespace Program_Flags{
 	enum T_Program_Flags : uint32_t{
 		none       = 0x0000,
@@ -55,6 +54,8 @@ namespace Program_Flags{
 		perf       = 0x0080,
 		instr      = 0x0100,
 		warn       = 0x0200,
+		preciseperf= 0x0400,
+		branch     = 0x0800
 	};
 };
 			
@@ -273,12 +274,16 @@ int main(int argc, char* argv[])
 	feature_register = Feature_Flags::M;
 
 
-	uint32_t instruction_count = 0;
-	uint32_t memory_references = 0;
-	uint32_t stack_operations  = 0;
-	uint32_t branches          = 0;
-	uint32_t branches_taken    = 0;
-	uint32_t arithmetic        = 0;
+	
+	uint32_t instruction_count    = 0;
+	uint32_t memory_references_r  = 0;
+	uint32_t memory_references_i  = 0;
+	uint32_t movrr                = 0;
+	uint32_t stack_operations     = 0;
+	uint32_t branches_taken       = 0;
+	uint32_t branches_c           = 0;
+	uint32_t branches_u           = 0;
+	uint32_t arithmetic           = 0;
 
 	uint32_t instr_ex_count[32];
 	std::memset(instr_ex_count, 0, sizeof(uint32_t) * 32); 
@@ -430,6 +435,9 @@ int main(int argc, char* argv[])
 			reg0 = second; 
 			
 			VERBOSE_PRINT("R" << +instr.op0.r0 << " <= " << second << "\n");
+
+			if(false == instr.is_imm)
+				movrr++;
 			break;
 		}
 		case Opcode::RDM: 
@@ -442,7 +450,10 @@ int main(int argc, char* argv[])
 					          << "at " << instruction_pointer - 1 << "instr\n";
 			}			
 
-			memory_references++;
+			if(instr.is_imm)
+				memory_references_i++;
+			else
+				memory_references_r++;
 
 			DEBUG_PRINT("RDM\n");
 			const uint16_t MSB = mem[(second + 0) & 0xFFFF];
@@ -466,7 +477,10 @@ int main(int argc, char* argv[])
 					          << "at " << instruction_pointer - 1 << "instr\n";
 			}			
 
-			memory_references++;
+			if(instr.is_imm)
+				memory_references_i++;
+			else
+				memory_references_r++;
 
 			DEBUG_PRINT("WRM\n");
 			
@@ -527,7 +541,6 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::PSH: 
 		{
-			memory_references++;
 			stack_operations++;
 
 			DEBUG_PRINT("PSH\n");
@@ -548,7 +561,6 @@ int main(int argc, char* argv[])
 		}
 		case Opcode::POP: 
 		{
-			memory_references++;
 			stack_operations++;
 
 			DEBUG_PRINT("POP\n");
@@ -657,7 +669,10 @@ int main(int argc, char* argv[])
 			{ best_gt = bp_g_his_2bc_sn_gt; best_score = bp_g_his_2bc_sn_cor[bp_his_g]; }
 
 
-			branches++;
+			if(instr.op0.r0 == 0b111)
+				branches_u++;
+			else
+				branches_c++;
 
 			DEBUG_PRINT("JMP\n");
 
@@ -858,7 +873,10 @@ int main(int argc, char* argv[])
 			if(bp_g_his_2bc_sn_cor[bp_his_l] > best_score)
 			{ best_gt = bp_g_his_2bc_sn_gt; best_score = bp_g_his_2bc_sn_cor[bp_his_g]; }
 
-			branches++;
+			if(instr.op0.r0 == 0b111)
+				branches_u++;
+			else
+				branches_c++;
 			DEBUG_PRINT("CAL\n");
 			
 			if(program_flags & Program_Flags::verbose)
@@ -1059,7 +1077,10 @@ int main(int argc, char* argv[])
 			if(bp_g_his_2bc_sn_cor[bp_his_l] > best_score)
 			{ best_gt = bp_g_his_2bc_sn_gt; best_score = bp_g_his_2bc_sn_cor[bp_his_g]; }
 
-			branches++;
+			if(instr.op0.r0 == 0b111)
+				branches_u++;
+			else
+				branches_c++;
 			DEBUG_PRINT("RET\n");
 
 			VERBOSE_PRINT("RET TO " << link_register);
@@ -1331,6 +1352,22 @@ end:
 		std::cout << '\n';
 	}
 
+	if(program_flags & Program_Flags::perf & ~Program_Flags::preciseperf)
+	{
+		std::cout << "____GENERAL INFO____\n";
+		std::cout << "Instruction Count: " << instruction_count << '\n';
+		std::cout << "Memory References: " << memory_references_i + memory_references_r + stack_operations << '\n';
+		std::cout << "Branches         : " << branches_u + branches_c << '\n';
+		std::cout << "Branches Taken   : " << branches_taken    << '\n'; 
+		std::cout << "Arithmetic       : " << arithmetic        << '\n'; 
+		std::cout << '\n';
+
+		std::cout << "__APPROXIMATE TIME__\n";
+		std::cout << "Approx. time on simple implementation  : " << instruction_count + (memory_references_i + memory_references_r + stack_operations)                  << " cycles\n";
+		std::cout << "Approx. time on pipeline implementation: " << instruction_count + (memory_references_i + memory_references_r + stack_operations) + 2 * branches_taken << " cycles\n";
+		std::cout << '\n';
+	}
+
 
 	if(program_flags & Program_Flags::instr)
 	{
@@ -1365,11 +1402,8 @@ end:
 		std::cout << '\n';
 	}
 
-
-	if(program_flags & Program_Flags::perf)
+	if(program_flags & Program_Flags::branch)
 	{
-
-
 		uint32_t t_bp_1bc_st_cor = 0;
 		uint32_t t_bp_1bc_sn_cor = 0;
 		uint32_t t_bp_2bc_st_cor = 0;
@@ -1414,15 +1448,6 @@ end:
 		for(int i = 0; i < par_bp_his_g_size; i++)
 			t_bp_g_his_2bc_sn_cor += bp_g_his_2bc_sn_cor[i];
 
-		std::cout << "____GENERAL INFO____\n";
-		std::cout << "Instruction Count: " << instruction_count << '\n';
-		std::cout << "Memory References: " << memory_references << '\n';
-		std::cout << "Stack Operations : " << stack_operations  << '\n'; 
-		std::cout << "Branches         : " << branches          << '\n'; 
-		std::cout << "Branches Taken   : " << branches_taken    << '\n'; 
-		std::cout << "Arithmetic       : " << arithmetic        << '\n'; 
-		std::cout << '\n';
-
 		std::cout << "__BRANCH PREDICTOR__\n";
 		std::cout << "1bc T            : " << t_bp_1bc_st_cor << '\n';
 		std::cout << "1bc N            : " << t_bp_1bc_sn_cor << '\n';
@@ -1445,11 +1470,38 @@ end:
 
 		std::cout << '\n';
 
+	}
+
+	if(program_flags & Program_Flags::preciseperf)
+	{
+		std::cout << "____PRECISE INFO____\n";
+		std::cout << "Instruction Count       : " << instruction_count                                            << '\n';
+		std::cout << "Memory References       : " << memory_references_r + memory_references_i + stack_operations << '\n';
+		std::cout << "Memory References R addr: " << memory_references_r                                          << '\n';
+		std::cout << "Memory References I addr: " << memory_references_i                                          << '\n';
+		std::cout << "Mov R R                 : " << movrr                                                        << '\n'; 
+		std::cout << "Stack Operations        : " << stack_operations                                             << '\n'; 
+		std::cout << "Branches                : " << branches_c + branches_u                                      << '\n'; 
+		std::cout << "Branches Taken          : " << branches_taken                                               << '\n'; 
+		std::cout << "Branches Conditional    : " << branches_c                                                   << '\n';
+		std::cout << "Branches Unconditional  : " << branches_u                                                   << '\n'; 
+		std::cout << "Arithmetic              : " << arithmetic                                                   << '\n'; 
+		std::cout << '\n';
+
 		std::cout << "__APPROXIMATE TIME__\n";
-		std::cout << "Approx. time on simple implementation  : " << instruction_count + memory_references                  << " cycles\n";
-		std::cout << "Approx. time on pipeline implementation: " << instruction_count + memory_references + 2 * branches_taken << " cycles\n";
+		std::cout << "Approx. time on simple implementation  : " << instruction_count + (memory_references_i + memory_references_r + stack_operations)                  << " cycles\n";
+		std::cout << "Approx. time on pipeline implementation: " << instruction_count + (memory_references_i + memory_references_r + stack_operations) + 2 * branches_taken << " cycles\n";
 		std::cout << '\n';
 	}
+	
+
+	if(program_flags & Program_Flags::warn)
+	{
+		if(stack_pointer != 0)
+			std::cout << "WARNING: stack pointer IS NOT back at 0\n"; 
+
+		std::cout << '\n';
+	}	
 
 	if(program_flags & Program_Flags::warn)
 	{

@@ -130,3 +130,59 @@ BEGIN
 	END PROCESS;
 
 END ARCHITECTURE behav;
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+USE work.p_types.ALL;
+
+ENTITY reg_file_oooe_3p IS 
+	GENERIC(
+		count    : integer;
+		count_lg : integer
+	);
+	PORT(
+		i00  : IN  t_uword;
+		i10  : IN  t_uword;
+		i20  : IN  t_uword;
+
+		o00  : OUT t_uword;
+		o01  : OUT t_uword;
+		o10  : OUT t_uword;
+		o11  : OUT t_uword;
+
+		r0d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r00  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r01  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r1d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r10  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r11  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r2d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+
+		we0  : IN  std_ulogic;
+		we1  : IN  std_ulogic;
+		we2  : IN  std_ulogic;
+
+		clk  : IN  std_ulogic
+	);
+END ENTITY reg_file_oooe_3p;
+
+ARCHITECTURE behav OF reg_file_oooe_3p IS 
+
+	SIGNAL data : t_reg_arr(count - 1 DOWNTO 0) := (OTHERS => x"0000");
+BEGIN
+
+	o00 <= data(to_integer(unsigned(r00)));
+	o01 <= data(to_integer(unsigned(r01)));
+	o10 <= data(to_integer(unsigned(r10)));
+	o11 <= data(to_integer(unsigned(r11)));
+	PROCESS (clk) IS 
+	BEGIN
+		IF rising_edge(clk) THEN
+			data(to_integer(unsigned(r0d))) <= i00 WHEN we0;
+			data(to_integer(unsigned(r1d))) <= i10 WHEN we1;
+			data(to_integer(unsigned(r2d))) <= i20 WHEN we2;
+		END IF;
+	END PROCESS;
+
+END ARCHITECTURE behav;

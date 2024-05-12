@@ -1,25 +1,26 @@
 [*]
 [*] GTKWave Analyzer v3.3.117 (w)1999-2023 BSI
-[*] Mon Jan  8 04:56:38 2024
+[*] Wed Jan 10 03:28:11 2024
 [*]
 [dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl_v2/wave.ghw"
-[dumpfile_mtime] "Mon Jan  8 04:54:49 2024"
-[dumpfile_size] 2486847
+[dumpfile_mtime] "Wed Jan 10 03:22:39 2024"
+[dumpfile_size] 4757749
 [savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl_v2/wide_oooe.gtkw"
 [timestart] 11120000
 [size] 1366 768
-[pos] -1 -1
+[pos] 9 9
 *-23.411512 33018000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.chip.
 [treeopen] top.chip.c_core0.
 [treeopen] top.chip.c_core0.eu0.signals.
 [treeopen] top.chip.c_core0.eu1.signals.
-[treeopen] top.chip.c_core0.rob.
+[treeopen] top.chip.c_core0.lsq.
+[treeopen] top.chip.c_core0.lsq.[0].
 [sst_width] 273
 [signals_width] 271
 [sst_expanded] 1
-[sst_vpaned_height] 354
+[sst_vpaned_height] 477
 @28
 top.chip.clk_core0
 top.chip.clk_mem0
@@ -62,6 +63,8 @@ top.chip.bus_adr[0]
 -
 -
 -branch_prdct
+@420
+top.chip.c_core0.cnt_instr
 @22
 #{top.chip.c_core0.cur_ip_p1[15:0]} top.chip.c_core0.cur_ip_p1[15] top.chip.c_core0.cur_ip_p1[14] top.chip.c_core0.cur_ip_p1[13] top.chip.c_core0.cur_ip_p1[12] top.chip.c_core0.cur_ip_p1[11] top.chip.c_core0.cur_ip_p1[10] top.chip.c_core0.cur_ip_p1[9] top.chip.c_core0.cur_ip_p1[8] top.chip.c_core0.cur_ip_p1[7] top.chip.c_core0.cur_ip_p1[6] top.chip.c_core0.cur_ip_p1[5] top.chip.c_core0.cur_ip_p1[4] top.chip.c_core0.cur_ip_p1[3] top.chip.c_core0.cur_ip_p1[2] top.chip.c_core0.cur_ip_p1[1] top.chip.c_core0.cur_ip_p1[0]
 @28
@@ -74,7 +77,6 @@ top.chip.c_core0.branch_predict_taken
 @28
 top.chip.c_core0.branch_dest_misalign
 top.chip.c_core0.s0_branch
-@29
 top.chip.c_core0.s1_branch
 @200
 -
@@ -670,6 +672,83 @@ top.chip.c_core0.signals1.rwr
 #{top.chip.c_core0.signals1.x0r[2:0]} top.chip.c_core0.signals1.x0r[2] top.chip.c_core0.signals1.x0r[1] top.chip.c_core0.signals1.x0r[0]
 #{top.chip.c_core0.signals1.x0w[2:0]} top.chip.c_core0.signals1.x0w[2] top.chip.c_core0.signals1.x0w[1] top.chip.c_core0.signals1.x0w[0]
 top.chip.c_core0.signals1.xwr
+@200
+-
+-
+-LSQ
+@29
+top.chip.c_core0.lsq_full
+@28
+top.chip.c_core0.lsq_dep1on0
+top.chip.c_core0.lsq_dep2on0
+top.chip.c_core0.lsq_dep2on1
+top.chip.c_core0.lsq_dep3on0
+top.chip.c_core0.lsq_dep3on1
+top.chip.c_core0.lsq_dep3on2
+@200
+-entry0
+@28
+top.chip.c_core0.lsq[0].present
+top.chip.c_core0.lsq[0].done
+top.chip.c_core0.lsq[0].write
+#{top.chip.c_core0.lsq[0].rob_entry[2:0]} top.chip.c_core0.lsq[0].rob_entry[2] top.chip.c_core0.lsq[0].rob_entry[1] top.chip.c_core0.lsq[0].rob_entry[0]
+top.chip.c_core0.lsq[0].addr_p
+@22
+#{top.chip.c_core0.lsq[0].data_pid[3:0]} top.chip.c_core0.lsq[0].data_pid[3] top.chip.c_core0.lsq[0].data_pid[2] top.chip.c_core0.lsq[0].data_pid[1] top.chip.c_core0.lsq[0].data_pid[0]
+#{top.chip.c_core0.lsq[0].addr_val[15:0]} top.chip.c_core0.lsq[0].addr_val[15] top.chip.c_core0.lsq[0].addr_val[14] top.chip.c_core0.lsq[0].addr_val[13] top.chip.c_core0.lsq[0].addr_val[12] top.chip.c_core0.lsq[0].addr_val[11] top.chip.c_core0.lsq[0].addr_val[10] top.chip.c_core0.lsq[0].addr_val[9] top.chip.c_core0.lsq[0].addr_val[8] top.chip.c_core0.lsq[0].addr_val[7] top.chip.c_core0.lsq[0].addr_val[6] top.chip.c_core0.lsq[0].addr_val[5] top.chip.c_core0.lsq[0].addr_val[4] top.chip.c_core0.lsq[0].addr_val[3] top.chip.c_core0.lsq[0].addr_val[2] top.chip.c_core0.lsq[0].addr_val[1] top.chip.c_core0.lsq[0].addr_val[0]
+@28
+top.chip.c_core0.lsq[0].data_p
+@22
+#{top.chip.c_core0.lsq[0].data_pid[3:0]} top.chip.c_core0.lsq[0].data_pid[3] top.chip.c_core0.lsq[0].data_pid[2] top.chip.c_core0.lsq[0].data_pid[1] top.chip.c_core0.lsq[0].data_pid[0]
+#{top.chip.c_core0.lsq[0].data_val[15:0]} top.chip.c_core0.lsq[0].data_val[15] top.chip.c_core0.lsq[0].data_val[14] top.chip.c_core0.lsq[0].data_val[13] top.chip.c_core0.lsq[0].data_val[12] top.chip.c_core0.lsq[0].data_val[11] top.chip.c_core0.lsq[0].data_val[10] top.chip.c_core0.lsq[0].data_val[9] top.chip.c_core0.lsq[0].data_val[8] top.chip.c_core0.lsq[0].data_val[7] top.chip.c_core0.lsq[0].data_val[6] top.chip.c_core0.lsq[0].data_val[5] top.chip.c_core0.lsq[0].data_val[4] top.chip.c_core0.lsq[0].data_val[3] top.chip.c_core0.lsq[0].data_val[2] top.chip.c_core0.lsq[0].data_val[1] top.chip.c_core0.lsq[0].data_val[0]
+@200
+-entry1
+@28
+top.chip.c_core0.lsq[1].present
+top.chip.c_core0.lsq[1].done
+top.chip.c_core0.lsq[1].write
+#{top.chip.c_core0.lsq[1].rob_entry[2:0]} top.chip.c_core0.lsq[1].rob_entry[2] top.chip.c_core0.lsq[1].rob_entry[1] top.chip.c_core0.lsq[1].rob_entry[0]
+top.chip.c_core0.lsq[1].addr_p
+@22
+#{top.chip.c_core0.lsq[1].data_pid[3:0]} top.chip.c_core0.lsq[1].data_pid[3] top.chip.c_core0.lsq[1].data_pid[2] top.chip.c_core0.lsq[1].data_pid[1] top.chip.c_core0.lsq[1].data_pid[0]
+#{top.chip.c_core0.lsq[1].addr_val[15:0]} top.chip.c_core0.lsq[1].addr_val[15] top.chip.c_core0.lsq[1].addr_val[14] top.chip.c_core0.lsq[1].addr_val[13] top.chip.c_core0.lsq[1].addr_val[12] top.chip.c_core0.lsq[1].addr_val[11] top.chip.c_core0.lsq[1].addr_val[10] top.chip.c_core0.lsq[1].addr_val[9] top.chip.c_core0.lsq[1].addr_val[8] top.chip.c_core0.lsq[1].addr_val[7] top.chip.c_core0.lsq[1].addr_val[6] top.chip.c_core0.lsq[1].addr_val[5] top.chip.c_core0.lsq[1].addr_val[4] top.chip.c_core0.lsq[1].addr_val[3] top.chip.c_core0.lsq[1].addr_val[2] top.chip.c_core0.lsq[1].addr_val[1] top.chip.c_core0.lsq[1].addr_val[0]
+@28
+top.chip.c_core0.lsq[1].data_p
+@22
+#{top.chip.c_core0.lsq[1].data_pid[3:0]} top.chip.c_core0.lsq[1].data_pid[3] top.chip.c_core0.lsq[1].data_pid[2] top.chip.c_core0.lsq[1].data_pid[1] top.chip.c_core0.lsq[1].data_pid[0]
+#{top.chip.c_core0.lsq[1].data_val[15:0]} top.chip.c_core0.lsq[1].data_val[15] top.chip.c_core0.lsq[1].data_val[14] top.chip.c_core0.lsq[1].data_val[13] top.chip.c_core0.lsq[1].data_val[12] top.chip.c_core0.lsq[1].data_val[11] top.chip.c_core0.lsq[1].data_val[10] top.chip.c_core0.lsq[1].data_val[9] top.chip.c_core0.lsq[1].data_val[8] top.chip.c_core0.lsq[1].data_val[7] top.chip.c_core0.lsq[1].data_val[6] top.chip.c_core0.lsq[1].data_val[5] top.chip.c_core0.lsq[1].data_val[4] top.chip.c_core0.lsq[1].data_val[3] top.chip.c_core0.lsq[1].data_val[2] top.chip.c_core0.lsq[1].data_val[1] top.chip.c_core0.lsq[1].data_val[0]
+@200
+-entry2
+@28
+top.chip.c_core0.lsq[2].present
+top.chip.c_core0.lsq[2].done
+top.chip.c_core0.lsq[2].write
+#{top.chip.c_core0.lsq[2].rob_entry[2:0]} top.chip.c_core0.lsq[2].rob_entry[2] top.chip.c_core0.lsq[2].rob_entry[1] top.chip.c_core0.lsq[2].rob_entry[0]
+top.chip.c_core0.lsq[2].addr_p
+@22
+#{top.chip.c_core0.lsq[2].data_pid[3:0]} top.chip.c_core0.lsq[2].data_pid[3] top.chip.c_core0.lsq[2].data_pid[2] top.chip.c_core0.lsq[2].data_pid[1] top.chip.c_core0.lsq[2].data_pid[0]
+#{top.chip.c_core0.lsq[2].addr_val[15:0]} top.chip.c_core0.lsq[2].addr_val[15] top.chip.c_core0.lsq[2].addr_val[14] top.chip.c_core0.lsq[2].addr_val[13] top.chip.c_core0.lsq[2].addr_val[12] top.chip.c_core0.lsq[2].addr_val[11] top.chip.c_core0.lsq[2].addr_val[10] top.chip.c_core0.lsq[2].addr_val[9] top.chip.c_core0.lsq[2].addr_val[8] top.chip.c_core0.lsq[2].addr_val[7] top.chip.c_core0.lsq[2].addr_val[6] top.chip.c_core0.lsq[2].addr_val[5] top.chip.c_core0.lsq[2].addr_val[4] top.chip.c_core0.lsq[2].addr_val[3] top.chip.c_core0.lsq[2].addr_val[2] top.chip.c_core0.lsq[2].addr_val[1] top.chip.c_core0.lsq[2].addr_val[0]
+@28
+top.chip.c_core0.lsq[2].data_p
+@22
+#{top.chip.c_core0.lsq[2].data_pid[3:0]} top.chip.c_core0.lsq[2].data_pid[3] top.chip.c_core0.lsq[2].data_pid[2] top.chip.c_core0.lsq[2].data_pid[1] top.chip.c_core0.lsq[2].data_pid[0]
+@200
+-entry3
+@28
+top.chip.c_core0.lsq[3].present
+top.chip.c_core0.lsq[3].done
+top.chip.c_core0.lsq[3].write
+#{top.chip.c_core0.lsq[3].rob_entry[2:0]} top.chip.c_core0.lsq[3].rob_entry[2] top.chip.c_core0.lsq[3].rob_entry[1] top.chip.c_core0.lsq[3].rob_entry[0]
+top.chip.c_core0.lsq[3].addr_p
+@22
+#{top.chip.c_core0.lsq[3].data_pid[3:0]} top.chip.c_core0.lsq[3].data_pid[3] top.chip.c_core0.lsq[3].data_pid[2] top.chip.c_core0.lsq[3].data_pid[1] top.chip.c_core0.lsq[3].data_pid[0]
+#{top.chip.c_core0.lsq[3].addr_val[15:0]} top.chip.c_core0.lsq[3].addr_val[15] top.chip.c_core0.lsq[3].addr_val[14] top.chip.c_core0.lsq[3].addr_val[13] top.chip.c_core0.lsq[3].addr_val[12] top.chip.c_core0.lsq[3].addr_val[11] top.chip.c_core0.lsq[3].addr_val[10] top.chip.c_core0.lsq[3].addr_val[9] top.chip.c_core0.lsq[3].addr_val[8] top.chip.c_core0.lsq[3].addr_val[7] top.chip.c_core0.lsq[3].addr_val[6] top.chip.c_core0.lsq[3].addr_val[5] top.chip.c_core0.lsq[3].addr_val[4] top.chip.c_core0.lsq[3].addr_val[3] top.chip.c_core0.lsq[3].addr_val[2] top.chip.c_core0.lsq[3].addr_val[1] top.chip.c_core0.lsq[3].addr_val[0]
+@28
+top.chip.c_core0.lsq[3].data_p
+@22
+#{top.chip.c_core0.lsq[3].data_pid[3:0]} top.chip.c_core0.lsq[3].data_pid[3] top.chip.c_core0.lsq[3].data_pid[2] top.chip.c_core0.lsq[3].data_pid[1] top.chip.c_core0.lsq[3].data_pid[0]
+#{top.chip.c_core0.lsq[3].data_val[15:0]} top.chip.c_core0.lsq[3].data_val[15] top.chip.c_core0.lsq[3].data_val[14] top.chip.c_core0.lsq[3].data_val[13] top.chip.c_core0.lsq[3].data_val[12] top.chip.c_core0.lsq[3].data_val[11] top.chip.c_core0.lsq[3].data_val[10] top.chip.c_core0.lsq[3].data_val[9] top.chip.c_core0.lsq[3].data_val[8] top.chip.c_core0.lsq[3].data_val[7] top.chip.c_core0.lsq[3].data_val[6] top.chip.c_core0.lsq[3].data_val[5] top.chip.c_core0.lsq[3].data_val[4] top.chip.c_core0.lsq[3].data_val[3] top.chip.c_core0.lsq[3].data_val[2] top.chip.c_core0.lsq[3].data_val[1] top.chip.c_core0.lsq[3].data_val[0]
+#{top.chip.c_core0.lsq[3].data_val[15:0]} top.chip.c_core0.lsq[3].data_val[15] top.chip.c_core0.lsq[3].data_val[14] top.chip.c_core0.lsq[3].data_val[13] top.chip.c_core0.lsq[3].data_val[12] top.chip.c_core0.lsq[3].data_val[11] top.chip.c_core0.lsq[3].data_val[10] top.chip.c_core0.lsq[3].data_val[9] top.chip.c_core0.lsq[3].data_val[8] top.chip.c_core0.lsq[3].data_val[7] top.chip.c_core0.lsq[3].data_val[6] top.chip.c_core0.lsq[3].data_val[5] top.chip.c_core0.lsq[3].data_val[4] top.chip.c_core0.lsq[3].data_val[3] top.chip.c_core0.lsq[3].data_val[2] top.chip.c_core0.lsq[3].data_val[1] top.chip.c_core0.lsq[3].data_val[0]
 @200
 -
 -

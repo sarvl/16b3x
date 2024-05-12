@@ -78,7 +78,7 @@ ARCHITECTURE behav of chip IS
 
 	SIGNAL abort   : boolean := false;
 
-	
+	SIGNAL disable_delay : std_ulogic := '1';	
 BEGIN
 	--connects everything that has to be connected
 	c_core0 : core PORT MAP(iodata  => bus_mem,
@@ -89,13 +89,13 @@ BEGIN
 	                        disable => c0_disable, 
 	                        clk     => clk_core0);
 
-	c_mem0  : memory GENERIC MAP(delay         => 0 NS)
+	c_mem0  : memory GENERIC MAP(delay         => 10 NS)
 	                 PORT    MAP(ia            => bus_adr,
 	                             iodata        => bus_mem,
 	                             rd            => bus_crd,
 	                             wr            => bus_cwr,
 	                             rdy           => bus_rdy,
-	                             disable_delay => '1', 
+	                             disable_delay => disable_delay, 
 	                             clk           => clk_mem0);
 	
 --	PROCESS IS
@@ -223,6 +223,7 @@ BEGIN
 
 		--dont drive them anymore
 		--can be 'Z' but nicely prevents warnings
+		disable_delay <= '0';
 		bus_cwr <= 'Z';
 		bus_crd <= 'Z';
 		bus_mem <= x"ZZZZ";

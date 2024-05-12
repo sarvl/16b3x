@@ -19,7 +19,9 @@ namespace Program_Flags{
 		symbols    = 0x0040,
 		perf       = 0x0080,
 		instr      = 0x0100,
-		warn       = 0x0200
+		warn       = 0x0200,
+		preciseperf= 0x0400,
+		branch     = 0x0800
 	};
 };
 
@@ -105,6 +107,12 @@ void input_handle_args(
 			continue;
 		case 'w':
 			flags |= Program_Flags::warn;
+			continue;
+		case 'P':
+			flags |= Program_Flags::preciseperf;
+			continue;
+		case 'b':
+			flags |= Program_Flags::branch;
 			continue;
 		case 's':
 			flags |= Program_Flags::symbols;
@@ -234,6 +242,8 @@ void output_print_help()
 		"\t-r         output register dump\n"
 		"\t-i         output how many times each instruction executed\n"
 		"\t-p         output performance info\n"
+		"\t-P         output precise performance info, overrides -p\n"
+		"\t-b         output branch predictor info\n"
 		"\t-w         output potential warnings\n"
 		"\t-s         symbol file, MUST be used as last option and MUST be followed by symbols file\n"
 		"using these options improperly may result in weird error\n";
