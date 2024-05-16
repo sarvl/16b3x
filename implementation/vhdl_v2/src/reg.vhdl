@@ -150,6 +150,7 @@ ENTITY reg_file_oooe_3p IS
 		o01  : OUT t_uword;
 		o10  : OUT t_uword;
 		o11  : OUT t_uword;
+		o20  : OUT t_uword;
 
 		r0d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 		r00  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
@@ -157,6 +158,7 @@ ENTITY reg_file_oooe_3p IS
 		r1d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 		r10  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 		r11  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
+		r20  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 		r2d  : IN  std_ulogic_vector(count_lg - 1 DOWNTO 0);
 
 		we0  : IN  std_ulogic;
@@ -176,6 +178,7 @@ BEGIN
 	o01 <= data(to_integer(unsigned(r01)));
 	o10 <= data(to_integer(unsigned(r10)));
 	o11 <= data(to_integer(unsigned(r11)));
+	o20 <= data(to_integer(unsigned(r20)));
 	PROCESS (clk) IS 
 	BEGIN
 		IF rising_edge(clk) THEN

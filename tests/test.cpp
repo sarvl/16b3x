@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
 	std::string commands[] = {
 		"cp ./tests/bin/g00t00.bin ./implementation/vhdl_v2/input_prog.bin",
-		"cd ./implementation/vhdl_v2/ ; ghdl -r --workdir=out --std=08 chip 1>/dev/null",
+		"cd ./implementation/vhdl_v2/ ; ghdl -r --workdir=out --std=08 chip --stop-time=10000ns 1>/dev/null",
 		"mv ./implementation/vhdl_v2/dump.txt ./",
 		"rm -f ./dump.txt",
 		"mv ./dump.txt ./failed_g00t00.out"

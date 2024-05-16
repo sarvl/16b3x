@@ -150,14 +150,16 @@ format_r:
 	rdm 	@int_r1, @int_r1
 
 execute:
-	wrx 	UI,      {ui_storage 0x7F /}
-	wrm 	@int_ui, {ui_storage 0xFF % 2 *}
-	mov 	@int_ui, 0
 	#jmp mem[(jump_table + int_op) * 2]
 	wrx 	UI,      {jump_table 256 /}
 	add 	@int_op, {jump_table 256 %}
 	sll 	@int_op, 1
 	rdm 	@int_op, @int_op
+	#jmp below, makes indirect jump faster 
+
+	wrx 	UI,      {ui_storage 0x7F /}
+	wrm 	@int_ui, {ui_storage 0xFF % 2 *}
+	mov 	@int_ui, 0
 	jmp 	@int_op
 
 NOP:
