@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sun Aug 27 19:57:17 2023
+[*] Wed Aug 30 00:06:47 2023
 [*]
 [dumpfile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/wave.ghw"
-[dumpfile_mtime] "Sun Aug 27 19:54:04 2023"
-[dumpfile_size] 2185149
+[dumpfile_mtime] "Wed Aug 30 00:04:47 2023"
+[dumpfile_size] 2277773
 [savefile] "/home/sarvel/Projects/Computers/16bit_v3/implementation/vhdl/oooe.gtkw"
-[timestart] 28740000
-[size] 1366 768
+[timestart] 38350000
+[size] 1920 1080
 [pos] -1 -1
-*-22.676767 38500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-22.676767 82830000 82830000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.computer.
 [treeopen] top.computer.bhb.[0].
@@ -25,7 +25,7 @@
 [sst_width] 273
 [signals_width] 256
 [sst_expanded] 1
-[sst_vpaned_height] 497
+[sst_vpaned_height] 748
 @200
 -clock
 @28
@@ -37,7 +37,6 @@ top.computer.clk
 top.computer.misprediction
 top.computer.misaligned_br
 top.computer.flush
-@29
 #{top.computer.flcmp[2:0]} top.computer.flcmp[2] top.computer.flcmp[1] top.computer.flcmp[0]
 @200
 -
@@ -345,12 +344,6 @@ top.computer.reg_lr.we
 #{top.computer.reg_lr.o0[15:0]} top.computer.reg_lr.o0[15] top.computer.reg_lr.o0[14] top.computer.reg_lr.o0[13] top.computer.reg_lr.o0[12] top.computer.reg_lr.o0[11] top.computer.reg_lr.o0[10] top.computer.reg_lr.o0[9] top.computer.reg_lr.o0[8] top.computer.reg_lr.o0[7] top.computer.reg_lr.o0[6] top.computer.reg_lr.o0[5] top.computer.reg_lr.o0[4] top.computer.reg_lr.o0[3] top.computer.reg_lr.o0[2] top.computer.reg_lr.o0[1] top.computer.reg_lr.o0[0]
 @200
 -ui
-@28
-top.computer.reg_ui.we
-@22
-#{top.computer.reg_ui.i0[15:0]} top.computer.reg_ui.i0[15] top.computer.reg_ui.i0[14] top.computer.reg_ui.i0[13] top.computer.reg_ui.i0[12] top.computer.reg_ui.i0[11] top.computer.reg_ui.i0[10] top.computer.reg_ui.i0[9] top.computer.reg_ui.i0[8] top.computer.reg_ui.i0[7] top.computer.reg_ui.i0[6] top.computer.reg_ui.i0[5] top.computer.reg_ui.i0[4] top.computer.reg_ui.i0[3] top.computer.reg_ui.i0[2] top.computer.reg_ui.i0[1] top.computer.reg_ui.i0[0]
-#{top.computer.reg_ui.o0[15:0]} top.computer.reg_ui.o0[15] top.computer.reg_ui.o0[14] top.computer.reg_ui.o0[13] top.computer.reg_ui.o0[12] top.computer.reg_ui.o0[11] top.computer.reg_ui.o0[10] top.computer.reg_ui.o0[9] top.computer.reg_ui.o0[8] top.computer.reg_ui.o0[7] top.computer.reg_ui.o0[6] top.computer.reg_ui.o0[5] top.computer.reg_ui.o0[4] top.computer.reg_ui.o0[3] top.computer.reg_ui.o0[2] top.computer.reg_ui.o0[1] top.computer.reg_ui.o0[0]
-@200
 -fl
 @28
 top.computer.reg_fl.we
@@ -359,7 +352,8 @@ top.computer.reg_fl.we
 #{top.computer.reg_fl.o0[15:0]} top.computer.reg_fl.o0[15] top.computer.reg_fl.o0[14] top.computer.reg_fl.o0[13] top.computer.reg_fl.o0[12] top.computer.reg_fl.o0[11] top.computer.reg_fl.o0[10] top.computer.reg_fl.o0[9] top.computer.reg_fl.o0[8] top.computer.reg_fl.o0[7] top.computer.reg_fl.o0[6] top.computer.reg_fl.o0[5] top.computer.reg_fl.o0[4] top.computer.reg_fl.o0[3] top.computer.reg_fl.o0[2] top.computer.reg_fl.o0[1] top.computer.reg_fl.o0[0]
 @200
 -
--BHB
+@201
+-BC
 @c00028
 #{top.computer.bhb[0].bc[1:0]} top.computer.bhb[0].bc[1] top.computer.bhb[0].bc[0]
 @28

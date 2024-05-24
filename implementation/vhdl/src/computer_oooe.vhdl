@@ -57,7 +57,6 @@ ARCHITECTURE behav OF computer IS
 
 		cf       : std_logic;
 		pr_tkn   : std_logic;
-		br_dir   : std_logic_vector(15 DOWNTO 0);
 
 		addr     : std_logic_vector(15 DOWNTO 0);
 	END RECORD t_buf_entry;
@@ -68,7 +67,7 @@ ARCHITECTURE behav OF computer IS
 	    (valid | complete | src0_p | src1_p | pr_tkn | cf => '0',
 	     dest  | alu_op  => "000",
 	     controls => (cycadv => '1', OTHERS => '0'),
-	     value | src0 | src1 | instr | br_dir | addr => x"0000");
+	     value | src0 | src1 | instr | addr => x"0000");
 
 
 --	TYPE t_instruction IS RECORD 
@@ -350,7 +349,6 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL  instr0_r1v      : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  instr0_foi      : std_ulogic;
 	SIGNAL  instr0_pr_tkn   : std_ulogic;
-	SIGNAL  instr0_br_dir   : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  instr0_cf       : std_ulogic;
 
 	SIGNAL  instr1_controls : t_controls;
@@ -362,7 +360,6 @@ ARCHITECTURE behav OF computer IS
 	SIGNAL  instr1_r1v      : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  instr1_foi      : std_ulogic;
 	SIGNAL  instr1_pr_tkn   : std_ulogic;
-	SIGNAL  instr1_br_dir   : std_ulogic_vector(15 DOWNTO 0);
 	SIGNAL  instr1_cf       : std_ulogic;
 
 	SIGNAL  can_assign_rob  : std_ulogic := '1';
@@ -600,7 +597,9 @@ BEGIN
 	            OR instr1_controls.srm
 	            OR instr1_controls.sre;
 
-	instr0_pr_tkn <= bhb(to_integer(unsigned(ipp1(3 DOWNTO 0)))).bc(1) 
+	--assume not taken for indirect branch, makes hw easier, perf bad
+	instr0_pr_tkn <= '0' WHEN NOT instr0_controls.iim
+	            ELSE bhb(to_integer(unsigned(ipp1(3 DOWNTO 0)))).bc(1) 
 	            WHEN instr0_controls.jmp 
 	              OR instr0_controls.cal
 	              OR instr0_controls.ret
@@ -609,10 +608,9 @@ BEGIN
 	              OR instr0_controls.cal
 	              OR instr0_controls.ret
 	              OR instr0_controls.hlt;
-	instr0_br_dir <= RAS(to_integer(unsigned(RSEp7))).addr WHEN instr0_controls.ret
-	            ELSE (7 DOWNTO 0 => instr0_imm8, OTHERS => '0');
 
-	instr1_pr_tkn <= bhb(to_integer(unsigned(ipp2(3 DOWNTO 0)))).bc(1) 
+	instr1_pr_tkn <= '0' WHEN NOT instr1_controls.iim
+	            ELSE bhb(to_integer(unsigned(ipp2(3 DOWNTO 0)))).bc(1) 
 	            WHEN instr1_controls.jmp 
 	              OR instr1_controls.cal
 	              OR instr1_controls.ret
@@ -621,8 +619,6 @@ BEGIN
 	              OR instr1_controls.cal
 	              OR instr1_controls.ret
 	              OR instr1_controls.hlt;
-	instr1_br_dir <= RAS(to_integer(unsigned(RSEp7))).addr WHEN instr1_controls.ret
-	            ELSE (7 DOWNTO 0 => instr1_imm8, OTHERS => '0');
 
 
 	--when either retired writes/reads to memory, dont fetch
@@ -630,7 +626,7 @@ BEGIN
 	can_assign_rob <= '0' WHEN use_memory 
 	             ELSE '1' WHEN REPp2 /= RSPp0 AND REPp2 /= RSPp1 
 	             ELSE '0'; 
-	can_retire0    <= ROB(addr0_s).valid AND (ROB(addr0_s).complete OR ROB(addr0_s).controls.sre OR ROB(addr0_s).controls.srm);
+	can_retire0    <= ROB(addr0_s).valid AND (ROB(addr0_s).complete OR ROB(addr0_s).controls.wre OR ROB(addr0_s).controls.sre OR ROB(addr0_s).controls.srm);
 	--to simplify, try not to retire when second instruction is control flow
 	--it causes much more care when dealing with flush and it appears to cause no major slowdown
 	--however, try to fix it 
@@ -862,15 +858,16 @@ BEGIN
 	rat11_e  <= to_integer(unsigned(instr1_r1));
 
 
-	misprediction <= '1' WHEN flcmp /= "000" AND r_lr.o0 /= ROB(addr0_s).br_dir AND ROB(addr0_s).pr_tkn = '1' AND ROB(addr0_s).controls.ret = '1' 
+	--for simplicity
+	misprediction <= '1' WHEN flcmp /= "000" AND ROB(addr0_s).pr_tkn = '1' AND ROB(addr0_s).controls.ret = '1' --AND r_lr.o0 /= ROB(addr0_s).br_dir AND ROB(addr0_s).pr_tkn = '1' AND ROB(addr0_s).controls.ret = '1' 
 	            ELSE '1' WHEN flcmp  = "000" AND ROB(addr0_s).pr_tkn = '1' AND ROB(addr0_s).cf = '1'
 	            ELSE '1' WHEN flcmp /= "000" AND ROB(addr0_s).pr_tkn = '0' AND ROB(addr0_s).cf = '1'
 	            ELSE '0';
 	flush <= '0' WHEN flush = '1' AND rising_edge(clk) 
         ELSE misprediction;
-	correct_addr <= r_lr.o0 WHEN flcmp /= "000" AND r_lr.o0 /= ROB(addr0_s).br_dir AND ROB(addr0_s).pr_tkn = '1' AND ROB(addr0_s).controls.ret = '1'
+	correct_addr <= r_lr.o0 WHEN flcmp /= "000" AND ROB(addr0_s).pr_tkn = '1' AND ROB(addr0_s).controls.ret = '1'
 	           ELSE ROB(addr0_s).addr   WHEN flcmp  = "000" AND ROB(addr0_s).pr_tkn = '1' 
-	           ELSE ROB(addr0_s).br_dir WHEN flcmp /= "000" AND ROB(addr0_s).pr_tkn = '0'
+	           ELSE ROB(addr0_s).src1   WHEN flcmp /= "000" AND ROB(addr0_s).pr_tkn = '0'
 	           ELSE x"BEEF";
 
 	bc_adi <= BHB(to_integer(unsigned(ROB(addr0_s).addr(3 DOWNTO 0)))).bc WHEN ROB(addr0_s).cf = '1';
@@ -1109,7 +1106,8 @@ BEGIN
 			--or first operand in buffer entry pointed to by the register
 			rob0_src0_p := '1' WHEN instr0_foi = '1' OR instr0_cf = '1' 
 			            OR RAT(rat00_e).in_rf = '1' 
-			            OR ROB(to_integer(unsigned(RAT(rat00_e).rob_entry))).complete = '1' 
+			            OR (ROB(to_integer(unsigned(RAT(rat00_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat00_e).rob_entry))).controls.sro = '0') 
+			            OR (ROB(to_integer(unsigned(RAT(rat00_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat00_e).rob_entry))).controls.sro = '1' AND ROB(to_integer(unsigned(RAT(rat00_e).rob_entry))).src1_p = '1')
 			            OR (exe_entry0p = '1' AND ROB(to_integer(unsigned(exe_entry0))).dest = instr0_r0 AND RAT(to_integer(unsigned(instr0_r0))).rob_entry = exe_entry0)
 			            OR (exe_entry1p = '1' AND ROB(to_integer(unsigned(exe_entry1))).dest = instr0_r0 AND RAT(to_integer(unsigned(instr0_r0))).rob_entry = exe_entry1)
 			          ELSE '0';
@@ -1127,7 +1125,8 @@ BEGIN
 			          ELSE (2 DOWNTO 0 => RAT(rat00_e).rob_entry, OTHERS => '0');
 			rob0_src1_p := '1' WHEN instr0_controls.iim = '1' 
 			            OR RAT(rat01_e).in_rf = '1'
-			            OR ROB(to_integer(unsigned(RAT(rat01_e).rob_entry))).complete = '1'
+			            OR (ROB(to_integer(unsigned(RAT(rat01_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat01_e).rob_entry))).controls.sro = '0') 
+			            OR (ROB(to_integer(unsigned(RAT(rat01_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat01_e).rob_entry))).controls.sro = '1' AND ROB(to_integer(unsigned(RAT(rat01_e).rob_entry))).src1_p = '1')
 			            OR (exe_entry0p = '1' AND ROB(to_integer(unsigned(exe_entry0))).dest = instr0_r1 AND RAT(to_integer(unsigned(instr0_r1))).rob_entry = exe_entry0)
 			            OR (exe_entry1p = '1' AND ROB(to_integer(unsigned(exe_entry1))).dest = instr0_r1 AND RAT(to_integer(unsigned(instr0_r1))).rob_entry = exe_entry1)
 			          ELSE '0';
@@ -1170,7 +1169,6 @@ BEGIN
 
 			ROB(addr0_e).cf       <= instr0_cf;
 			ROB(addr0_e).pr_tkn   <= instr0_pr_tkn;
-			ROB(addr0_e).br_dir   <= instr0_br_dir; 
 			ROB(addr0_e).addr     <= ipp1;
 
 			IF instr0_controls.wrr = '1' THEN 
@@ -1211,7 +1209,8 @@ BEGIN
 			rob1_src0_p := '1' WHEN instr1_foi = '1' OR instr1_cf = '1' 
 			          ELSE '0' WHEN instr0_r0 = instr1_r0  AND instr0_controls.wrr = '1' 
 			          ELSE '1' WHEN RAT(rat10_e).in_rf = '1' 
-			            OR ROB(to_integer(unsigned(RAT(rat10_e).rob_entry))).complete = '1' 
+			            OR (ROB(to_integer(unsigned(RAT(rat10_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat10_e).rob_entry))).controls.sro = '0') 
+			            OR (ROB(to_integer(unsigned(RAT(rat10_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat10_e).rob_entry))).controls.sro = '1' AND ROB(to_integer(unsigned(RAT(rat10_e).rob_entry))).src1_p = '1')
 			            OR (exe_entry0p = '1' AND ROB(to_integer(unsigned(exe_entry0))).dest = instr1_r0 AND RAT(to_integer(unsigned(instr1_r0))).rob_entry = exe_entry0)
 			            OR (exe_entry1p = '1' AND ROB(to_integer(unsigned(exe_entry1))).dest = instr1_r0 AND RAT(to_integer(unsigned(instr1_r0))).rob_entry = exe_entry1)
 			          ELSE '0';
@@ -1230,7 +1229,8 @@ BEGIN
 			rob1_src1_p := '1' WHEN instr1_controls.iim 
 			          ELSE '0' WHEN instr0_r0 = instr1_r1 AND instr0_controls.wrr = '1'
 			          ELSE '1' WHEN RAT(rat11_e).in_rf = '1' 
-			            OR ROB(to_integer(unsigned(RAT(rat11_e).rob_entry))).complete = '1' 
+			            OR (ROB(to_integer(unsigned(RAT(rat11_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat11_e).rob_entry))).controls.sro = '0') 
+			            OR (ROB(to_integer(unsigned(RAT(rat11_e).rob_entry))).complete = '1' AND ROB(to_integer(unsigned(RAT(rat11_e).rob_entry))).controls.sro = '1' AND ROB(to_integer(unsigned(RAT(rat11_e).rob_entry))).src1_p = '1')
 			            OR (exe_entry0p = '1' AND ROB(to_integer(unsigned(exe_entry0))).dest = instr1_r1 AND RAT(to_integer(unsigned(instr1_r1))).rob_entry = exe_entry0)
 			            OR (exe_entry1p = '1' AND ROB(to_integer(unsigned(exe_entry1))).dest = instr1_r1 AND RAT(to_integer(unsigned(instr1_r1))).rob_entry = exe_entry1)
 			          ELSE '0';
@@ -1267,7 +1267,6 @@ BEGIN
 
 			ROB(addr1_e).cf       <= instr1_cf;
 			ROB(addr1_e).pr_tkn   <= instr1_pr_tkn; 
-			ROB(addr1_e).br_dir   <= instr1_br_dir;
 			ROB(addr1_e).addr     <= ipp2;
 
 			RAT(rat10_e).in_rf     <= '0'   WHEN instr1_controls.wrr = '1'
@@ -1385,15 +1384,15 @@ BEGIN
 	      ELSE '0'; 
 --	r_ui.i0 <= x"0000"; 
 	--when last bit is 1 then branch is misaligned
-	misaligned_br <= correct_addr(0)  WHEN rising_edge(clk) AND flush = '1'
-	            ELSE instr0_br_dir(0) WHEN rising_edge(clk) AND instr0_pr_tkn = '1' AND can_assign_rob = '1'
-	            ELSE instr1_br_dir(0) WHEN rising_edge(clk) AND instr1_pr_tkn = '1' AND can_assign_rob = '1'
-	            ELSE misaligned_br    WHEN rising_edge(clk) AND can_assign_rob = '0' --when needs to wait, forward 
-	            ELSE '0'              WHEN rising_edge(clk) 
+	misaligned_br <= correct_addr(0) WHEN rising_edge(clk) AND flush = '1'
+	            ELSE instr0_imm8(0)  WHEN rising_edge(clk) AND instr0_pr_tkn = '1' AND can_assign_rob = '1'
+	            ELSE instr1_imm8(0)  WHEN rising_edge(clk) AND instr1_pr_tkn = '1' AND can_assign_rob = '1'
+	            ELSE misaligned_br   WHEN rising_edge(clk) AND can_assign_rob = '0' --when needs to wait, forward 
+	            ELSE '0'             WHEN rising_edge(clk) 
 	            ELSE UNAFFECTED;
-	r_ip.i0 <= correct_addr  WHEN flush
-	      ELSE instr0_br_dir WHEN instr0_pr_tkn
-	      ELSE instr1_br_dir WHEN instr1_pr_tkn
+	r_ip.i0 <= correct_addr WHEN flush
+	      ELSE (7 DOWNTO 0 => instr0_imm8, OTHERS => '0')  WHEN instr0_pr_tkn
+	      ELSE (7 DOWNTO 0 => instr1_imm8, OTHERS => '0')  WHEN instr1_pr_tkn
 	      ELSE ipp2; 
 	r_ip.we <= can_fetch; 
 	r_fl.we <= (ROB(addr0_s).controls.wrf AND can_retire0)

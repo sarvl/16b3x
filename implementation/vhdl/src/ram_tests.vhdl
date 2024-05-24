@@ -17,7 +17,7 @@
 		so in practice behaves like 32Ki of 16bit 
 
 		however internal implementation is 16Ki of 32bit 
-		because that how it is the most convenient for superscalar implementation
+		because that is the most convenient for superscalar implementation
 		and poses no additional cost for other impl. 
 
 	this RAM is specifically designed for quick tests
@@ -123,7 +123,7 @@ ARCHITECTURE behav OF ram IS
 	SIGNAL can_write : std_ulogic := '0';
 	
 BEGIN
-	memory_init: PROCESS IS  
+	memory_write: PROCESS(clk) IS 
 		FILE code : text; 
 
 		VARIABLE index : natural;
@@ -131,6 +131,11 @@ BEGIN
 		VARIABLE temp_storage : string(8 DOWNTO 1);
 	BEGIN
 		index := 0;
+			
+		IF can_write'delayed(1 NS) = '1' THEN 
+			data(addr) <= mem_in WHEN we = '1' AND rising_edge(clk) AND can_write'delayed(1 NS) = '1'
+			         ELSE UNAFFECTED;
+		END IF;
 --
 		file_open(code, "input_prog.bin"); 
 		WHILE NOT endfile(code) LOOP
@@ -138,12 +143,11 @@ BEGIN
 			data(index) <= str_to_slv(temp_storage) WHEN can_write = '0';
 			index := index + 1;
 		END LOOP;
-
 		file_close(code);
-		can_write <= '1';
-		WAIT;
 
-	END PROCESS memory_init;
+		--effectively stops all signal driving
+		can_write <= '1';
+	END PROCESS memory_write;
 
 	memory_fin: PROCESS IS 
 		FILE dump : text;
@@ -175,9 +179,6 @@ BEGIN
 	--since input is 16b it needs to be merged with part of what is already stored 
 	mem_in <= mem_data(31 DOWNTO 16) & i0s WHEN ms_half = '0'
 	     ELSE i0s & mem_data(15 DOWNTO  0);
-
-	data(addr) <= mem_in WHEN we = '1' AND rising_edge(clk) AND can_write'delayed(1 NS) = '1'
-	         ELSE UNAFFECTED;
 
 	o0s <= mem_data(31 DOWNTO 16) WHEN ms_half = '1'
 	  ELSE mem_data(15 DOWNTO  0); 

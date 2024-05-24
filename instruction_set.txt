@@ -11,7 +11,6 @@
 	[DURING_EVERY_CYCLE]
 	[FEATURE_FLAGS]
 	[DETAILED_INSTRUCTION_EXPLANATION]
-	[KNOWN_LIMITATIONS]
 
 [OVERVIEW]
 	version:           1 
@@ -20,7 +19,7 @@
 	architecture:      register-register
 	instruction-limit: 63
 	instruction-count: 44
-	this doc revision:  1 
+	this doc revision:  2 
 	
 	all potential future version WILL BE backwards compatible with previous versions 
 	note that instruction-limit and instruction-count treat instruction's formats as separate instructions
@@ -36,15 +35,15 @@
 	00  nop                  	# ---
 	01  hlt ccc              	# IF(FL & ccc) { halt } 
 	02                       	# 
-	03                       	#  
-	04                       	#   
+ 	03                       	# 
+ 	04                       	# 
 	05  mov     Rd, Rs/imm8 	# Rd <-- Rs/imm16
 	06  rdm     Rd, Rs/imm8 	# Rd <-- M[Rs/imm16]
 	07  wrm     Rd, Rs/imm8 	# M[Rs/imm16] <-- Rd
-	08                      	#  
+	08                      	# 
 	09                      	#  
-	0A                      	# 
-	0B                      	# 
+ 	0A                      	# 
+ 	0B                      	#  
 	0C  rdx     Rd, Es       	# Rd <-- Es      
 	0D  wrx     Ed, Rs/imm8 	# Ed <-- Rs/imm16
 	0E  psh     Rd          	# SP <-- SP - 2 ; M[SP] <-- Rd
@@ -54,9 +53,9 @@
 	12                      	#  
 	13  tst     Rd, Rs/imm8 	# Rd & Rs/imm16 
 	14  jmp ccc     Rs/imm8 	# IF(FL & ccc) { IP <-- Rd/imm16 }
-	15  cal ccc     Rs/imm8 	# IF(FL & ccc) { LR <-- IP + 2; IP <-- Rd/imm16 }
+	15  cal ccc     Rs/imm8 	# IF(FL & ccc) { LR <-- IP; IP <-- Rd/imm16 }
 	16  ret ccc             	# IF(FL & ccc) { IP <-- LR }
-	17                      	#  
+ 	17                          # 
 	18  add     Rd, Rs/imm8 	# Rd <-- Rd +  Rs/imm16
 	19  sub     Rd, Rs/imm8 	# Rd <-- Rd -  Rs/imm16
 	1A  not     Rd, Rs/imm8 	# Rd <--    ~  Rs/imm16
@@ -125,7 +124,7 @@
 		if instruction uses imm4 instead of imm8 then 4LSb have to be used 
 		
 	
-	instructions that use ccc are encoded as regular instructions except 3 condition bits are placed where R0 would be and instructions do not care about R0
+	instructions that use ccc are encoded as regular instructions except 3 condition bits are placed where R0 would be and those instructions do not care about R0
 	if instruction doesnt have variant with immiediate and it uses only 1 register (1 condition code) then its behavior is the same in R-format and I-format
 	if instruction doesnt have variant with immiediate and uses 2 registers then it DOES NOT HAVE imm format 
 
@@ -203,7 +202,9 @@
 	UI
 		used by any instruction that uses immiediate
 		value set at instruction n will take effect at instruction n + 1 and after instruction n + 1 UI is set back to 0 
-		may be changed by WRX
+
+		may be modified by 
+			WRX
 	
 		see [EXTENDED_IMM]
 	
@@ -218,9 +219,13 @@
 		write/read from other bits does not have to have an effect 
 	
 		initial value is not specified but is valid (meaning that one and only one flag bit is 1)
+		at any point it *can* be assumed that exactly one bit is 1, however it does not *have* to be assumed 
+		EVEN IF it is not actually 1 bit because of write with wrx
+		for example, after WRX FL, 0  it can be still assumed that JMP LEG loop will jump to loop
+		however after the same write, instruction sequence JMP L loop ; JMP E loop, JMP G loop may not jump to loop
 	
 		set by
-		MUL, CMP, TST, ADD, SUB, NOT, AND, ORR, XOR 
+			MUL, CMP, TST, ADD, SUB, NOT, AND, ORR, XOR 
 
 	CF
 		see [FEATURE_FLAGS]
@@ -237,6 +242,8 @@
 
 	SP points to the data on top of the stack NOT where that data would go 
 	in other words, PSH first decreases SP then puts data, POP first gets data then increases SP 
+
+	local variables can be easily accessed by WRS and RDS, if those instructions are supported
 
 [STACK_FRAME]
 	arguments passed to procedure A by procedure B are considered part of procedure B's stack frame
@@ -293,9 +300,10 @@
 
 	reading from CF (see [EXTERNAL_REGISTERS]) will result in 16bits flag array
 	flags from MSb to LSb:
-		0000 0000 0000 000M
+		0000 0000 0000 00SM
 
-		M - MUL, if present MUL instruction does exist
+		M - MUL, if present MUL instruction is supported
+		S - STK, if present WRS and RDS instructions are supported
 		
 
 [DETAILED_INSTRUCTION_EXPLANATION]
@@ -310,6 +318,10 @@
 		{
 			halt
 		}
+
+		ccc = 0b111 ALWAYS means halt
+		ccc = 0b000 ALWAYS means nop 
+		indepenent of FL value, see [EXTERNAL_REGISTERS] about FL 
 
 		conditionally stops execution of the processor
 		once stopped there is no way to resume it other than to restart it
@@ -340,7 +352,7 @@
 
 		external registers altered:
 			---
-
+	
 	RDX Rd, E0
 		E0 <-- Rd
 
@@ -387,6 +399,10 @@
 			IP <-- Rd/imm16
 		}
 
+		ccc = 0b111 ALWAYS means jump 
+		ccc = 0b000 ALWAYS means nop 
+		indepenent of FL value, see [EXTERNAL_REGISTERS] about FL 
+
 		if flags register anded with condition codes yields nonzero value
 			changes the IP to second operand 
 
@@ -399,6 +415,10 @@
 			LR <-- IP
 			IP <-- Rd/imm16 
 		}
+
+		ccc = 0b111 ALWAYS means call 
+		ccc = 0b000 ALWAYS means nop 
+		indepenent of FL value, see [EXTERNAL_REGISTERS] about FL 
 		
 		if flags register anded with condition codes yields non zero value
 			saves value of IP into LR
@@ -413,6 +433,10 @@
 		{ 
 			IP <-- LR
 		}
+
+		ccc = 0b111 ALWAYS means return 
+		ccc = 0b000 ALWAYS means nop 
+		indepenent of FL value, see [EXTERNAL_REGISTERS] about FL 
         
 		if flags register anded with condition codes yields non zero value
 			changes IP to LR	
@@ -529,21 +553,3 @@
 
 		external registers altered:
 			FL
-
-[KNOWN_LIMITATIONS]
-	comparing values
-		since the cpu is 16bit and flags are set basing on output
-		then comparision IS NOT COMMUTATIVE 
-		that is a < b ∧ b < c =/> a < c 
-		example:
-		a = 123, b = 11859, c = 36427 
-		a < b ∧ b < c 
-		but a > c 
-		because a - c is actually a + (-c) 
-		since c is in 2s complement and bigger than 2^15 then it is already treated as negative
-		therefore 123 + ~c + 1 is actually > 0 therefore a > c even though mathematically a < c 
-
-
-		for best results ensure that the absolute value is smaller than 2^15
-
-

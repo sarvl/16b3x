@@ -18,10 +18,10 @@ refresh:
 clear:
 	@clear
 
-asm: clear sim 
-remake: clean refresh sim 
+sim: clear link 
+remake: clean refresh link
 
-sim: ${FILES}
+link: ${FILES}
 	@echo -e ${CR}linking${CD}
 	@g++ ${SAN} -std=c++20 -o sim ${FILES} -Wall -Wextra -pedantic
 
